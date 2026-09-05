@@ -337,8 +337,8 @@ body{margin:0;background:#07111f;color:white;font-family:Arial,Helvetica,sans-se
         It simply starts audio generation/cache work slightly earlier.
       */
       await fetch(
-        PRODUCTION_WORKER +
-        "/azure-tts-test",
+        DEMO_WORKER +
+        "/demo-azure-tts-test",
         {
           method:
             "POST",
@@ -591,8 +591,8 @@ body{margin:0;background:#07111f;color:white;font-family:Arial,Helvetica,sans-se
 
     const response =
       await fetch(
-        PRODUCTION_WORKER +
-        "/transcribe-audio",
+        DEMO_WORKER +
+        "/demo-transcribe-audio",
         {
           method:
             "POST",
@@ -1179,8 +1179,8 @@ body{margin:0;background:#07111f;color:white;font-family:Arial,Helvetica,sans-se
 
     const transcriptionResponse =
       await fetch(
-        PRODUCTION_WORKER +
-        "/transcribe-audio",
+        DEMO_WORKER +
+        "/demo-transcribe-audio",
         {
           method:
             "POST",

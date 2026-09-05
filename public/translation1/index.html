@@ -542,6 +542,17 @@
   let ROOM_ID = "";
   let listenerSocket = null;
   let listenerHeartbeat = null;
+
+  /*
+    Production listener resilience:
+    the listener stays joined in the background and reconnects
+    automatically if the socket closes, the network changes,
+    or the listener changes language.
+  */
+  let listenerReconnectTimer = null;
+  let listenerReconnectAttempts = 0;
+  let listenerReconnectInProgress = false;
+  let listenerConnectionWanted = false;
   let listenerStreamTimeout = null;
   let listenerFontSize = 18;
   let listenerAutoScroll = true;
@@ -971,7 +982,115 @@ listenerAudioButton.addEventListener("click", () => {
   }
 
 
-  async function joinLiveRoom() {
+  function clearListenerReconnectTimer() {
+
+    if (listenerReconnectTimer) {
+      clearTimeout(listenerReconnectTimer);
+      listenerReconnectTimer = null;
+    }
+  }
+
+
+  function closeListenerSocketIntentionally() {
+
+    if (!listenerSocket) {
+      return;
+    }
+
+    try {
+      listenerSocket.__lbIntentionalClose = true;
+      listenerSocket.close();
+    } catch (error) {
+      console.error(error);
+    }
+
+    listenerSocket = null;
+  }
+
+
+  function scheduleListenerReconnect(
+    reason = "connection lost"
+  ) {
+
+    if (
+      !listenerConnectionWanted ||
+      !ROOM_ID ||
+      listenerReconnectTimer ||
+      listenerReconnectInProgress
+    ) {
+      return;
+    }
+
+    listenerReconnectAttempts += 1;
+
+    const delay =
+      Math.min(
+        5000,
+        700 +
+        (
+          Math.max(
+            0,
+            listenerReconnectAttempts - 1
+          ) * 700
+        )
+      );
+
+    document.getElementById(
+      "listenerStatus"
+    ).textContent =
+      "Reconnecting automatically…";
+
+    document.getElementById(
+      "listenerDot"
+    ).classList.remove("live");
+
+    listenerReconnectTimer =
+      setTimeout(
+        async function () {
+
+          listenerReconnectTimer = null;
+
+          await joinLiveRoom({
+            preserveTranscript: true,
+            preserveSession: true,
+            reconnect: true
+          });
+
+        },
+        delay
+      );
+
+    console.log(
+      "LiveBridge listener reconnect scheduled:",
+      reason,
+      delay
+    );
+  }
+
+
+  async function joinLiveRoom(
+    options = {}
+  ) {
+
+    /*
+      A normal button click passes a MouseEvent.
+      Treat that as a fresh user join, not an options object.
+    */
+    if (
+      typeof Event !== "undefined" &&
+      options instanceof Event
+    ) {
+      options = {};
+    }
+
+    const preserveTranscript =
+      !!options.preserveTranscript;
+
+    const preserveSession =
+      !!options.preserveSession;
+
+    const reconnecting =
+      !!options.reconnect;
 
     const roomInput =
       document.getElementById("listenerRoom");
@@ -988,6 +1107,8 @@ listenerAudioButton.addEventListener("click", () => {
       alert("Please enter a room name.");
       return;
     }
+
+    listenerConnectionWanted = true;
 
     roomInput.value = ROOM_ID;
 
@@ -1014,25 +1135,26 @@ listenerAudioButton.addEventListener("click", () => {
     document.getElementById(
       "listenerStatus"
     ).textContent =
-      "Checking Room...";
+      reconnecting
+        ? "Reconnecting automatically…"
+        : "Checking Room...";
 
     document.getElementById(
       "listenerDot"
     ).classList.remove("live");
 
-    if (listenerSocket) {
-      try {
-        listenerSocket.close();
-      } catch (error) {
-        console.error(error);
-      }
-
-      listenerSocket = null;
-    }
+    clearListenerReconnectTimer();
+    closeListenerSocketIntentionally();
 
     window.speechSynthesis?.cancel();
 
-    stopListenerTracking();
+    /*
+      Only stop/create analytics tracking on a fresh manual join.
+      Background reconnects keep the same listener session.
+    */
+    if (!preserveSession) {
+      stopListenerTracking();
+    }
 
     const access =
       await checkLiveBridgeRoomAccess(
@@ -1041,6 +1163,8 @@ listenerAudioButton.addEventListener("click", () => {
 
     if (!access.allowed) {
 
+      listenerConnectionWanted = false;
+
       await handleRoomAccessDenied(
         access.data
       );
@@ -1048,17 +1172,23 @@ listenerAudioButton.addEventListener("click", () => {
       return;
     }
 
-    output.innerHTML = "";
-    fullTranslatedTranscript = "";
-    listenerDisplayQueue = [];
+    if (!preserveTranscript) {
+      output.innerHTML = "";
+      fullTranslatedTranscript = "";
+      listenerDisplayQueue = [];
+    }
 
-    listenerSessionId =
-      createListenerSessionId();
+    if (!preserveSession) {
+      listenerSessionId =
+        createListenerSessionId();
+    }
 
     document.getElementById(
       "listenerStatus"
     ).textContent =
-      "Connecting...";
+      reconnecting
+        ? "Reconnecting automatically…"
+        : "Connecting...";
 
     const socketURL =
       "wss://livebridge.northstarventures-ca.workers.dev/live-feed" +
@@ -1069,16 +1199,35 @@ listenerAudioButton.addEventListener("click", () => {
       "&listenerId=" +
       encodeURIComponent(listenerSessionId);
 
-    listenerSocket =
+    listenerReconnectInProgress = true;
+
+    const thisSocket =
       new WebSocket(socketURL);
+
+    listenerSocket =
+      thisSocket;
 
     let socketOpened = false;
     let capacityNoticeShown = false;
 
-    listenerSocket.onopen =
+    thisSocket.onopen =
       async function () {
 
+        if (
+          listenerSocket !==
+          thisSocket
+        ) {
+          try {
+            thisSocket.__lbIntentionalClose = true;
+            thisSocket.close();
+          } catch {}
+          return;
+        }
+
         socketOpened = true;
+        listenerReconnectInProgress = false;
+        listenerReconnectAttempts = 0;
+        clearListenerReconnectTimer();
 
         document.getElementById(
           "listenerStatus"
@@ -1089,17 +1238,12 @@ listenerAudioButton.addEventListener("click", () => {
           "listenerDot"
         ).classList.add("live");
 
-        /*
-        Only create analytics tracking after
-        the WebSocket was actually admitted.
-        A listener rejected by the viewer cap
-        will not inflate listener statistics.
-        */
-
-        await startListenerTracking();
+        if (!preserveSession) {
+          await startListenerTracking();
+        }
       };
 
-    listenerSocket.onmessage =
+    thisSocket.onmessage =
       function (event) {
 
         try {
@@ -1114,10 +1258,17 @@ listenerAudioButton.addEventListener("click", () => {
 
           if (data.type === "connected") {
 
+            listenerReconnectInProgress = false;
+            listenerReconnectAttempts = 0;
+
             document.getElementById(
               "listenerStatus"
             ).textContent =
               "Connected — Waiting for Live Feed";
+
+            document.getElementById(
+              "listenerDot"
+            ).classList.add("live");
 
             return;
           }
@@ -1154,7 +1305,7 @@ listenerAudioButton.addEventListener("click", () => {
         }
       };
 
-    listenerSocket.onerror =
+    thisSocket.onerror =
       async function (error) {
 
         console.error(
@@ -1165,19 +1316,11 @@ listenerAudioButton.addEventListener("click", () => {
         document.getElementById(
           "listenerStatus"
         ).textContent =
-          "Connection Error";
+          "Reconnecting automatically…";
 
         document.getElementById(
           "listenerDot"
         ).classList.remove("live");
-
-        /*
-        Capacity could have filled in the
-        small moment between the pre-check
-        and WebSocket admission. Re-check
-        so the user still gets the friendly
-        LiveBridge room-full message.
-        */
 
         if (
           !socketOpened &&
@@ -1192,16 +1335,50 @@ listenerAudioButton.addEventListener("click", () => {
           if (!retryAccess.allowed) {
 
             capacityNoticeShown = true;
+            listenerConnectionWanted = false;
 
             await handleRoomAccessDenied(
               retryAccess.data
             );
+
+            return;
           }
         }
+
+        /*
+          onclose normally follows onerror.
+          This is also a fallback in case a browser does not fire close.
+        */
+        setTimeout(
+          function () {
+            if (
+              listenerSocket === thisSocket &&
+              thisSocket.readyState !== WebSocket.OPEN
+            ) {
+              listenerReconnectInProgress = false;
+              scheduleListenerReconnect(
+                "socket error"
+              );
+            }
+          },
+          900
+        );
       };
 
-    listenerSocket.onclose =
+    thisSocket.onclose =
       function () {
+
+        const intentional =
+          !!thisSocket.__lbIntentionalClose;
+
+        if (
+          listenerSocket ===
+          thisSocket
+        ) {
+          listenerSocket = null;
+        }
+
+        listenerReconnectInProgress = false;
 
         document.getElementById(
           "listenerDot"
@@ -1209,15 +1386,105 @@ listenerAudioButton.addEventListener("click", () => {
 
         if (
           ROOM_ID &&
-          !capacityNoticeShown
+          !capacityNoticeShown &&
+          listenerConnectionWanted
         ) {
+
           document.getElementById(
             "listenerStatus"
           ).textContent =
-            "Disconnected";
+            intentional
+              ? "Reconnecting automatically…"
+              : "Reconnecting automatically…";
+
+          if (!intentional) {
+            scheduleListenerReconnect(
+              "socket closed"
+            );
+          }
         }
       };
   }
+
+
+  /*
+    Changing listening language must never require a refresh.
+    Reconnect the live-feed socket immediately in the background
+    using the same room and listener session.
+  */
+  document.getElementById(
+    "listenerLanguage"
+  )?.addEventListener(
+    "change",
+    function () {
+
+      if (!listenerConnectionWanted || !ROOM_ID) {
+        return;
+      }
+
+      joinLiveRoom({
+        preserveTranscript: true,
+        preserveSession: true,
+        reconnect: true
+      });
+    }
+  );
+
+
+  /*
+    If the device temporarily loses internet, rejoin as soon as
+    the browser reports that connectivity has returned.
+  */
+  window.addEventListener(
+    "online",
+    function () {
+
+      if (
+        listenerConnectionWanted &&
+        ROOM_ID &&
+        (
+          !listenerSocket ||
+          listenerSocket.readyState !== WebSocket.OPEN
+        )
+      ) {
+        clearListenerReconnectTimer();
+
+        joinLiveRoom({
+          preserveTranscript: true,
+          preserveSession: true,
+          reconnect: true
+        });
+      }
+    }
+  );
+
+
+  /*
+    Safety watchdog. The listener page is meant to stay open all day.
+    If anything silently drops the WebSocket, it repairs it without
+    asking the listener to refresh or press Join again.
+  */
+  setInterval(
+    function () {
+
+      if (
+        listenerConnectionWanted &&
+        ROOM_ID &&
+        !listenerReconnectInProgress &&
+        (
+          !listenerSocket ||
+          listenerSocket.readyState === WebSocket.CLOSED
+        )
+      ) {
+        scheduleListenerReconnect(
+          "connection watchdog"
+        );
+      }
+
+    },
+    3000
+  );
+
 
   async function translateListenerText(
     text,
@@ -1801,7 +2068,12 @@ function askForEmail() {
 
   window.addEventListener(
     "pagehide",
-    sendListenerStop
+    function () {
+      listenerConnectionWanted = false;
+      clearListenerReconnectTimer();
+      closeListenerSocketIntentionally();
+      sendListenerStop();
+    }
   );
 
 
