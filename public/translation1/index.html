@@ -1416,17 +1416,71 @@ listenerAudioButton.addEventListener("click", () => {
     "listenerLanguage"
   )?.addEventListener(
     "change",
-    function () {
+    async function () {
 
-      if (!listenerConnectionWanted || !ROOM_ID) {
+      if (
+        !listenerConnectionWanted ||
+        !ROOM_ID
+      ) {
         return;
       }
 
-      joinLiveRoom({
+      /*
+        A language change is treated as a brand-new listener
+        subscription for the same room.
+
+        This is intentionally different from an ordinary socket
+        reconnect. Reusing the previous listenerSessionId can leave
+        the server-side listener subscription associated with the
+        previous language until the page is manually refreshed.
+      */
+
+      document.getElementById(
+        "listenerStatus"
+      ).textContent =
+        "Switching language…";
+
+      document.getElementById(
+        "listenerDot"
+      ).classList.remove("live");
+
+      /*
+        Stop anything still speaking in the old language and discard
+        any old-language items that were waiting locally.
+      */
+      window.speechSynthesis?.cancel();
+
+      if (
+        typeof stopAzureAudio ===
+        "function"
+      ) {
+        stopAzureAudio();
+      }
+
+      listenerDisplayQueue = [];
+      listenerQueueRunning = false;
+
+      /*
+        End the old analytics/listener session and create a fresh
+        listener identity for the newly selected language. This
+        matches what a full page refresh previously accomplished,
+        but happens invisibly in the background.
+      */
+      stopListenerTracking();
+
+      listenerSessionId =
+        createListenerSessionId();
+
+      clearListenerReconnectTimer();
+      closeListenerSocketIntentionally();
+
+      await joinLiveRoom({
         preserveTranscript: true,
         preserveSession: true,
         reconnect: true
       });
+
+      refreshListenerShare();
     }
   );
 
