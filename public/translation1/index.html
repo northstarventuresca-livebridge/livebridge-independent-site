@@ -217,10 +217,146 @@
       align-items: flex-start;
     }
   }
+
+  .lb-listener-home-row{
+    display:flex;
+    justify-content:flex-start;
+    margin-bottom:14px;
+  }
+
+  .lb-listener-home{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:9px 12px;
+    border-radius:9px;
+    border:1px solid rgba(255,255,255,.12);
+    background:#13243a;
+    color:#dbe9f7;
+    text-decoration:none;
+    font-size:12px;
+    font-weight:800;
+    transition:.16s ease;
+  }
+
+  .lb-listener-home:hover{
+    transform:translateY(-1px);
+    background:#18304c;
+  }
+
+  .lb-listener-share-card{
+    margin-top:18px;
+    padding:20px;
+    border-radius:18px;
+    background:rgba(15,118,80,.09);
+    border:1px solid rgba(52,211,153,.32);
+    display:grid;
+    grid-template-columns:1fr 190px;
+    gap:22px;
+    align-items:center;
+  }
+
+  .lb-listener-share-title{
+    color:#48f59a;
+    font-size:20px;
+    font-weight:900;
+    margin-bottom:5px;
+  }
+
+  .lb-listener-share-copy{
+    color:#c5d4e5;
+    line-height:1.45;
+    margin-bottom:13px;
+    font-size:13px;
+  }
+
+  .lb-listener-share-row{
+    display:grid;
+    grid-template-columns:1fr auto auto auto;
+    gap:8px;
+  }
+
+  .lb-listener-share-link{
+    background:#09241f;
+    border:1px solid rgba(52,211,153,.30);
+    color:#53f49a;
+    border-radius:10px;
+    padding:12px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-weight:800;
+    font-size:11px;
+  }
+
+  .lb-listener-share-button{
+    padding:11px 12px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.13);
+    background:#14263b;
+    color:white;
+    cursor:pointer;
+    font-weight:800;
+    font-size:12px;
+  }
+
+  .lb-listener-share-button.green{
+    background:#3dde83;
+    color:#06120b;
+    border:none;
+  }
+
+  .lb-listener-qr-wrap{
+    text-align:center;
+  }
+
+  .lb-listener-qr-box{
+    width:160px;
+    height:160px;
+    background:white;
+    padding:7px;
+    border-radius:12px;
+    margin:auto;
+  }
+
+  .lb-listener-qr-box img{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+
+  .lb-listener-qr-caption{
+    color:#98acc2;
+    font-size:11px;
+    margin-top:7px;
+  }
+
 </style>
+
+<style>
+@media(max-width:700px){
+  .lb-listener-share-card{
+    grid-template-columns:1fr;
+  }
+
+  .lb-listener-share-row{
+    grid-template-columns:1fr;
+  }
+
+  .lb-listener-qr-box{
+    width:170px;
+    height:170px;
+  }
+}
+</style>
+
 
 <div class="lb-live-page">
   <div class="lb-live-wrap">
+
+    <div class="lb-listener-home-row">
+      <a class="lb-listener-home" href="/">← Back to LiveBridge</a>
+    </div>
 
     <div class="lb-live-header">
       <div class="lb-live-brand">Live<span>Bridge</span></div>
@@ -373,12 +509,35 @@
 
     </div>
 
+    <div class="lb-listener-share-card">
+      <div>
+        <div class="lb-listener-share-title">Share This Room</div>
+        <div class="lb-listener-share-copy">
+          Send this listener link to someone else so they can join the same LiveBridge room.
+        </div>
+
+        <div class="lb-listener-share-row">
+          <div class="lb-listener-share-link" id="lbListenerShareURL"></div>
+          <button type="button" class="lb-listener-share-button" id="lbListenerCopy">Copy Link</button>
+          <button type="button" class="lb-listener-share-button green" id="lbListenerShare">Send / Share</button>
+          <button type="button" class="lb-listener-share-button" id="lbListenerOpen">Open</button>
+        </div>
+      </div>
+
+      <div class="lb-listener-qr-wrap">
+        <div class="lb-listener-qr-box">
+          <img id="lbListenerQR" alt="LiveBridge room QR code">
+        </div>
+        <div class="lb-listener-qr-caption">Scan to join this room</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <script>
   const WORKER_URL =
-  "https://.northstarventures-ca.workers.dev";
+  "https://livebridge.northstarventures-ca.workers.dev";
 
   let ROOM_ID = "";
   let listenerSocket = null;
@@ -902,7 +1061,7 @@ listenerAudioButton.addEventListener("click", () => {
       "Connecting...";
 
     const socketURL =
-      "wss://.northstarventures-ca.workers.dev/live-feed" +
+      "wss://livebridge.northstarventures-ca.workers.dev/live-feed" +
       "?room=" +
       encodeURIComponent(ROOM_ID) +
       "&lang=" +
@@ -1784,7 +1943,7 @@ Keep the existing listener embeds unchanged.
 (function () {
 
   const AZURE_WORKER =
-    "https://.northstarventures-ca.workers.dev";
+    "https://livebridge.northstarventures-ca.workers.dev";
 
   let azureVoices = [];
   let azureVoicesLoaded = false;
@@ -3073,41 +3232,7 @@ Keep the existing listener embeds unchanged.
       return;
     }
 
-    /*
-      Azure test badge under the LiveBridge title.
-    */
-    const subtitle =
-      document.querySelector(
-        ".lb-live-subtitle"
-      );
-
-    if (
-      subtitle &&
-      !document.getElementById(
-        "lbAzureTestBadge"
-      )
-    ) {
-
-      const badge =
-        document.createElement(
-          "div"
-        );
-
-      badge.id =
-        "lbAzureTestBadge";
-
-      badge.className =
-        "lb-azure-test-badge";
-
-      badge.innerHTML =
-        "⚡ Azure Voice Test";
-
-      subtitle.insertAdjacentElement(
-        "afterend",
-        badge
-      );
-    }
-
+    /* Production Azure voice engine. */
 
     const engineStatus =
       document.createElement(
@@ -3230,6 +3355,194 @@ Keep the existing listener embeds unchanged.
   );
 
 })();
+
+  function getListenerShareURL(){
+
+    const room =
+      String(
+        document.getElementById(
+          "listenerRoom"
+        )?.value ||
+        new URLSearchParams(
+          window.location.search
+        ).get("room") ||
+        ""
+      )
+      .trim()
+      .toUpperCase();
+
+
+    const url =
+      new URL(
+        "/translation1",
+        window.location.origin
+      );
+
+
+    if(room){
+      url.searchParams.set(
+        "room",
+        room
+      );
+    }
+
+
+    return url.toString();
+  }
+
+
+  function refreshListenerShare(){
+
+    const url =
+      getListenerShareURL();
+
+
+    const text =
+      document.getElementById(
+        "lbListenerShareURL"
+      );
+
+
+    const qr =
+      document.getElementById(
+        "lbListenerQR"
+      );
+
+
+    if(text){
+      text.textContent =
+        url;
+    }
+
+
+    if(qr){
+
+      qr.src =
+        "https://api.qrserver.com/v1/create-qr-code/" +
+        "?size=300x300&margin=5&data=" +
+        encodeURIComponent(
+          url
+        );
+    }
+  }
+
+
+  document.getElementById(
+    "lbListenerCopy"
+  )?.addEventListener(
+    "click",
+    async function(){
+
+      const url =
+        getListenerShareURL();
+
+
+      await navigator.clipboard.writeText(
+        url
+      );
+
+
+      const old =
+        this.textContent;
+
+
+      this.textContent =
+        "✓ Copied";
+
+
+      setTimeout(
+        () =>
+          this.textContent =
+            old,
+        1400
+      );
+    }
+  );
+
+
+  document.getElementById(
+    "lbListenerShare"
+  )?.addEventListener(
+    "click",
+    async function(){
+
+      const url =
+        getListenerShareURL();
+
+
+      if(
+        navigator.share
+      ){
+
+        try{
+
+          await navigator.share({
+            title:
+              "LiveBridge Room",
+
+            text:
+              "Join this LiveBridge room.",
+
+            url
+          });
+
+        }catch{}
+
+
+      }else{
+
+        await navigator.clipboard.writeText(
+          url
+        );
+
+
+        alert(
+          "Room link copied."
+        );
+      }
+    }
+  );
+
+
+  document.getElementById(
+    "lbListenerOpen"
+  )?.addEventListener(
+    "click",
+    function(){
+
+      window.open(
+        getListenerShareURL(),
+        "_blank"
+      );
+    }
+  );
+
+
+  document.getElementById(
+    "listenerRoom"
+  )?.addEventListener(
+    "input",
+    refreshListenerShare
+  );
+
+
+  document.getElementById(
+    "joinRoomButton"
+  )?.addEventListener(
+    "click",
+    function(){
+
+      setTimeout(
+        refreshListenerShare,
+        50
+      );
+    }
+  );
+
+
+  refreshListenerShare();
+
+
 </script>
 </body>
 </html>

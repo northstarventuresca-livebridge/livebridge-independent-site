@@ -1555,7 +1555,7 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
 
 
   const AZURE_WORKER =
-    "https://.northstarventures-ca.workers.dev";
+    "https://livebridge.northstarventures-ca.workers.dev";
 
 
   const DEMO_ROOM =
@@ -2253,6 +2253,9 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
         ){
           speechSynthesis.cancel();
         }
+
+
+        stopAzureDemoAudio();
 
       } else if(demoRunning){
 
