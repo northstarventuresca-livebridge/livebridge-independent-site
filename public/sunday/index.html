@@ -7,2410 +7,5998 @@
 <body>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-serif}
-.lb-page{
+
+body{
+  margin:0;
+  background:#07111f;
+  font-family:Arial,Helvetica,sans-serif;
+  color:white;
+}
+
+.lb-dashboard{
   min-height:100vh;
   background:
-    radial-gradient(circle at top left,#163d70 0%,transparent 30%),
-    radial-gradient(circle at top right,#3a155f 0%,transparent 25%),
+    radial-gradient(circle at top left,#10335e 0%,transparent 30%),
+    radial-gradient(circle at bottom right,#24144a 0%,transparent 28%),
     #07111f;
+  display:grid;
+  grid-template-columns:300px 1fr;
 }
-.lb-wrap{width:min(1180px,calc(100% - 32px));margin:auto}
-.lb-nav{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:18px;
-  padding:22px 0;
+
+.lb-sidebar{
+  padding:24px;
+  border-right:1px solid rgba(255,255,255,.08);
+  background:rgba(0,0,0,.18);
 }
+
 .lb-brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  font-weight:900;
-  font-size:24px;
-}
-.lb-logo{
-  width:44px;
-  height:44px;
-  border-radius:14px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,#37d39a,#2588ff,#9747ff);
-  box-shadow:0 10px 30px rgba(37,136,255,.25);
-}
-.lb-nav-actions,.lb-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.lb-btn{
-  border:0;
-  border-radius:12px;
-  padding:13px 18px;
+  font-size:26px;
   font-weight:800;
-  cursor:pointer;
-  text-decoration:none;
-  display:inline-block;
-  text-align:center;
+  margin-bottom:4px;
 }
-.lb-btn-primary{
-  color:#fff;
-  background:linear-gradient(135deg,#2588ff,#6e43df);
-}
-.lb-btn-secondary{
-  color:#fff;
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.13);
-}
-.lb-btn-green{
-  color:#06150e;
-  background:linear-gradient(135deg,#2bd785,#59ecaa);
-}
-.lb-hero{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:44px;
-  align-items:center;
-  padding:72px 0 68px;
-}
-.lb-kicker{
-  color:#55d6ff;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  font-size:13px;
-}
-.lb-title{
-  margin:14px 0 18px;
-  font-size:clamp(46px,7vw,82px);
-  line-height:.98;
-  font-weight:900;
-}
-.lb-gradient{
-  background:linear-gradient(90deg,#34d4bd,#2897ff,#a14cff);
+
+.lb-brand span{
+  background:linear-gradient(90deg,#36d6b4,#2897ff,#9b4dff);
   -webkit-background-clip:text;
   color:transparent;
 }
-.lb-tagline{
-  font-size:25px;
+
+.lb-subbrand{
+  color:#9caec2;
+  margin-bottom:8px;
+}
+
+.lb-org-name{
+  color:#5fb4ff;
+  font-size:13px;
   font-weight:800;
+  margin-bottom:24px;
+}
+
+.lb-label{
+  display:block;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:#71859d;
+  margin-bottom:7px;
+}
+
+.lb-input,
+.lb-select{
+  width:100%;
+  padding:13px 14px;
+  border-radius:10px;
+  background:#101d2d;
+  color:white;
+  border:1px solid rgba(255,255,255,.14);
   margin-bottom:18px;
 }
-.lb-lead{
-  color:#b6c5d8;
-  font-size:18px;
-  line-height:1.65;
-  max-width:700px;
+
+.lb-input[readonly]{
+  color:#d8e7f7;
+  background:#0d1928;
+  cursor:default;
 }
-.lb-actions{margin-top:28px}
-.lb-beta-strip{
-  margin-top:18px;
-  display:inline-flex;
+
+.lb-status-card{
+  background:rgba(34,197,94,.10);
+  border:1px solid rgba(34,197,94,.22);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:16px;
+}
+
+.lb-live-row{
+  display:flex;
   align-items:center;
   gap:8px;
-  padding:9px 12px;
-  border-radius:999px;
-  border:1px solid rgba(52,212,189,.25);
-  background:rgba(52,212,189,.08);
-  color:#bceede;
-  font-size:12px;
   font-weight:800;
+  color:#5cf09a;
 }
-.lb-device,.lb-card,.lb-flow-step,.lb-price,.lb-room-demo,.lb-faq{
-  background:rgba(255,255,255,.055);
-  border:1px solid rgba(255,255,255,.1);
-}
-.lb-device{
-  border-radius:28px;
-  padding:20px;
-  box-shadow:0 30px 80px rgba(0,0,0,.38);
-  backdrop-filter:blur(18px);
-}
-.lb-device-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:14px;
-  gap:10px;
-}
-.lb-live{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  font-weight:800;
-  color:#9fd7b6;
-}
+
 .lb-dot{
   width:10px;
   height:10px;
   border-radius:50%;
-  background:#24cf6b;
-  box-shadow:0 0 12px #24cf6b;
+  background:#ef4444;
 }
-.lb-screen{
-  background:#0d1928;
-  border-radius:18px;
-  padding:20px;
+
+.lb-dot.live{
+  background:#22c55e;
+  box-shadow:0 0 12px #22c55e;
 }
-.lb-label{
-  color:#93a9c1;
-  font-size:12px;
-  margin-bottom:7px;
-}
-.lb-room{
-  font-size:23px;
-  font-weight:900;
+
+.lb-time-card{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  padding:16px;
   margin-bottom:18px;
+  background:rgba(255,255,255,.03);
 }
-.lb-transcript{
-  font-size:17px;
-  line-height:1.5;
-  color:#f4f7fb;
-  background:#101f31;
-  padding:15px;
-  border-radius:12px;
-}
-.lb-stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-top:12px;
-}
-.lb-stat{
-  background:#13243a;
-  border-radius:11px;
-  padding:11px;
-  text-align:center;
-}
-.lb-stat strong{display:block;font-size:19px}
-.lb-stat span{color:#9fb1c7;font-size:11px}
-.lb-languages{margin-top:10px;color:#b9c8d9;font-size:12px}
-.lb-section{padding:72px 0}
-.lb-section-title{
-  text-align:center;
-  font-size:clamp(32px,5vw,48px);
-  margin:0 0 12px;
-}
-.lb-section-sub{
-  text-align:center;
-  color:#9eb1c8;
-  max-width:800px;
-  margin:0 auto 40px;
-  line-height:1.6;
-}
-.lb-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
-}
-.lb-card{
-  border-radius:20px;
-  padding:24px;
-}
-.lb-card-icon{font-size:34px;margin-bottom:14px}
-.lb-card h3{margin:0 0 10px;font-size:20px}
-.lb-card p{margin:0;color:#9fb1c7;line-height:1.55}
-.lb-flow{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:10px;
-}
-.lb-flow-step{
-  text-align:center;
-  padding:20px 8px;
-  border-radius:18px;
-}
-.lb-flow-step div{font-size:32px;margin-bottom:8px}
-.lb-highlight{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-  align-items:stretch;
-}
-.lb-room-demo{
-  padding:25px;
-  border-radius:22px;
-}
-.lb-room-demo h3{margin:0 0 8px}
-.lb-room-demo p{color:#9fb1c7;line-height:1.5}
-.lb-badge{
-  display:inline-block;
-  padding:7px 10px;
-  border-radius:9px;
-  background:rgba(34,197,94,.12);
-  color:#8de8ad;
-  font-size:12px;
+
+.lb-time{
+  font-size:32px;
   font-weight:800;
-  margin-bottom:12px;
 }
-.lb-account-strip{
+
+.lb-sidebar-actions{
+  display:grid;
+  gap:10px;
+  margin-top:20px;
+}
+
+.lb-btn{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.14);
+  background:#122238;
+  color:white;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.lb-btn-primary{
+  background:linear-gradient(135deg,#2588ff,#6f43df);
+  border:none;
+}
+
+.lb-btn-danger{
+  background:#dc3545;
+  border:none;
+}
+
+.lb-main{
+  padding:28px;
+}
+
+.lb-top{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:center;
+  margin-bottom:24px;
+}
+
+.lb-room-title{
+  font-size:28px;
+  font-weight:800;
+}
+
+.lb-metrics{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:14px;
+  margin-bottom:18px;
 }
-.lb-account-chip{
-  padding:18px;
+
+.lb-card{
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.10);
   border-radius:16px;
-  background:#0f1d2d;
-  border:1px solid rgba(255,255,255,.09);
+  padding:18px;
 }
-.lb-account-chip strong{
-  display:block;
-  font-size:18px;
-  margin-bottom:5px;
-}
-.lb-account-chip span{
-  color:#91a7be;
-  font-size:13px;
-  line-height:1.45;
-}
-.lb-pricing{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-}
-.lb-price{
-  position:relative;
-  padding:26px;
-  border-radius:20px;
-}
-.lb-price.featured{
-  border-color:#3a9cff;
-  box-shadow:0 0 30px rgba(58,156,255,.15);
-}
-.lb-price-badge{
-  display:inline-block;
-  padding:6px 9px;
-  border-radius:999px;
-  background:linear-gradient(135deg,#2588ff,#6e43df);
-  color:white;
-  font-size:10px;
+
+.lb-metric-number{
+  font-size:30px;
   font-weight:900;
-  text-transform:uppercase;
-  letter-spacing:.06em;
-  margin-bottom:10px;
+  margin-bottom:4px;
 }
-.lb-price h3{margin:0 0 8px}
-.lb-price-number{
-  font-size:38px;
-  font-weight:900;
-  margin:12px 0 4px;
-}
-.lb-price small,.lb-price p{color:#9fb1c7}
-.lb-price p{line-height:1.6}
-.lb-price .lb-btn{
-  width:100%;
-  margin-top:12px;
-}
-.lb-faq{
-  border-radius:20px;
-  padding:24px;
-}
-.lb-faq strong{
-  display:block;
-  margin-bottom:8px;
-  font-size:17px;
-}
-.lb-faq span{
-  color:#9fb1c7;
-  line-height:1.55;
-}
-.lb-cta{
-  margin-top:60px;
-  padding:42px 30px;
-  border-radius:28px;
-  text-align:center;
-  background:linear-gradient(135deg,rgba(34,152,255,.15),rgba(145,68,255,.16));
-  border:1px solid rgba(255,255,255,.12);
-}
-.lb-cta h2{font-size:38px;margin:0 0 12px}
-.lb-cta p{
-  color:#b6c6d8;
-  margin:0 auto 22px;
-  max-width:720px;
-  line-height:1.6;
-}
-.lb-footer{
-  text-align:center;
-  color:#71869f;
-  padding:34px 0 45px;
+
+.lb-muted{
+  color:#91a5bc;
   font-size:13px;
 }
 
-.lb-demo-shell{
-  margin-top:18px;
-  border-radius:26px;
-  padding:26px;
-  background:
-    linear-gradient(135deg,rgba(37,136,255,.12),rgba(151,71,255,.10)),
-    rgba(255,255,255,.045);
-  border:1px solid rgba(255,255,255,.11);
+.lb-content-grid{
   display:grid;
-  grid-template-columns:1.15fr .85fr;
+  grid-template-columns:2fr 1fr;
+  gap:16px;
+}
+
+.lb-section-title{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:14px;
+}
+
+.lb-transcript-box{
+  height:380px;
+  max-height:380px;
+  background:#0d1724;
+  border-radius:12px;
+  padding:20px;
+  font-size:22px;
+  line-height:1.5;
+  overflow-y:auto;
+  scroll-behavior:smooth;
+}
+
+.lb-activity{
+  display:grid;
+  gap:10px;
+}
+
+.lb-activity-row{
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  color:#c5d2e2;
+  font-size:14px;
+}
+
+.lb-bottom-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:16px;
+  margin-top:16px;
+}
+
+.lb-action-list{
+  display:grid;
+  gap:9px;
+}
+
+.lb-action-placeholder{
+  background:#101d2d;
+  border:1px solid rgba(255,255,255,.09);
+  padding:11px;
+  border-radius:9px;
+  font-size:14px;
+}
+
+.lb-banner{
+  margin-top:16px;
+  padding:18px;
+  border-radius:14px;
+  background:rgba(20,184,166,.08);
+  border:1px solid rgba(20,184,166,.20);
+  color:#c8fff0;
+}
+
+.lb-summary-card{
+  margin:22px 28px 28px;
+  padding:22px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  background:rgba(255,255,255,.04);
+}
+
+.lb-summary-card[hidden]{
+  display:none;
+}
+
+.lb-summary-title{
+  font-size:22px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.lb-summary-subtitle{
+  opacity:.72;
+  margin-bottom:18px;
+}
+
+.lb-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:12px;
+}
+
+.lb-summary-stat{
+  padding:16px;
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
+}
+
+.lb-summary-number{
+  font-size:25px;
+  font-weight:800;
+}
+
+.lb-summary-label{
+  margin-top:4px;
+  font-size:12px;
+  opacity:.7;
+}
+
+.lb-summary-languages{
+  margin-top:18px;
+}
+
+.lb-summary-language-row{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  padding:10px 0;
+  border-top:1px solid rgba(255,255,255,.09);
+}
+
+#lb-auth-loading{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  background:#07111f;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+.lb-auth-spinner{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  border:4px solid rgba(255,255,255,.12);
+  border-top-color:#2897ff;
+  margin:0 auto 16px;
+  animation:lb-spin .8s linear infinite;
+}
+
+@keyframes lb-spin{
+  to{transform:rotate(360deg)}
+}
+
+  .lb-share-room{
+  margin-top:16px;
+  padding:22px;
+  border-radius:18px;
+  border:1px solid rgba(52,211,153,.30);
+  background:rgba(15,118,80,.08);
+  display:grid;
+  grid-template-columns:1fr 220px;
   gap:24px;
   align-items:center;
 }
 
-.lb-demo-list{
-  display:grid;
-  gap:10px;
-  margin-top:18px;
-}
-
-.lb-demo-list div{
-  display:flex;
-  gap:10px;
-  align-items:flex-start;
-  color:#b7c6d8;
-  line-height:1.5;
-}
-
-.lb-demo-list span{
-  color:#66e5bf;
+.lb-share-room-title{
+  color:#4df29b;
+  font-size:24px;
   font-weight:900;
-}
-
-.lb-demo-preview{
-  border-radius:20px;
-  padding:18px;
-  background:#0b1726;
-  border:1px solid rgba(255,255,255,.09);
-  box-shadow:0 18px 50px rgba(0,0,0,.28);
-}
-
-.lb-demo-live{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  align-items:center;
-  margin-bottom:12px;
-  font-size:13px;
-  color:#9fb1c7;
-}
-
-.lb-demo-live strong{
-  color:#67e6b7;
-}
-
-.lb-demo-preview-text{
-  min-height:135px;
-  padding:16px;
-  border-radius:13px;
-  background:#101f31;
-  color:#f6f9fc;
-  line-height:1.65;
-  font-size:16px;
-}
-
-.lb-demo-modal{
-  position:fixed;
-  inset:0;
-  z-index:999999;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  background:rgba(2,8,18,.86);
-  backdrop-filter:blur(6px);
-}
-
-.lb-demo-modal.open{
-  display:flex;
-}
-
-.lb-demo-window{
-  width:min(980px,100%);
-  max-height:92vh;
-  overflow:auto;
-  border-radius:24px;
-  background:
-    radial-gradient(circle at top right,rgba(113,67,223,.18),transparent 35%),
-    #0a1524;
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 30px 90px rgba(0,0,0,.5);
-}
-
-.lb-demo-modal-top{
-  display:flex;
-  justify-content:space-between;
-  gap:16px;
-  align-items:center;
-  padding:18px 20px;
-  border-bottom:1px solid rgba(255,255,255,.09);
-}
-
-.lb-demo-modal-brand{
-  font-size:20px;
-  font-weight:900;
-}
-
-.lb-demo-close{
-  border:1px solid rgba(255,255,255,.12);
-  background:#142338;
-  color:white;
-  border-radius:10px;
-  padding:9px 12px;
-  cursor:pointer;
-  font-weight:800;
-}
-
-.lb-demo-controls{
-  padding:18px 20px;
-  display:grid;
-  grid-template-columns:1.2fr 1fr 1fr;
-  gap:12px;
-  border-bottom:1px solid rgba(255,255,255,.09);
-}
-
-.lb-demo-control label{
-  display:block;
-  color:#8fa5bc;
-  font-size:11px;
   margin-bottom:6px;
-  text-transform:uppercase;
-  letter-spacing:.06em;
-  font-weight:800;
 }
 
-.lb-demo-control select,
-.lb-demo-control button{
-  width:100%;
+.lb-share-room-copy{
+  color:#c4d3e3;
+  font-size:14px;
+  line-height:1.5;
+  margin-bottom:15px;
+}
+
+.lb-share-room-link-row{
+  display:grid;
+  grid-template-columns:1fr auto auto auto;
+  gap:9px;
+}
+
+.lb-share-room-link{
+  padding:13px;
   border-radius:10px;
-  padding:12px;
-  border:1px solid rgba(255,255,255,.12);
-  background:#101f31;
+  border:1px solid rgba(52,211,153,.30);
+  background:#09241f;
+  color:#55f29c;
+  font-size:13px;
+  font-weight:800;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.lb-share-room-button{
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.13);
+  background:#14263b;
   color:white;
   font-weight:800;
-}
-
-.lb-demo-control button{
   cursor:pointer;
 }
 
-.lb-demo-listener{
-  padding:20px;
+.lb-share-room-button.green{
+  background:#3dde83;
+  border:none;
+  color:#06120b;
 }
 
-.lb-demo-status{
+.lb-share-language-row{
   display:flex;
+  align-items:center;
   gap:10px;
+  margin:14px 0 12px;
   flex-wrap:wrap;
-  align-items:center;
-  margin-bottom:14px;
+}
+.lb-share-language-label{color:#9fb4ca;font-size:12px;font-weight:800;}
+.lb-share-language-select{
+  min-width:210px;padding:10px 12px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.12);
+  background:#102338;color:#fff;font-weight:800;
+}
+.lb-share-language-note{color:#7890aa;font-size:11px;}
+.lb-share-preview{
+  display:none;margin-top:16px;border:1px solid rgba(52,211,153,.28);
+  border-radius:14px;overflow:hidden;background:#061321;
+}
+.lb-share-preview.show{display:block;}
+.lb-share-preview img{width:100%;display:block;}
+.lb-share-preview-actions{display:flex;gap:8px;flex-wrap:wrap;padding:10px;background:#0a1928;}
+.lb-share-preview-actions button{
+  padding:10px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.12);
+  background:#13263c;color:white;cursor:pointer;font-weight:800;font-size:12px;
 }
 
-.lb-demo-pill{
-  padding:8px 10px;
-  border-radius:10px;
-  background:#13243a;
-  border:1px solid rgba(255,255,255,.09);
-  color:#c2d0df;
-  font-size:12px;
+.lb-share-room-qr-wrap{
+  text-align:center;
 }
 
-.lb-demo-pill.live{
-  color:#66ebb2;
+.lb-share-room-qr{
+  width:190px;
+  height:190px;
+  margin:auto;
+  background:white;
+  border-radius:12px;
+  padding:8px;
 }
 
-.lb-demo-transcript{
-  min-height:300px;
-  max-height:420px;
-  overflow:auto;
-  border-radius:15px;
-  background:#0d1928;
-  border:1px solid rgba(255,255,255,.08);
-  padding:18px;
-}
-
-.lb-demo-line{
-  padding:12px 0;
-  border-bottom:1px solid rgba(255,255,255,.06);
-  color:#f2f7fb;
-  font-size:17px;
-  line-height:1.55;
-}
-
-.lb-demo-line:last-child{
-  border-bottom:0;
-}
-
-.lb-demo-footer{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  align-items:center;
-  padding:14px 20px 20px;
-  color:#8298ae;
-  font-size:12px;
-}
-
-@media(max-width:800px){
-  .lb-demo-shell{
-    grid-template-columns:1fr;
-  }
-
-  .lb-demo-controls{
-    grid-template-columns:1fr;
-  }
-}
-
-@media(max-width:1000px){
-  .lb-account-strip{grid-template-columns:1fr 1fr}
-}
-@media(max-width:900px){
-  .lb-hero{grid-template-columns:1fr}
-  .lb-grid{grid-template-columns:1fr 1fr}
-  .lb-flow{grid-template-columns:repeat(3,1fr)}
-  .lb-pricing{grid-template-columns:1fr 1fr}
-}
-@media(max-width:600px){
-  .lb-wrap{width:min(100% - 22px,1180px)}
-  .lb-nav{align-items:flex-start}
-  .lb-nav-actions{display:none}
-  .lb-hero{padding-top:42px}
-  .lb-grid,.lb-flow,.lb-pricing,.lb-highlight,.lb-account-strip{grid-template-columns:1fr}
-  .lb-actions{flex-direction:column}
-  .lb-btn{text-align:center}
-  .lb-stats{grid-template-columns:1fr}
-}
-
-/* LiveBridge video animations */
-.lb-video-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:22px;
-  margin-top:34px;
-}
-.lb-video-card{
-  background:#0d1b2d;
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:22px;
-  overflow:hidden;
-  box-shadow:0 18px 50px rgba(0,0,0,.28);
-}
-.lb-video-frame{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  background:#081321;
-}
-.lb-video-frame iframe{
-  position:absolute;
-  inset:0;
+.lb-share-room-qr img{
+  display:block;
   width:100%;
   height:100%;
-  border:0;
 }
-.lb-video-label{
-  padding:14px 18px 16px;
-  color:#b8c7d9;
-  font-size:14px;
-  font-weight:700;
-  letter-spacing:.02em;
+
+.lb-share-room-qr-caption{
+  color:#99abc0;
+  font-size:12px;
+  margin-top:8px;
 }
-@media(max-width:820px){
-  .lb-video-grid{grid-template-columns:1fr;}
+
+@media(max-width:1050px){
+  .lb-share-room{
+    grid-template-columns:1fr;
+  }
+
+  .lb-share-room-link-row{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:600px){
+  .lb-share-room-link-row{
+    grid-template-columns:1fr;
+  }
+}
+@media(max-width:900px){
+  .lb-dashboard{
+    grid-template-columns:1fr;
+  }
+
+  .lb-sidebar{
+    border-right:none;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+
+  .lb-metrics,
+  .lb-bottom-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .lb-content-grid{
+    grid-template-columns:1fr;
+  }
+
+  .lb-summary-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:600px){
+  .lb-main,
+  .lb-sidebar{
+    padding:16px;
+  }
+
+  .lb-metrics,
+  .lb-bottom-grid{
+    grid-template-columns:1fr;
+  }
+
+  .lb-top{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .lb-summary-card{
+    margin:16px;
+  }
 }
 </style>
 
-<div class="lb-page">
-<div class="lb-wrap">
 
-<nav class="lb-nav">
-  <div class="lb-brand">
-    <div class="lb-logo">🌉</div>
-    LiveBridge
-  </div>
-
-  <div class="lb-nav-actions">
-    <a class="lb-btn lb-btn-secondary" href="/translation1">Join a Room</a>
-    <a class="lb-btn lb-btn-secondary" href="/account">Sign In</a>
-    <a class="lb-btn lb-btn-primary" href="/signup">Create Account</a>
-  </div>
-</nav>
-
-
-<section class="lb-hero">
-
+<div id="lb-auth-loading">
   <div>
-
-    <div class="lb-kicker">
-      Real-time multilingual communication
-    </div>
-
-    <h1 class="lb-title">
-      Speak Once.<br>
-      <span class="lb-gradient">Reach Everyone.</span>
-    </h1>
-
-    <div class="lb-tagline">
-      One speaker. Every listener. Their language.
-    </div>
-
-    <div class="lb-lead">
-      LiveBridge turns a live speaker into real-time captions,
-      translated text and spoken translated audio — directly on each
-      listener's own phone, tablet or computer. No listener account.
-      No app. No translation hardware.
-    </div>
-
-    <div class="lb-actions">
-      <a class="lb-btn lb-btn-primary" href="/signup">
-        Create LiveBridge Account
-      </a>
-
-      <a class="lb-btn lb-btn-secondary" href="/account">
-        Sign In
-      </a>
-
-      <a class="lb-btn lb-btn-secondary" href="/translation1">
-        Join a Room
-      </a>
-    </div>
-
-    <div class="lb-beta-strip">
-      ✨ Beta Access — no payment collected today
-    </div>
-
-  </div>
-
-
-  <div class="lb-device">
-
-    <div class="lb-device-top">
-
-      <strong>
-        LiveBridge Broadcaster
-      </strong>
-
-      <div class="lb-live">
-        <span class="lb-dot"></span>
-        LIVE
-      </div>
-
-    </div>
-
-    <div class="lb-screen">
-
-      <div class="lb-label">
-        ACTIVE ROOM
-      </div>
-
-      <div class="lb-room">
-        SUNDAY-SERVICE
-      </div>
-
-      <div class="lb-label">
-        LIVE TRANSCRIPTION
-      </div>
-
-      <div class="lb-transcript">
-        Welcome everyone. Today we're going to look at three
-        important principles that can change how we communicate...
-      </div>
-
-      <div class="lb-stats">
-
-        <div class="lb-stat">
-          <strong>27</strong>
-          <span>Active Viewers</span>
-        </div>
-
-        <div class="lb-stat">
-          <strong>4</strong>
-          <span>Languages</span>
-        </div>
-
-        <div class="lb-stat">
-          <strong>00:42:18</strong>
-          <span>Live Time</span>
-        </div>
-
-      </div>
-
-      <div class="lb-languages">
-        🌎 French 11 &nbsp; • &nbsp; Spanish 8 &nbsp; • &nbsp;
-        English 5 &nbsp; • &nbsp; Ukrainian 3
-      </div>
-
-    </div>
-
-  </div>
-
-
-</section>
-
-<section class="lb-section" id="video-demo">
-
-  <h2 class="lb-section-title">
-    See LiveBridge
-    <span class="lb-gradient">in action.</span>
-  </h2>
-
-  <div class="lb-section-sub">
-    A quick look at the LiveBridge experience for broadcasters and listeners.
-  </div>
-
-  <div class="lb-video-grid">
-
-    <div class="lb-video-card">
-      <div class="lb-video-frame">
-        <iframe
-          src="https://www.youtube-nocookie.com/embed/2LslCdtGMZg?autoplay=1&mute=1&loop=1&playlist=2LslCdtGMZg&controls=0&modestbranding=1&rel=0&playsinline=1"
-          title="LiveBridge animation 1"
-          allow="autoplay; encrypted-media; picture-in-picture"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen>
-        </iframe>
-      </div>
-      <div class="lb-video-label">LiveBridge — real-time multilingual communication</div>
-    </div>
-
-    <div class="lb-video-card">
-      <div class="lb-video-frame">
-        <iframe
-          src="https://www.youtube-nocookie.com/embed/EDXfH6MF9s4?autoplay=1&mute=1&loop=1&playlist=EDXfH6MF9s4&controls=0&modestbranding=1&rel=0&playsinline=1"
-          title="LiveBridge animation 2"
-          allow="autoplay; encrypted-media; picture-in-picture"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen>
-        </iframe>
-      </div>
-      <div class="lb-video-label">LiveBridge — the listener experience</div>
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<section class="lb-section" id="live-demo">
-
-  <h2 class="lb-section-title">
-    Experience LiveBridge
-    <span class="lb-gradient">before you sign up.</span>
-  </h2>
-
-  <div class="lb-section-sub">
-    Launch a simulated live broadcast and experience what your listeners
-    see and hear — no account required.
-  </div>
-
-
-  <div class="lb-demo-shell">
-
-    <div>
-
-      <div class="lb-kicker">
-        2-minute interactive demo
-      </div>
-
-      <h3 style="
-        font-size:34px;
-        margin:10px 0 12px;
-      ">
-        Listen to a Test Live Broadcast
-      </h3>
-
-      <p class="lb-lead" style="font-size:16px;">
-        Choose a listening language, watch translated captions arrive
-        in real time and turn translated audio on or off just like a
-        real LiveBridge listener.
-      </p>
-
-      <div class="lb-demo-list">
-
-        <div>
-          <span>✓</span>
-          <div>Live-style translated captions</div>
-        </div>
-
-        <div>
-          <span>✓</span>
-          <div>Choose your listening language</div>
-        </div>
-
-        <div>
-          <span>✓</span>
-          <div>Hear translated speech using your device's voice</div>
-        </div>
-
-        <div>
-          <span>✓</span>
-          <div>No signup or app required</div>
-        </div>
-
-      </div>
-
-      <div class="lb-actions">
-
-        <button
-          class="lb-btn lb-btn-primary"
-          id="lbLaunchDemo"
-          type="button"
-        >
-          ▶ Launch Live Demo
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <div class="lb-demo-preview">
-
-      <div class="lb-demo-live">
-        <span>Room: LIVEBRIDGE-DEMO</span>
-        <strong>● LIVE DEMO</strong>
-      </div>
-
-      <div class="lb-label">
-        LIVE TRANSLATION
-      </div>
-
-      <div class="lb-demo-preview-text">
-        Welcome to the LiveBridge demonstration. Imagine this message
-        arriving live in the language your listener understands best...
-      </div>
-
-      <div style="
-        display:flex;
-        gap:8px;
-        margin-top:12px;
-        flex-wrap:wrap;
-      ">
-        <span class="lb-demo-pill">🌎 French</span>
-        <span class="lb-demo-pill">🔊 Audio On</span>
-        <span class="lb-demo-pill">📱 No App</span>
-      </div>
-
-    </div>
-
-  </div>
-
-
-<section class="lb-section">
-
-  <h2 class="lb-section-title">
-    Everything you need to
-    <span class="lb-gradient">bridge the language gap.</span>
-  </h2>
-
-  <div class="lb-section-sub">
-    LiveBridge combines live transcription, translation, spoken audio,
-    audience tools, account management and analytics into one simple platform.
-  </div>
-
-
-  <div class="lb-grid">
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🎙️</div>
-      <h3>Live Broadcasting</h3>
-      <p>
-        Broadcast from a phone, tablet or computer microphone.
-        Choose the speaker's language and start instantly.
-      </p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">💬</div>
-      <h3>Live Captions</h3>
-      <p>
-        Spoken words are continuously transcribed into readable text
-        while the speaker talks.
-      </p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🌎</div>
-      <h3>Individual Translation</h3>
-      <p>
-        Every listener independently chooses the language they want
-        without changing the experience for anyone else.
-      </p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🎧</div>
-      <h3>Spoken Translation</h3>
-      <p>
-        Listeners can hear translated speech privately through their own
-        headphones while following live captions.
-      </p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🔊</div>
-      <h3>Male or Female Voice</h3>
-      <p>
-        Listeners can choose the translated voice they prefer and mute
-        audio anytime while continuing to read captions.
-      </p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">📱</div>
-      <h3>No Listener Account</h3>
-      <p>
-        Share a room link or QR code. Listeners open LiveBridge in their
-        browser, choose their language and join.
-      </p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">✉️</div>
-      <h3>Transcript & AI Notes</h3>
-      <p>
-        Listeners and broadcasters can email themselves the transcript
-        together with organized AI-generated notes.
-      </p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">📊</div>
-      <h3>Broadcast Analytics</h3>
-      <p>
-        Track listener sessions, peak audience, listening time,
-        languages used and completed broadcast history.
-      </p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">📡</div>
-      <h3>Live Queue Monitoring</h3>
-      <p>
-        Broadcasters can see whether translated audio is caught up,
-        slightly delayed or backlogged.
-      </p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🔗</div>
-      <h3>Permanent Room Link</h3>
-      <p>
-        Each organization gets its own default room, shareable URL and
-        QR code for easy listener access.
-      </p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🛠️</div>
-      <h3>Custom Room Names</h3>
-      <p>
-        Organization names stay unchanged while LiveBridge administrators
-        can assign a custom room name when needed.
-      </p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🛡️</div>
-      <h3>Managed Account Controls</h3>
-      <p>
-        Plans, broadcast time, viewer limits and account status are managed
-        securely through the LiveBridge administration system.
-      </p>
-    </div>
-
-  </div>
-
-</section>
-
-
-<section class="lb-section">
-
-  <h2 class="lb-section-title">
-    How LiveBridge Works
-  </h2>
-
-  <div class="lb-section-sub">
-    From one speaker to a multilingual audience in seconds.
-  </div>
-
-  <div class="lb-flow">
-
-    <div class="lb-flow-step">
-      <div>🎙️</div>
-      <strong>1. Start Broadcast</strong>
-    </div>
-
-    <div class="lb-flow-step">
-      <div>🔗</div>
-      <strong>2. Share Link / QR</strong>
-    </div>
-
-    <div class="lb-flow-step">
-      <div>📱</div>
-      <strong>3. Listener Opens Room</strong>
-    </div>
-
-    <div class="lb-flow-step">
-      <div>🌎</div>
-      <strong>4. Choose Language</strong>
-    </div>
-
-    <div class="lb-flow-step">
-      <div>🎧</div>
-      <strong>5. Read or Listen</strong>
-    </div>
-
-    <div class="lb-flow-step">
-      <div>✉️</div>
-      <strong>6. Email Notes</strong>
-    </div>
-
-  </div>
-
-</section>
-
-
-
-
-
-<section class="lb-section">
-
-  <h2 class="lb-section-title">
-    Your organization gets its own
-    <span class="lb-gradient">LiveBridge account.</span>
-  </h2>
-
-  <div class="lb-section-sub">
-    Every customer receives a secure dashboard with room sharing,
-    usage information, broadcast history and direct access to the broadcaster.
-  </div>
-
-  <div class="lb-account-strip">
-
-    <div class="lb-account-chip">
-      <strong>🏢 Organization Account</strong>
-      <span>Your own organization, room and account holder details.</span>
-    </div>
-
-    <div class="lb-account-chip">
-      <strong>📊 Usage & Statistics</strong>
-      <span>Broadcasts, listener sessions, listening time and language usage.</span>
-    </div>
-
-    <div class="lb-account-chip">
-      <strong>🕘 Broadcast History</strong>
-      <span>Review completed broadcasts and audience activity.</span>
-    </div>
-
-    <div class="lb-account-chip">
-      <strong>🔗 Share Your Room</strong>
-      <span>Copy the room link, share it directly or display the QR code.</span>
-    </div>
-
-  </div>
-
-</section>
-
-
-<section class="lb-section">
-
-  <h2 class="lb-section-title">
-    Built for more than one industry
-  </h2>
-
-  <div class="lb-section-sub">
-    Anywhere one person needs to communicate clearly with people
-    who speak different languages.
-  </div>
-
-  <div class="lb-grid">
-
-    <div class="lb-card">
-      <div class="lb-card-icon">⛪</div>
-      <h3>Churches</h3>
-      <p>Sermons, classes, conferences, outreach and multilingual services.</p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🏢</div>
-      <h3>Businesses</h3>
-      <p>Staff training, onboarding, meetings and company presentations.</p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🎓</div>
-      <h3>Education</h3>
-      <p>Classes, seminars, workshops and international student communication.</p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🎤</div>
-      <h3>Events</h3>
-      <p>Conferences, seminars, public meetings and live presentations.</p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🏛️</div>
-      <h3>Public Organizations</h3>
-      <p>Community meetings, public consultations and multilingual accessibility.</p>
-    </div>
-
-    <div class="lb-card">
-      <div class="lb-card-icon">🌍</div>
-      <h3>International Teams</h3>
-      <p>Let one presenter communicate naturally with multilingual audiences.</p>
-    </div>
-
-  </div>
-
-</section>
-
-
-<section class="lb-section">
-
-  <h2 class="lb-section-title">
-    Simple for the audience
-  </h2>
-
-  <div class="lb-section-sub">
-    No account. No download. Scan a QR code or open the link,
-    choose your language and join.
-  </div>
-
-  <div class="lb-device" style="max-width:650px;margin:auto">
-
-    <div class="lb-label">ROOM NAME</div>
-
-    <div class="lb-room" style="
-      background:#13243a;
-      padding:14px;
-      border-radius:12px;
+    <div class="lb-auth-spinner"></div>
+
+    <div style="
+      font-size:20px;
+      font-weight:900;
     ">
-      SUNDAY-SERVICE
+      LiveBridge
     </div>
 
-    <div class="lb-label">
-      LISTENING LANGUAGE
+    <div
+      class="lb-muted"
+      style="margin-top:6px;"
+    >
+      Loading your broadcaster...
+    </div>
+  </div>
+</div>
+
+
+<div class="lb-dashboard">
+
+  <aside class="lb-sidebar">
+
+    <div class="lb-brand">
+      Live<span>Bridge</span>
+    </div>
+
+    <div class="lb-subbrand">
+      Broadcaster
+    </div>
+
+    <div
+      class="lb-org-name"
+      id="broadcasterOrganization"
+    >
+      —
+    </div>
+    <a
+  href="/account"
+  style="
+    display:block;
+    margin-bottom:22px;
+    padding:11px 12px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.12);
+    background:#122238;
+    color:white;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:800;
+    text-align:center;
+  "
+>
+  ← Back to Account Dashboard
+</a>
+
+
+    <label class="lb-label">
+      Room Name
+    </label>
+
+    <input
+      class="lb-input"
+      id="roomName"
+      value=""
+      readonly
+    >
+
+
+    <label class="lb-label">
+      Spoken Language
+    </label>
+
+    <select
+      class="lb-select"
+      id="inputLanguage"
+    >
+      <option value="en">English</option>
+      <option value="fr">French — Français</option>
+      <option value="es">Spanish — Español</option>
+      <option value="de">German — Deutsch</option>
+      <option value="pt">Portuguese — Português</option>
+      <option value="it">Italian — Italiano</option>
+      <option value="pl">Polish — Polski</option>
+      <option value="ru">Russian — Русский</option>
+      <option value="uk">Ukrainian — Українська</option>
+      <option value="nl">Dutch — Nederlands</option>
+      <option value="cs">Czech — Čeština</option>
+      <option value="fil">Filipino (Tagalog) — Filipino</option>
+      <option value="he">Hebrew — עברית</option>
+      <option value="yo">Yoruba — Yorùbá</option>
+      <option value="ig">Igbo — Igbo</option>
+      <option value="ha">Hausa — Hausa</option>
+    </select>
+
+
+    <label class="lb-label">
+      Audio Input
+    </label>
+
+    <select
+      class="lb-select"
+      id="audioInput"
+    >
+      <option value="">
+        Loading audio devices...
+      </option>
+    </select>
+
+
+    <div class="lb-status-card">
+      <div class="lb-live-row">
+
+        <span
+          id="broadcastDot"
+          class="lb-dot"
+        ></span>
+
+        <span id="broadcastStatus">
+          NOT BROADCASTING
+        </span>
+
+      </div>
+    </div>
+
+
+    <div class="lb-time-card">
+
+      <div class="lb-muted">
+        Elapsed Time
+      </div>
+
+      <div
+        class="lb-time"
+        id="elapsedTime"
+      >
+        00:00:00
+      </div>
+
+    </div>
+
+
+    <div class="lb-muted">
+      Quick Tips
+      <br><br>
+      • Speak clearly<br>
+      • Avoid background noise<br>
+      • Use a good microphone<br>
+      • Keep your internet connection stable
+    </div>
+
+
+    <div class="lb-sidebar-actions">
+
+      <button
+        id="broadcastButton"
+        class="lb-btn lb-btn-primary"
+      >
+        Start Broadcasting
+      </button>
+
+      <button
+        class="lb-btn"
+        disabled
+      >
+        Pause Broadcast
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <main class="lb-main">
+
+    <div class="lb-top">
+
+      <div class="lb-room-title">
+        Room:
+        <span id="roomTitle">—</span>
+      </div>
+
+      <div class="lb-live-row">
+        👥
+        <span id="viewerTop">
+          0 / 50 Viewers
+        </span>
+      </div>
+
+    </div>
+
+
+    <div class="lb-metrics">
+
+      <div class="lb-card">
+        <div
+          class="lb-metric-number"
+          id="viewerCount"
+        >
+          0 / 50
+        </div>
+
+        <div class="lb-muted">
+          Viewers
+        </div>
+      </div>
+
+
+      <div class="lb-card">
+        <div
+          class="lb-metric-number"
+          id="languageCount"
+        >
+          0
+        </div>
+
+        <div class="lb-muted">
+          Languages Active
+        </div>
+      </div>
+
+
+      <div class="lb-card">
+        <div
+          class="lb-metric-number"
+          id="metricElapsed"
+        >
+          00:00:00
+        </div>
+
+        <div class="lb-muted">
+          Elapsed Time
+        </div>
+      </div>
+
+
+      <div class="lb-card">
+        <div class="lb-metric-number">
+          Demo
+        </div>
+
+        <div class="lb-muted">
+          Monthly Usage
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="lb-content-grid">
+
+      <div class="lb-card">
+
+        <div class="lb-section-title">
+          🎙 Live Transcription
+        </div>
+
+        <div
+          class="lb-transcript-box"
+          id="liveTranscript"
+        >
+          Transcription will appear here once broadcasting begins.
+        </div>
+
+      </div>
+
+
+      <div class="lb-card">
+
+        <div class="lb-section-title">
+          Recent Activity
+        </div>
+
+
+        <div style="
+          background:rgba(34,197,94,.10);
+          border:1px solid rgba(34,197,94,.22);
+          border-radius:10px;
+          padding:11px;
+          margin-bottom:16px;
+          color:#5cf09a;
+          font-size:13px;
+          font-weight:800;
+        ">
+          🟢 Translation Delivery Active ·
+          <span id="messagesSent">0</span>
+          messages sent
+        </div>
+
+
+        <div
+          id="audioQueueStatus"
+          style="
+            background:rgba(34,197,94,.10);
+            border:1px solid rgba(34,197,94,.22);
+            border-radius:10px;
+            padding:11px;
+            margin-bottom:16px;
+            color:#5cf09a;
+            font-size:13px;
+            font-weight:800;
+          "
+        >
+          🟢 Audio Queue · Caught Up ·
+          <span id="audioQueueCount">0</span>
+          waiting
+        </div>
+
+
+        <div style="
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:16px;
+        ">
+
+          <div>
+
+            <strong style="
+              font-size:13px;
+              color:#5cf09a;
+            ">
+              Joined
+            </strong>
+
+            <div
+              class="lb-activity"
+              id="joinedActivity"
+            >
+              <div
+                class="lb-muted"
+                style="margin-top:10px;"
+              >
+                None yet
+              </div>
+            </div>
+
+          </div>
+
+
+          <div>
+
+            <strong style="
+              font-size:13px;
+              color:#f59e9e;
+            ">
+              Disconnected
+            </strong>
+
+            <div
+              class="lb-activity"
+              id="disconnectedActivity"
+            >
+              <div
+                class="lb-muted"
+                style="margin-top:10px;"
+              >
+                None yet
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="lb-share-room">
+
+  <div class="lb-share-room-info">
+
+    <div class="lb-share-room-title">
+      Share This Live Room
+    </div>
+
+    <div class="lb-share-room-copy">
+      Send this link or QR code to anyone who needs to join
+      <strong id="shareRoomName">this room</strong>
+      and receive the live translation.
+    </div>
+
+    <div class="lb-share-language-row">
+      <div class="lb-share-language-label">Share invite language</div>
+      <select class="lb-share-language-select" id="shareInviteLanguage">
+        <option value="en">English</option>
+        <option value="fr">Français — French</option>
+        <option value="es">Español — Spanish</option>
+        <option value="de">Deutsch — German</option>
+        <option value="pt">Português — Portuguese</option>
+        <option value="it">Italiano — Italian</option>
+        <option value="nl">Nederlands — Dutch</option>
+        <option value="pl">Polski — Polish</option>
+        <option value="uk">Українська — Ukrainian</option>
+        <option value="ru">Русский — Russian</option>
+        <option value="ar">العربية — Arabic</option>
+        <option value="zh">中文 — Chinese</option>
+        <option value="ja">日本語 — Japanese</option>
+        <option value="ko">한국어 — Korean</option>
+        <option value="hi">हिन्दी — Hindi</option>
+      </select>
+      <div class="lb-share-language-note">
+        Invite text and graphic use this language.
+      </div>
+    </div>
+
+    <div class="lb-share-room-link-row">
+
+      <div
+        class="lb-share-room-link"
+        id="shareRoomURL"
+      >
+        —
+      </div>
+
+      <button
+        class="lb-share-room-button"
+        id="shareCopyButton"
+      >
+        Copy Link
+      </button>
+
+      <button
+        class="lb-share-room-button green"
+        id="shareSendButton"
+      >
+        Send / Share
+      </button>
+
+      <button
+        class="lb-share-room-button"
+        id="shareOpenButton"
+      >
+        Open Listener Page
+      </button>
+
+    </div>
+
+    <div class="lb-share-preview" id="shareInvitePreview">
+      <img id="shareInvitePreviewImage" alt="LiveBridge invite preview">
+      <div class="lb-share-preview-actions">
+        <button id="shareInviteDownloadButton" type="button">Download Graphic</button>
+        <button id="shareInviteCopyTextButton" type="button">Copy Invite Text</button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="lb-share-room-qr-wrap">
+
+    <div class="lb-share-room-qr">
+      <img
+        id="shareRoomQR"
+        alt="LiveBridge room QR code"
+      >
+    </div>
+
+    <div class="lb-share-room-qr-caption">
+      Scan to join this LiveBridge room
+    </div>
+
+  </div>
+
+</div>
+    <div class="lb-bottom-grid">
+
+      <div class="lb-card">
+
+        <div class="lb-section-title">
+          Active Languages
+        </div>
+
+        <div id="activeLanguages">
+          <div class="lb-muted">
+            No active listener languages yet.
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="lb-card">
+
+        <div class="lb-section-title">
+          Actions
+        </div>
+
+        <div class="lb-action-list">
+
+          <button
+            id="emailBroadcastButton"
+            class="lb-action-placeholder"
+            style="
+              width:100%;
+              color:white;
+              cursor:pointer;
+            "
+          >
+            ✉ Email Transcript & AI Notes
+          </button>
+
+
+          <button
+            class="lb-action-placeholder"
+            style="
+              width:100%;
+              color:white;
+              cursor:pointer;
+            "
+            onclick="copyListenerLink(this)"
+          >
+            🔗 Copy Room Link
+          </button>
+
+
+          <button
+            class="lb-action-placeholder"
+            style="
+              width:100%;
+              color:white;
+              cursor:pointer;
+            "
+            id="viewListenerPageButton"
+          >
+            🌎 View Listener Page
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="lb-card">
+
+        <div class="lb-section-title">
+          Listener Distribution
+        </div>
+
+        <div class="lb-muted">
+          Audience language distribution will appear here.
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="lb-banner">
+      🎧 Listeners are hearing your message in their chosen language.
+      Your speech is being transcribed, translated and delivered in real time.
+    </div>
+
+  </main>
+
+</div>
+
+
+<div
+  class="lb-summary-card"
+  id="broadcastSummaryCard"
+  hidden
+>
+
+  <div class="lb-summary-title">
+    Broadcast Summary
+  </div>
+
+  <div
+    class="lb-summary-subtitle"
+    id="broadcastSummarySubtitle"
+  >
+    Your completed broadcast statistics.
+  </div>
+
+
+  <div class="lb-summary-grid">
+
+    <div class="lb-summary-stat">
+      <div
+        class="lb-summary-number"
+        id="summaryTotalListeners"
+      >
+        0
+      </div>
+
+      <div class="lb-summary-label">
+        Total Listeners
+      </div>
+    </div>
+
+
+    <div class="lb-summary-stat">
+      <div
+        class="lb-summary-number"
+        id="summaryPeakListeners"
+      >
+        0
+      </div>
+
+      <div class="lb-summary-label">
+        Peak Live
+      </div>
+    </div>
+
+
+    <div class="lb-summary-stat">
+      <div
+        class="lb-summary-number"
+        id="summaryTotalListening"
+      >
+        0m
+      </div>
+
+      <div class="lb-summary-label">
+        Total Listening Time
+      </div>
+    </div>
+
+
+    <div class="lb-summary-stat">
+      <div
+        class="lb-summary-number"
+        id="summaryAverageListening"
+      >
+        0m
+      </div>
+
+      <div class="lb-summary-label">
+        Average Listen
+      </div>
+    </div>
+
+
+    <div class="lb-summary-stat">
+      <div
+        class="lb-summary-number"
+        id="summaryBroadcastDuration"
+      >
+        0m
+      </div>
+
+      <div class="lb-summary-label">
+        Broadcast Duration
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="lb-summary-languages">
+
+    <strong>
+      Languages
+    </strong>
+
+    <div id="summaryLanguages"></div>
+
+  </div>
+
+</div>
+
+<script
+  async
+  crossorigin="anonymous"
+  data-clerk-publishable-key="pk_test_c3RhYmxlLXN3aW5lLTY1NTQuY2xlcmsuYWNjb3VudHMuZGV2JA"
+  src="https://stable-swine-6554.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+  type="text/javascript">
+</script>
+
+<script>
+
+const WORKER_URL =
+  "https://livebridge.northstarventures-ca.workers.dev";
+
+const LISTENER_BASE_URL =
+  window.location.origin + "/t/";
+
+let ROOM_ID = "";
+let broadcastHeartbeat = null;
+let roomReserved = false;
+let lastBroadcastAuthToken = null;
+let mediaStream = null;
+let mediaRecorder = null;
+let broadcasting = false;
+let broadcastStartedAt = null;
+let broadcastTimer = null;
+let broadcastMessageId = 0;
+let broadcastSessionId = "";
+let roomStatusTimer = null;
+let previousListenerCounts = {};
+let messagesSentCount = 0;
+let usageWarningShown = new Set();
+let broadcastStartingRemainingMinutes = null;
+let endingForTimeLimit = false;
+
+
+/* =====================================================
+   ACCOUNT + ROOM INITIALIZATION
+===================================================== */
+
+async function getSignedInLiveBridgeUser() {
+
+  if (
+    Clerk.isSignedIn &&
+    Clerk.user
+  ) {
+    return Clerk.user;
+  }
+
+  const sessions =
+    Clerk.client?.sessions ||
+    Clerk.client?.signedInSessions ||
+    [];
+
+  if (!sessions.length) {
+    return null;
+  }
+
+  const lastActiveId =
+    Clerk.client?.lastActiveSessionId ||
+    "";
+
+  const session =
+    sessions.find(item =>
+      item.id === lastActiveId
+    ) ||
+    sessions.find(item =>
+      item.status === "active"
+    ) ||
+    sessions[0];
+
+  if (!session) {
+    return null;
+  }
+
+  await Clerk.setActive({
+    session: session.id
+  });
+
+  return (
+    Clerk.user ||
+    session.user ||
+    null
+  );
+}
+
+
+async function getBroadcasterSessionToken() {
+
+  const currentUserId =
+    Clerk.user?.id || "";
+
+  const sessions =
+    Clerk.client?.sessions ||
+    Clerk.client?.signedInSessions ||
+    [];
+
+  let session =
+    Clerk.session || null;
+
+  if (
+    currentUserId &&
+    session?.user?.id !== currentUserId
+  ) {
+    session =
+      sessions.find(item =>
+        item?.user?.id === currentUserId
+      ) || null;
+  }
+
+  if (!session && currentUserId) {
+    session =
+      sessions.find(item =>
+        item?.user?.id === currentUserId
+      ) || null;
+  }
+
+  if (!session) {
+    session =
+      sessions.find(item =>
+        item.status === "active"
+      ) ||
+      sessions[0] ||
+      null;
+  }
+
+  if (!session) {
+    return null;
+  }
+
+  if (
+    Clerk.session?.id !== session.id
+  ) {
+    await Clerk.setActive({
+      session: session.id
+    });
+  }
+
+  return await session.getToken();
+}
+
+
+async function loadAuthoritativeLiveBridgeAccount() {
+
+  const token =
+    await getBroadcasterSessionToken();
+
+  if (!token) {
+    return null;
+  }
+
+  const response =
+    await fetch(
+      WORKER_URL + "/account",
+      {
+        headers: {
+          "Authorization":
+            "Bearer " + token
+        }
+      }
+    );
+
+  const data =
+    await response.json();
+
+  if (
+    !response.ok ||
+    !data.success ||
+    !data.account
+  ) {
+    throw new Error(
+      data.error ||
+      "Could not load LiveBridge account."
+    );
+  }
+
+  return data.account;
+}
+
+
+
+
+async function loadBroadcasterRoomSelection(){
+
+  const token =
+    await getBroadcasterSessionToken();
+
+  if(!token){
+    return null;
+  }
+
+
+  const response =
+    await fetch(
+      WORKER_URL +
+      "/room-selection",
+      {
+        headers:{
+          "Authorization":
+            "Bearer " + token
+        }
+      }
+    );
+
+
+  const data =
+    await response.json();
+
+
+  if(
+    !response.ok ||
+    !data.success
+  ){
+
+    throw new Error(
+      data.error ||
+      "Unable to load room selection."
+    );
+  }
+
+
+  return data;
+}
+
+
+function renderBroadcasterRoomSelector(
+  selection
+){
+
+  const roomInput =
+    document.getElementById(
+      "roomName"
+    );
+
+
+  if(!roomInput){
+    return;
+  }
+
+
+  roomInput.readOnly =
+    true;
+
+
+  const old =
+    document.getElementById(
+      "lbSubroomSelector"
+    );
+
+
+  if(old){
+    old.remove();
+  }
+
+
+  const box =
+    document.createElement(
+      "div"
+    );
+
+  box.id =
+    "lbSubroomSelector";
+
+  box.style.cssText = `
+    margin-top:12px;
+    padding:14px;
+    border-radius:13px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.035);
+  `;
+
+
+  box.innerHTML = `
+    <div style="
+      color:#91a7be;
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:6px;
+    ">
+      Base Room
     </div>
 
     <div style="
-      background:#13243a;
-      padding:14px;
-      border-radius:12px;
-      margin-bottom:18px;
+      font-size:14px;
+      font-weight:900;
+      color:white;
+      margin-bottom:13px;
     ">
-      French — Français ▼
+      ${selection.baseRoom}
     </div>
 
-    <a
-      class="lb-btn lb-btn-primary"
-      href="/translation1"
-      style="width:100%;"
-    >
-      Join Live Room
-    </a>
-
-  </div>
-
-</section>
-
-
-<section class="lb-section" id="pricing">
-
-  <h2 class="lb-section-title">
-    Simple plans that grow with you
-  </h2>
-
-  <div class="lb-section-sub">
-    Choose a plan based on monthly broadcast time and simultaneous listeners.
-    During beta, you can select your plan and activate your account without
-    entering payment information.
-  </div>
-
-
-  <div class="lb-pricing">
-
-    <div class="lb-price">
-
-      <h3>Starter</h3>
-
-      <div class="lb-price-number">
-        $39
-      </div>
-
-      <small>CAD / month</small>
-
-      <p>
-        ✓ 5 broadcast hours / month<br>
-        ✓ Up to 25 simultaneous listeners<br>
-        ✓ Live captions & translation<br>
-        ✓ Spoken translated audio<br>
-        ✓ Transcript & AI notes<br>
-        ✓ Account dashboard & history
-      </p>
-
-      <a class="lb-btn lb-btn-secondary" href="/signup">
-        Choose Starter
-      </a>
-
+    <div style="
+      color:#91a7be;
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:6px;
+    ">
+      Optional Room Name
     </div>
 
+    <div style="
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    ">
 
-    <div class="lb-price featured">
-
-      <div class="lb-price-badge">
-        Most Popular
-      </div>
-
-      <h3>Growth</h3>
-
-      <div class="lb-price-number">
-        $79
-      </div>
-
-      <small>CAD / month</small>
-
-      <p>
-        ✓ 10 broadcast hours / month<br>
-        ✓ Up to 50 simultaneous listeners<br>
-        ✓ Live captions & translation<br>
-        ✓ Spoken translated audio<br>
-        ✓ Transcript & AI notes<br>
-        ✓ Account dashboard & history
-      </p>
-
-      <a class="lb-btn lb-btn-primary" href="/signup">
-        Choose Growth
-      </a>
-
-    </div>
-
-
-    <div class="lb-price">
-
-      <h3>Pro</h3>
-
-      <div class="lb-price-number">
-        $149
-      </div>
-
-      <small>CAD / month</small>
-
-      <p>
-        ✓ 20 broadcast hours / month<br>
-        ✓ Up to 100 simultaneous listeners<br>
-        ✓ Live captions & translation<br>
-        ✓ Spoken translated audio<br>
-        ✓ Transcript & AI notes<br>
-        ✓ Account dashboard & history
-      </p>
-
-      <a class="lb-btn lb-btn-secondary" href="/signup">
-        Choose Pro
-      </a>
-
-    </div>
-
-
-    <div class="lb-price">
-
-      <h3>Event / Custom</h3>
-
-      <div class="lb-price-number">
-        Custom
-      </div>
-
-      <small>for larger or special-use rooms</small>
-
-      <p>
-        ✓ Custom broadcast time<br>
-        ✓ Custom listener capacity<br>
-        ✓ One-time events available<br>
-        ✓ Admin-set room options<br>
-        ✓ Flexible account limits<br>
-        ✓ Contact us for setup
-      </p>
-
-      <a
-        class="lb-btn lb-btn-secondary"
-        href="mailto:globalconnectionschurch@gmail.com?subject=LiveBridge%20Custom%20Plan"
+      <input
+        id="lbSubroomInput"
+        type="text"
+        value="${selection.subroom || ""}"
+        placeholder="Example: SERVICE-1 or WYERSWEDDING"
+        maxlength="40"
+        style="
+          flex:1;
+          min-width:210px;
+          padding:11px 12px;
+          border-radius:10px;
+          border:1px solid rgba(255,255,255,.13);
+          background:#07111f;
+          color:white;
+          outline:none;
+        "
       >
-        Contact Us
-      </a>
-
-    </div>
-
-  </div>
-
-
-  <div class="lb-beta-strip" style="
-    display:flex;
-    width:max-content;
-    max-width:100%;
-    margin:24px auto 0;
-  ">
-    ✨ Beta Access — your selected plan activates immediately and no payment is collected today
-  </div>
-
-</section>
-
-
-<section class="lb-section">
-
-  <h2 class="lb-section-title">
-    Common questions
-  </h2>
-
-  <div class="lb-grid">
-
-    <div class="lb-faq">
-      <strong>Do listeners need an account?</strong>
-      <span>No. They simply open the room link or scan the QR code and choose a language.</span>
-    </div>
-
-    <div class="lb-faq">
-      <strong>Do listeners need an app?</strong>
-      <span>No. LiveBridge runs directly in a modern web browser.</span>
-    </div>
-
-    <div class="lb-faq">
-      <strong>Can every listener choose a different language?</strong>
-      <span>Yes. Each listener independently chooses the language they want to receive.</span>
-    </div>
-
-    <div class="lb-faq">
-      <strong>Can we use our own room name?</strong>
-      <span>Your organization receives a default room, and LiveBridge administrators can assign a custom room when needed.</span>
-    </div>
-
-    <div class="lb-faq">
-      <strong>Can I see previous broadcasts?</strong>
-      <span>Yes. Your account dashboard includes broadcast history and audience statistics.</span>
-    </div>
-
-    <div class="lb-faq">
-      <strong>Is payment required during beta?</strong>
-      <span>No. You can select a plan during signup without entering payment information today.</span>
-    </div>
-
-  </div>
-
-
-  <div class="lb-cta">
-
-    <h2>
-      Your message shouldn't stop at a language barrier.
-    </h2>
-
-    <p>
-      Create your LiveBridge account, choose your plan and start building
-      a multilingual experience for your audience.
-    </p>
-
-    <div class="lb-actions" style="justify-content:center;">
-
-      <a class="lb-btn lb-btn-primary" href="/signup">
-        Create Account
-      </a>
-
-      <a class="lb-btn lb-btn-secondary" href="/account">
-        Sign In
-      </a>
-
-      <a class="lb-btn lb-btn-secondary" href="/translation1">
-        Join a Room
-      </a>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<div class="lb-footer">
-  LiveBridge — Speak Once. Reach Everyone.<br><br>
-  A North Star Ventures product
-</div>
-
-
-<div class="lb-demo-modal" id="lbDemoModal">
-
-  <div class="lb-demo-window">
-
-    <div class="lb-demo-modal-top">
-
-      <div>
-        <div class="lb-demo-modal-brand">
-          Live<span class="lb-gradient">Bridge</span> Demo
-        </div>
-
-        <div style="
-          color:#8fa5bc;
-          font-size:12px;
-          margin-top:3px;
-        ">
-          Experience the listener view
-        </div>
-      </div>
 
       <button
-        class="lb-demo-close"
-        id="lbDemoClose"
+        id="lbApplySubroom"
         type="button"
+        style="
+          border:0;
+          border-radius:10px;
+          padding:11px 15px;
+          cursor:pointer;
+          background:linear-gradient(135deg,#2588ff,#6f43df);
+          color:white;
+          font-weight:900;
+        "
       >
-        ✕ Close
+        Apply Room
       </button>
 
     </div>
 
-
-    <div class="lb-demo-controls">
-
-      <div class="lb-demo-control">
-        <label>Listening Language</label>
-
-        <select id="lbDemoLanguage">
-          <optgroup label="Demo languages — full accounts include many more">
-            <option value="en">English</option>
-            <option value="fr">French — Français</option>
-            <option value="es">Spanish — Español</option>
-            <option value="de">German — Deutsch</option>
-          </optgroup>
-        </select>
-        <div style="
-          margin-top:7px;
-          color:#8fa6bd;
-          font-size:11px;
-          font-weight:700;
-          line-height:1.35;
-        ">
-          Demo selection only — your LiveBridge account includes many more listening languages.
-        </div>
-      </div>
-
-
-      <div class="lb-demo-control">
-        <label>Translated Voice</label>
-
-        <select id="lbDemoVoice">
-          <option value="female">Female Voice</option>
-          <option value="male">Male Voice</option>
-        </select>
-      </div>
-
-
-      <div class="lb-demo-control">
-        <label>Audio</label>
-
-        <button id="lbDemoAudioToggle" type="button">
-          🔊 Audio On
-        </button>
-      </div>
-
+    <div style="
+      color:#7f94aa;
+      font-size:11px;
+      line-height:1.45;
+      margin-top:8px;
+    ">
+      Leave blank to use only ${selection.baseRoom}.
+      Your last room is remembered automatically.
     </div>
 
+    <label style="
+      display:flex;
+      gap:9px;
+      align-items:flex-start;
+      margin-top:14px;
+      padding-top:13px;
+      border-top:1px solid rgba(255,255,255,.08);
+      color:#9fb2c6;
+      font-size:11px;
+      line-height:1.5;
+      cursor:pointer;
+    ">
 
-    <div class="lb-demo-listener">
-
-      <div class="lb-demo-status">
-
-        <span class="lb-demo-pill live">
-          ● Connected — Live Demo
-        </span>
-
-        <span class="lb-demo-pill">
-          Room: LIVEBRIDGE-DEMO
-        </span>
-
-        <span class="lb-demo-pill" id="lbDemoLanguagePill">
-          Language: English
-        </span>
-
-      </div>
-
-
-      <div class="lb-demo-transcript" id="lbDemoTranscript">
-
-        <div style="
-          color:#6f849b;
-          text-align:center;
-          padding:80px 20px;
-        ">
-          Press Start Demo to begin.
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="lb-demo-footer">
+      <input
+        id="lbBroadcastAuthorityConfirm"
+        type="checkbox"
+        style="
+          margin-top:2px;
+          width:16px;
+          height:16px;
+          flex:0 0 auto;
+        "
+      >
 
       <span>
-        Simulated LiveBridge broadcast — no account required
+        I confirm that my organization has the authority and any
+        required consent to transmit and process the audio/content
+        in this broadcast.
+        <a
+          href="/terms"
+          target="_blank"
+          style="color:#78b7ff;font-weight:800;"
+        >
+          Terms
+        </a>
       </span>
 
-      <button
-        class="lb-btn lb-btn-primary"
-        id="lbDemoStart"
-        type="button"
-      >
-        ▶ Start Demo
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
+    </label>
+  `;
 
 
-<script>
-(function(){
-
-  const demoData = {
-
-    en: [
-      "Welcome to the LiveBridge demonstration.",
-      "Imagine you are sitting in a church service, conference, classroom or business meeting.",
-      "The speaker continues talking naturally in their own language.",
-      "LiveBridge converts that speech into readable captions as the message is being delivered.",
-      "Now choose another language from the menu above.",
-      "Your captions change independently without affecting anyone else in the room.",
-      "Turn translated audio on and you can listen privately through your headphones.",
-      "Every listener can choose the language and voice that works best for them.",
-      "There is no listener account to create and no app to download.",
-      "The organization simply shares a room link or QR code.",
-      "LiveBridge also keeps broadcast history, audience statistics and short-term transcript records.",
-      "One speaker can communicate with an entire multilingual audience at the same time.",
-      "That is LiveBridge: speak once, reach everyone."
-    ],
-
-    fr: [
-      "Bienvenue dans la démonstration de LiveBridge.",
-      "Imaginez que vous assistez à un service religieux, une conférence, un cours ou une réunion d'entreprise.",
-      "L'orateur continue de parler naturellement dans sa propre langue.",
-      "LiveBridge transforme la parole en sous-titres lisibles pendant que le message est présenté.",
-      "Choisissez maintenant une autre langue dans le menu ci-dessus.",
-      "Vos sous-titres changent indépendamment sans affecter les autres personnes dans la salle.",
-      "Activez l'audio traduit pour écouter la traduction en privé dans vos écouteurs.",
-      "Chaque auditeur peut choisir la langue et la voix qui lui conviennent le mieux.",
-      "Aucun compte d'auditeur n'est nécessaire et aucune application n'est à télécharger.",
-      "L'organisation partage simplement un lien de salle ou un code QR.",
-      "LiveBridge conserve également l'historique des diffusions, les statistiques d'audience et des transcriptions temporaires.",
-      "Un seul orateur peut communiquer avec tout un public multilingue en même temps.",
-      "Voilà LiveBridge : parlez une fois, rejoignez tout le monde."
-    ],
-
-    es: [
-      "Bienvenido a la demostración de LiveBridge.",
-      "Imagina que estás en un servicio de iglesia, una conferencia, una clase o una reunión de negocios.",
-      "El orador continúa hablando naturalmente en su propio idioma.",
-      "LiveBridge convierte la voz en subtítulos legibles mientras se presenta el mensaje.",
-      "Ahora elige otro idioma en el menú de arriba.",
-      "Tus subtítulos cambian de forma independiente sin afectar a nadie más en la sala.",
-      "Activa el audio traducido y podrás escuchar la traducción en privado con tus auriculares.",
-      "Cada oyente puede elegir el idioma y la voz que mejor le funcionen.",
-      "No hace falta crear una cuenta de oyente ni descargar una aplicación.",
-      "La organización simplemente comparte un enlace de sala o un código QR.",
-      "LiveBridge también mantiene historial de transmisiones, estadísticas de audiencia y transcripciones temporales.",
-      "Un solo orador puede comunicarse con toda una audiencia multilingüe al mismo tiempo.",
-      "Eso es LiveBridge: habla una vez, llega a todos."
-    ],
-
-    de: [
-      "Willkommen bei der LiveBridge-Demonstration.",
-      "Stellen Sie sich vor, Sie sitzen in einem Gottesdienst, einer Konferenz, einem Unterricht oder einer Geschäftssitzung.",
-      "Der Sprecher spricht ganz natürlich in seiner eigenen Sprache weiter.",
-      "LiveBridge wandelt die Sprache während der Präsentation in lesbare Untertitel um.",
-      "Wählen Sie jetzt oben im Menü eine andere Sprache aus.",
-      "Ihre Untertitel ändern sich unabhängig, ohne andere Personen im Raum zu beeinflussen.",
-      "Schalten Sie die übersetzte Audioausgabe ein und hören Sie die Übersetzung privat über Ihre Kopfhörer.",
-      "Jeder Zuhörer kann die Sprache und Stimme auswählen, die für ihn am besten geeignet ist.",
-      "Es ist kein Zuhörerkonto erforderlich und keine App muss heruntergeladen werden.",
-      "Die Organisation teilt einfach einen Raumlink oder QR-Code.",
-      "LiveBridge speichert außerdem Übertragungsverlauf, Publikumsstatistiken und kurzfristige Transkripte.",
-      "Ein Sprecher kann gleichzeitig mit einem ganzen mehrsprachigen Publikum kommunizieren.",
-      "Das ist LiveBridge: einmal sprechen, alle erreichen."
-    ]
-
-  };
+  roomInput.insertAdjacentElement(
+    "afterend",
+    box
+  );
 
 
-  const languageNames = {
-    en: "English",
-    fr: "French",
-    es: "Spanish",
-    de: "German"
-  };
+  document.getElementById(
+    "lbApplySubroom"
+  ).onclick =
+    applyBroadcasterSubroom;
+}
 
 
-  const speechLangs = {
-    en: "en-US",
-    fr: "fr-CA",
-    es: "es-US",
-    de: "de-DE"
-  };
+async function applyBroadcasterSubroom(){
+
+  if(broadcasting){
+
+    showLiveBridgeAccountNotice(
+      "End the current broadcast before changing rooms."
+    );
+
+    return;
+  }
 
 
-  const AZURE_WORKER =
-    "https://livebridge.northstarventures-ca.workers.dev";
-
-
-  const DEMO_ROOM =
-    "LIVEBRIDGE-DEMO";
-
-
-  const AZURE_VOICES = {
-
-    en:{
-      female:{
-        locale:"en-US",
-        voice:"en-US-AvaMultilingualNeural"
-      },
-
-      male:{
-        locale:"en-US",
-        voice:"en-US-AndrewMultilingualNeural"
-      }
-    },
-
-
-    fr:{
-      female:{
-        locale:"fr-CA",
-        voice:"fr-CA-SylvieNeural"
-      },
-
-      male:{
-        locale:"fr-CA",
-        voice:"fr-CA-AntoineNeural"
-      }
-    },
-
-
-    es:{
-      female:{
-        locale:"es-US",
-        voice:"es-US-PalomaNeural"
-      },
-
-      male:{
-        locale:"es-US",
-        voice:"es-US-AlonsoNeural"
-      }
-    },
-
-
-    de:{
-      female:{
-        locale:"de-DE",
-        voice:"de-DE-SeraphinaMultilingualNeural"
-      },
-
-      male:{
-        locale:"de-DE",
-        voice:"de-DE-FlorianMultilingualNeural"
-      }
-    }
-
-  };
-
-
-  let azureDemoAudio =
-    null;
-
-  let azureDemoUrl =
-    null;
-
-  let azureDemoRequestId =
-    0;
-
-
-  let demoTimer = null;
-  let demoIndex = 0;
-  let demoRunning = false;
-  let audioEnabled = true;
-
-
-  const modal =
+  const input =
     document.getElementById(
-      "lbDemoModal"
+      "lbSubroomInput"
     );
 
 
-  function clearDemo(){
-
-    if(demoTimer){
-      clearTimeout(demoTimer);
-      demoTimer = null;
-    }
-
-    demoRunning = false;
-    demoIndex = 0;
-
-    if(
-      "speechSynthesis" in window
-    ){
-      speechSynthesis.cancel();
-    }
-
-
-    stopAzureDemoAudio();
-
-  }
-
-
-  function stopAzureDemoAudio(){
-
-    azureDemoRequestId +=
-      1;
-
-
-    if(
-      azureDemoAudio
-    ){
-
-      try{
-
-        azureDemoAudio.pause();
-
-        azureDemoAudio.currentTime =
-          0;
-
-      }catch{}
-
-
-      azureDemoAudio =
-        null;
-    }
-
-
-    if(
-      azureDemoUrl
-    ){
-
-      try{
-
-        URL.revokeObjectURL(
-          azureDemoUrl
-        );
-
-      }catch{}
-
-
-      azureDemoUrl =
-        null;
-    }
-  }
-
-
-  function getAzureDemoVoice(
-    language
-  ){
-
-    const gender =
-      document.getElementById(
-        "lbDemoVoice"
-      )?.value ||
-      "female";
-
-
-    return (
-      AZURE_VOICES[
-        language
-      ]?.[
-        gender
-      ] ||
-      AZURE_VOICES.en.female
+  const button =
+    document.getElementById(
+      "lbApplySubroom"
     );
+
+
+  if(!input || !button){
+    return;
   }
 
 
-  function getAzureDemoSpeechText(
-    text,
-    language
-  ){
+  button.disabled =
+    true;
 
-    let spoken =
-      String(
-        text || ""
+  button.textContent =
+    "Applying...";
+
+
+  try{
+
+    const token =
+      await getBroadcasterSessionToken();
+
+
+    const response =
+      await fetch(
+        WORKER_URL +
+        "/room-selection",
+        {
+          method:"POST",
+
+          headers:{
+            "Authorization":
+              "Bearer " + token,
+
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+            subroom:
+              input.value
+          })
+        }
       );
 
 
-    /*
-      TTS-only pronunciation fix.
-      Captions still display the brand as "LiveBridge".
-      Giving Azure two words strongly biases "Live" toward
-      the /laɪv/ pronunciation used for live broadcasting.
-    */
+    const data =
+      await response.json();
+
+
     if(
-      language ===
-      "en"
+      !response.ok ||
+      !data.success
     ){
 
-      spoken =
-        spoken.replace(
-          /LiveBridge/gi,
-          "Live Bridge"
-        );
+      throw new Error(
+        data.error ||
+        "Unable to change room."
+      );
     }
 
 
-    return spoken;
+    ROOM_ID =
+      String(
+        data.effectiveRoom ||
+        ""
+      )
+      .trim()
+      .toUpperCase();
+
+
+    document.getElementById(
+      "roomName"
+    ).value =
+      ROOM_ID;
+
+
+    document.getElementById(
+      "roomTitle"
+    ).textContent =
+      ROOM_ID;
+
+
+    input.value =
+      data.subroom || "";
+
+
+    updateBroadcasterSharePanel();
+
+    updateRoomStatus();
+
+
+    button.textContent =
+      "✓ Applied";
+
+
+    setTimeout(
+      () => {
+
+        button.textContent =
+          "Apply Room";
+
+      },
+      1400
+    );
+
+
+  }catch(error){
+
+    alert(
+      error.message ||
+      "Unable to change room."
+    );
+
+
+  }finally{
+
+    button.disabled =
+      false;
+  }
+}
+
+
+async function initializeLiveBridgeBroadcaster() {
+
+  try {
+
+    await Clerk.load();
+
+    const user =
+      await getSignedInLiveBridgeUser();
+
+    if (!user) {
+      window.location.href =
+        "/account";
+      return;
+    }
+
+    const liveBridge =
+      user.unsafeMetadata?.liveBridge || {};
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    const urlRoom =
+      String(
+        params.get("room") || ""
+      )
+      .trim()
+      .toUpperCase();
+
+    let serverAccount = null;
+
+    try {
+      serverAccount =
+        await loadAuthoritativeLiveBridgeAccount();
+    } catch (accountError) {
+      console.error(
+        "Could not load authoritative LiveBridge account:",
+        accountError
+      );
+    }
+
+    let roomSelection = null;
+
+    try{
+
+      roomSelection =
+        await loadBroadcasterRoomSelection();
+
+    }catch(roomSelectionError){
+
+      console.error(
+        "Could not load LiveBridge room selection:",
+        roomSelectionError
+      );
+    }
+
+
+    const accountRoom =
+      String(
+        roomSelection?.effectiveRoom ||
+        serverAccount?.roomName ||
+        liveBridge.defaultRoom ||
+        ""
+      )
+      .trim()
+      .toUpperCase();
+
+
+    ROOM_ID =
+      accountRoom ||
+      urlRoom ||
+      "TRANSLATION";
+
+
+    const organization =
+      serverAccount?.organizationName ||
+      liveBridge.organizationName ||
+      user.fullName ||
+      "LiveBridge Organization";
+
+    document.getElementById(
+      "roomName"
+    ).value =
+      ROOM_ID;
+
+    document.getElementById(
+      "roomTitle"
+    ).textContent =
+      ROOM_ID;
+
+    document.getElementById(
+      "broadcasterOrganization"
+    ).textContent =
+      organization;
+
+
+    if(roomSelection){
+
+      renderBroadcasterRoomSelector(
+        roomSelection
+      );
+    }
+
+
+    updateBroadcasterSharePanel();
+
+    document.title =
+      organization +
+      " | LiveBridge Broadcaster";
+
+    await loadAudioInputs();
+
+    updateRoomStatus();
+
+    document.getElementById(
+      "lb-auth-loading"
+    ).style.display =
+      "none";
+
+  } catch (error) {
+
+    console.error(
+      "LiveBridge broadcaster account load failed:",
+      error
+    );
+
+    window.location.href =
+      "/account";
+  }
+}
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+const broadcastButton =
+  document.getElementById(
+    "broadcastButton"
+  );
+
+broadcastButton.addEventListener(
+  "click",
+  toggleBroadcast
+);
+
+const emailBroadcastButton =
+  document.getElementById(
+    "emailBroadcastButton"
+  );
+
+emailBroadcastButton.addEventListener(
+  "click",
+  emailBroadcastTranscript
+);
+
+
+/* =====================================================
+   AUDIO INPUTS
+===================================================== */
+
+async function loadAudioInputs() {
+
+  const audioSelect =
+    document.getElementById(
+      "audioInput"
+    );
+
+  try {
+
+    const permissionStream =
+      await navigator.mediaDevices
+        .getUserMedia({
+          audio: true
+        });
+
+    const devices =
+      await navigator.mediaDevices
+        .enumerateDevices();
+
+    permissionStream
+      .getTracks()
+      .forEach(
+        track => track.stop()
+      );
+
+    const audioInputs =
+      devices.filter(
+        device =>
+          device.kind ===
+          "audioinput"
+      );
+
+    audioSelect.innerHTML =
+      "";
+
+    if (
+      audioInputs.length === 0
+    ) {
+
+      audioSelect.innerHTML =
+        '<option value="">No audio inputs found</option>';
+
+      return;
+    }
+
+    audioInputs.forEach(
+      (device,index) => {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          device.deviceId;
+
+        option.textContent =
+          device.label ||
+          "Audio Input " +
+          (index + 1);
+
+        audioSelect.appendChild(
+          option
+        );
+      }
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Could not load audio inputs:",
+      error
+    );
+
+    audioSelect.innerHTML =
+      '<option value="">Microphone permission required</option>';
+  }
+}
+
+
+/* =====================================================
+   BROADCAST
+===================================================== */
+
+function createBroadcastSessionId() {
+
+  return (
+    "broadcast_" +
+    Date.now() +
+    "_" +
+    Math.random()
+      .toString(36)
+      .substring(2,10)
+  );
+}
+
+function showLiveBridgeAccountNotice(message) {
+
+  const oldModal =
+    document.getElementById(
+      "liveBridgeAccountNotice"
+    );
+
+  if (oldModal) {
+    oldModal.remove();
+  }
+
+  const organization =
+    document.getElementById(
+      "broadcasterOrganization"
+    )?.textContent?.trim() ||
+    "LiveBridge Customer";
+
+  const room =
+    document.getElementById(
+      "roomName"
+    )?.value?.trim() ||
+    "";
+
+  const overlay =
+    document.createElement("div");
+
+  overlay.id =
+    "liveBridgeAccountNotice";
+
+  overlay.style.cssText = `
+    position:fixed;
+    inset:0;
+    z-index:999999;
+    background:rgba(2,8,18,.82);
+    backdrop-filter:blur(5px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  `;
+
+  overlay.innerHTML = `
+    <div style="
+      width:100%;
+      max-width:500px;
+      background:#101d2d;
+      border:1px solid rgba(255,255,255,.13);
+      border-radius:20px;
+      padding:28px;
+      box-shadow:0 25px 70px rgba(0,0,0,.45);
+      color:white;
+      font-family:Arial,Helvetica,sans-serif;
+    ">
+
+      <div style="
+        font-size:25px;
+        font-weight:900;
+        margin-bottom:6px;
+      ">
+        LiveBridge
+      </div>
+
+      <div style="
+        color:#68e5c1;
+        font-size:12px;
+        font-weight:800;
+        text-transform:uppercase;
+        letter-spacing:.08em;
+        margin-bottom:18px;
+      ">
+        Account Notice
+      </div>
+
+      <div style="
+        font-size:18px;
+        font-weight:800;
+        line-height:1.45;
+        margin-bottom:10px;
+      ">
+        ${message}
+      </div>
+
+      <div style="
+        color:#94a9bf;
+        font-size:13px;
+        line-height:1.6;
+        margin-bottom:22px;
+      ">
+        Broadcasting is unavailable at this time.
+        If you believe this is an error or need help with your account,
+        our LiveBridge team can assist you.
+      </div>
+
+      <button
+        id="liveBridgeRequestContact"
+        style="
+          width:100%;
+          border:0;
+          border-radius:11px;
+          padding:14px 16px;
+          margin-bottom:10px;
+          cursor:pointer;
+          background:linear-gradient(135deg,#29d783,#38e59a);
+          color:#04150d;
+          font-size:14px;
+          font-weight:900;
+        "
+      >
+        Have Someone From Our Team Contact Me
+      </button>
+
+      <button
+        id="liveBridgeNoticeClose"
+        style="
+          width:100%;
+          border:1px solid rgba(255,255,255,.13);
+          border-radius:11px;
+          padding:13px 16px;
+          cursor:pointer;
+          background:#17283d;
+          color:white;
+          font-size:14px;
+          font-weight:800;
+        "
+      >
+        Close
+      </button>
+
+    </div>
+  `;
+
+  document.body.appendChild(
+    overlay
+  );
+
+
+  document.getElementById(
+    "liveBridgeNoticeClose"
+  ).onclick = () => {
+    overlay.remove();
+  };
+
+
+  document.getElementById(
+    "liveBridgeRequestContact"
+  ).onclick = () => {
+
+    const subject =
+      encodeURIComponent(
+        "LiveBridge Account Support Request"
+      );
+
+    const body =
+      encodeURIComponent(
+        "Hello LiveBridge Team,\n\n" +
+        "Please contact me regarding my LiveBridge account.\n\n" +
+        "Organization: " +
+        organization +
+        "\n" +
+        "Room: " +
+        room +
+        "\n\n" +
+        "Thank you."
+      );
+
+    window.location.href =
+      "mailto:globalconnectionschurch@gmail.com" +
+      "?subject=" +
+      subject +
+      "&body=" +
+      body;
+  };
+}
+
+function openLiveBridgeBilling(){
+
+  window.location.href =
+    "/account?panel=billing";
+}
+
+
+function showUsageWarningModal({
+  title,
+  message,
+  allowContinue = false,
+  topUpLabel = "Top Up / Upgrade"
+}){
+
+  return new Promise(
+    resolve => {
+
+      const old =
+        document.getElementById(
+          "liveBridgeUsageWarning"
+        );
+
+      if(old){
+        old.remove();
+      }
+
+      const overlay =
+        document.createElement(
+          "div"
+        );
+
+      overlay.id =
+        "liveBridgeUsageWarning";
+
+      overlay.style.cssText = `
+        position:fixed;
+        inset:0;
+        z-index:999999;
+        background:rgba(2,8,18,.84);
+        backdrop-filter:blur(5px);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:20px;
+      `;
+
+      overlay.innerHTML = `
+        <div style="
+          width:100%;
+          max-width:500px;
+          background:#101d2d;
+          border:1px solid rgba(255,255,255,.13);
+          border-radius:20px;
+          padding:28px;
+          box-shadow:0 25px 70px rgba(0,0,0,.45);
+          color:white;
+          font-family:Arial,Helvetica,sans-serif;
+        ">
+
+          <div style="
+            font-size:25px;
+            font-weight:900;
+            margin-bottom:5px;
+          ">
+            LiveBridge
+          </div>
+
+          <div style="
+            color:#f7c66b;
+            font-size:12px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            margin-bottom:18px;
+          ">
+            Broadcast Time Notice
+          </div>
+
+          <div style="
+            font-size:20px;
+            font-weight:900;
+            margin-bottom:10px;
+          ">
+            ${title}
+          </div>
+
+          <div style="
+            color:#a8b9cb;
+            font-size:14px;
+            line-height:1.65;
+          ">
+            ${message}
+          </div>
+
+          <div style="
+            display:flex;
+            gap:10px;
+            margin-top:22px;
+            flex-wrap:wrap;
+          ">
+
+            ${
+              allowContinue
+                ? `
+                  <button
+                    id="lbUsageContinue"
+                    style="
+                      flex:1;
+                      min-width:170px;
+                      border:1px solid rgba(255,255,255,.13);
+                      border-radius:11px;
+                      padding:13px 16px;
+                      cursor:pointer;
+                      background:#17283d;
+                      color:white;
+                      font-weight:800;
+                    "
+                  >
+                    Continue Broadcasting
+                  </button>
+                `
+                : `
+                  <button
+                    id="lbUsageClose"
+                    style="
+                      flex:1;
+                      min-width:150px;
+                      border:1px solid rgba(255,255,255,.13);
+                      border-radius:11px;
+                      padding:13px 16px;
+                      cursor:pointer;
+                      background:#17283d;
+                      color:white;
+                      font-weight:800;
+                    "
+                  >
+                    Close
+                  </button>
+                `
+            }
+
+            <button
+              id="lbUsageTopUp"
+              style="
+                flex:1;
+                min-width:170px;
+                border:0;
+                border-radius:11px;
+                padding:13px 16px;
+                cursor:pointer;
+                background:linear-gradient(135deg,#2588ff,#6f43df);
+                color:white;
+                font-weight:900;
+              "
+            >
+              ${topUpLabel}
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+      document.body.appendChild(
+        overlay
+      );
+
+
+      const finish =
+        value => {
+
+          overlay.remove();
+
+          resolve(value);
+        };
+
+
+      const continueButton =
+        document.getElementById(
+          "lbUsageContinue"
+        );
+
+      if(continueButton){
+
+        continueButton.onclick =
+          () => finish("continue");
+      }
+
+
+      const closeButton =
+        document.getElementById(
+          "lbUsageClose"
+        );
+
+      if(closeButton){
+
+        closeButton.onclick =
+          () => finish("close");
+      }
+
+
+      document.getElementById(
+        "lbUsageTopUp"
+      ).onclick =
+        () => {
+
+          overlay.remove();
+
+          openLiveBridgeBilling();
+
+          resolve("billing");
+        };
+    }
+  );
+}
+
+
+async function checkStartingBroadcastTime(){
+
+  try{
+
+    const token =
+      await getBroadcasterSessionToken();
+
+    if(!token){
+      return true;
+    }
+
+
+    const response =
+      await fetch(
+        WORKER_URL +
+        "/account",
+        {
+          headers:{
+            "Authorization":
+              "Bearer " + token
+          }
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(
+      !response.ok ||
+      !data.success ||
+      !data.account
+    ){
+      return true;
+    }
+
+
+    const remainingMinutes =
+      Number(
+        data.account.remainingMinutes ??
+        0
+      );
+
+
+    broadcastStartingRemainingMinutes =
+      remainingMinutes;
+
+
+    usageWarningShown =
+      new Set();
+
+
+    [30,20,10,5]
+      .forEach(threshold => {
+
+        if(
+          remainingMinutes <=
+          threshold
+        ){
+          usageWarningShown.add(
+            threshold
+          );
+        }
+      });
+
+
+    if(
+      remainingMinutes > 0 &&
+      remainingMinutes < 60
+    ){
+
+      const result =
+        await showUsageWarningModal({
+          title:
+            remainingMinutes +
+            " minutes remaining",
+
+          message:
+            "Your account has less than one hour of broadcast time remaining. You may continue this broadcast, or top up / upgrade your account before starting.",
+
+          allowContinue:
+            true
+        });
+
+
+      return (
+        result ===
+        "continue"
+      );
+    }
+
+
+    return true;
+
+
+  }catch(error){
+
+    console.error(
+      "LiveBridge starting time check failed:",
+      error
+    );
+
+    return true;
+  }
+}
+
+
+async function endBroadcastForTimeLimit(){
+
+  if(
+    endingForTimeLimit ||
+    !broadcasting
+  ){
+    return;
+  }
+
+  endingForTimeLimit =
+    true;
+
+
+  broadcasting =
+    false;
+
+
+  if(
+    mediaRecorder &&
+    mediaRecorder.state ===
+      "recording"
+  ){
+    mediaRecorder.stop();
   }
 
 
-  async function speakDemoLine(
-    text,
-    language
+  if(mediaStream){
+
+    mediaStream
+      .getTracks()
+      .forEach(
+        track => track.stop()
+      );
+  }
+
+
+  mediaStream =
+    null;
+
+
+  stopBroadcastTimer();
+
+  stopBroadcastHeartbeat();
+
+  stopRoomStatusPolling();
+
+
+  await releaseBroadcastRoom();
+
+
+  document.getElementById(
+    "inputLanguage"
+  ).disabled =
+    false;
+
+
+  broadcastButton.disabled =
+    false;
+
+  broadcastButton.textContent =
+    "Start Broadcasting";
+
+
+  broadcastButton
+    .classList
+    .remove(
+      "lb-btn-danger"
+    );
+
+
+  broadcastButton
+    .classList
+    .add(
+      "lb-btn-primary"
+    );
+
+
+  document.getElementById(
+    "broadcastDot"
+  ).classList.remove(
+    "live"
+  );
+
+
+  document.getElementById(
+    "broadcastStatus"
+  ).textContent =
+    "NOT BROADCASTING";
+
+
+  await showUsageWarningModal({
+    title:
+      "Broadcast time used",
+
+    message:
+      "Your broadcast has ended because your available LiveBridge broadcast time reached zero. Top up your account or upgrade your plan to continue broadcasting.",
+
+    allowContinue:
+      false,
+
+    topUpLabel:
+      "Top Up / Upgrade"
+  });
+
+
+  endingForTimeLimit =
+    false;
+}
+
+
+function maybeShowRemainingTimeWarning(
+  remainingSeconds
+){
+
+  const thresholds =
+    [30,20,10,5];
+
+
+  for(
+    const minutes of thresholds
   ){
 
     if(
-      !audioEnabled
+      remainingSeconds <=
+        minutes * 60 &&
+      !usageWarningShown.has(
+        minutes
+      )
     ){
+
+      usageWarningShown.add(
+        minutes
+      );
+
+
+      showUsageWarningModal({
+        title:
+          minutes +
+          " minutes remaining",
+
+        message:
+          "You have approximately " +
+          minutes +
+          " minutes of LiveBridge broadcast time remaining. Your broadcast will automatically end when the available time reaches zero.",
+
+        allowContinue:
+          false
+      });
+
+
+      break;
+    }
+  }
+}
+
+
+async function toggleBroadcast() {
+
+  if (!broadcasting) {
+
+    const authorityConfirmation =
+      document.getElementById(
+        "lbBroadcastAuthorityConfirm"
+      );
+
+    if(
+      authorityConfirmation &&
+      !authorityConfirmation.checked
+    ){
+
+      showLiveBridgeAccountNotice(
+        "Please confirm that your organization has the authority and any required consent to transmit and process this broadcast."
+      );
+
+      return;
+    }
+
+    ROOM_ID =
+      document
+        .getElementById(
+          "roomName"
+        )
+        .value
+        .trim()
+        .toUpperCase();
+
+    if (!ROOM_ID) {
+
+      alert(
+        "Your LiveBridge account does not have a valid room name."
+      );
+
+      return;
+    }
+
+    document.getElementById(
+      "roomTitle"
+    ).textContent =
+      ROOM_ID;
+
+    const canStart =
+      await checkStartingBroadcastTime();
+
+    if(!canStart){
       return;
     }
 
 
-    stopAzureDemoAudio();
+    broadcastButton.disabled =
+      true;
 
+    broadcastButton.textContent =
+      "Checking Room...";
 
-    const myRequest =
-      ++azureDemoRequestId;
+    try {
 
+      const startToken =
+        await getBroadcasterSessionToken();
 
-    const config =
-      getAzureDemoVoice(
-        language
-      );
+      if (!startToken) {
+        throw new Error(
+          "Your LiveBridge session could not be verified."
+        );
+      }
 
+      lastBroadcastAuthToken =
+        startToken;
 
-    const spokenText =
-      getAzureDemoSpeechText(
-        text,
-        language
-      );
-
-
-    try{
-
-      const response =
+      const roomResponse =
         await fetch(
-          AZURE_WORKER +
-          "/azure-tts-test",
+          WORKER_URL +
+          "/broadcast-start",
           {
-            method:
-              "POST",
+            method: "POST",
 
-            headers:{
+            headers: {
               "Content-Type":
-                "application/json"
+                "application/json",
+
+              "Authorization":
+                "Bearer " +
+                startToken
             },
 
-            body:
-              JSON.stringify({
-                room:
-                  DEMO_ROOM,
-
-                text:
-                  spokenText,
-
-                voice:
-                  config.voice,
-
-                locale:
-                  config.locale,
-
-                rate:
-                  1.15
-              })
+            body: JSON.stringify({
+              room: ROOM_ID
+            })
           }
         );
 
+      const roomData =
+        await roomResponse.json();
+
+     if (
+  !roomResponse.ok ||
+  !roomData.success
+) {
+
+  const errorMessage =
+    roomData.error ||
+    roomData.message ||
+    "The broadcast could not be started.";
+
+  if (
+    roomData.code ===
+      "ACCOUNT_NOT_ACTIVE" ||
+    roomData.code ===
+      "NO_BROADCAST_TIME"
+  ) {
+
+    showLiveBridgeAccountNotice(
+      errorMessage
+    );
+
+  } else {
+
+    alert(
+      errorMessage
+    );
+  }
+
+  broadcastButton.disabled =
+    false;
+
+  broadcastButton.textContent =
+    "Start Broadcasting";
+
+  return;
+}
+
+      roomReserved =
+        true;
+
 
       if(
-        !response.ok ||
-        myRequest !==
-          azureDemoRequestId
+        roomData.remainingMinutes !==
+        null &&
+        roomData.remainingMinutes !==
+        undefined
       ){
-        return;
+
+        broadcastStartingRemainingMinutes =
+          Number(
+            roomData.remainingMinutes
+          );
+
+        usageWarningShown =
+          new Set();
+
+        [30,20,10,5]
+          .forEach(threshold => {
+
+            if(
+              broadcastStartingRemainingMinutes <=
+              threshold
+            ){
+              usageWarningShown.add(
+                threshold
+              );
+            }
+          });
       }
 
 
-      const blob =
-        await response.blob();
+      try {
 
+        const selectedAudioDevice =
+          document.getElementById(
+            "audioInput"
+          ).value;
 
-      if(
-        myRequest !==
-        azureDemoRequestId
-      ){
+        mediaStream =
+          await navigator.mediaDevices
+            .getUserMedia({
+
+              audio:
+                selectedAudioDevice
+                  ? {
+                      deviceId: {
+                        exact:
+                          selectedAudioDevice
+                      }
+                    }
+                  : true
+
+            });
+
+      } catch (micError) {
+
+        await releaseBroadcastRoom();
+
+        broadcastButton.disabled =
+          false;
+
+        broadcastButton.textContent =
+          "Start Broadcasting";
+
+        alert(
+          "Microphone access was not available. Please allow microphone permission and try again."
+        );
+
+        console.error(
+          micError
+        );
+
         return;
       }
 
+      broadcasting =
+        true;
 
-      const objectUrl =
-        URL.createObjectURL(
-          blob
+      broadcastMessageId =
+        0;
+
+      messagesSentCount =
+        0;
+
+      previousListenerCounts =
+        {};
+
+      document.getElementById(
+        "messagesSent"
+      ).textContent =
+        "0";
+
+      broadcastSessionId =
+        createBroadcastSessionId();
+
+      document.getElementById(
+        "inputLanguage"
+      ).disabled =
+        true;
+
+      startBroadcastHeartbeat();
+
+      startRoomStatusPolling();
+
+      recordNextChunk();
+
+      startBroadcastTimer();
+
+      broadcastButton.disabled =
+        false;
+
+      broadcastButton.textContent =
+        "End Broadcast";
+
+      broadcastButton
+        .classList
+        .remove(
+          "lb-btn-primary"
         );
 
-
-      const audio =
-        new Audio(
-          objectUrl
+      broadcastButton
+        .classList
+        .add(
+          "lb-btn-danger"
         );
 
+      document.getElementById(
+        "broadcastDot"
+      ).classList.add(
+        "live"
+      );
 
-      audio.preload =
-        "auto";
+      document.getElementById(
+        "broadcastStatus"
+      ).textContent =
+        "LIVE BROADCASTING";
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+      if (roomReserved) {
+        await releaseBroadcastRoom();
+      }
+
+      document.getElementById(
+        "inputLanguage"
+      ).disabled =
+        false;
+
+      broadcastButton.disabled =
+        false;
+
+      broadcastButton.textContent =
+        "Start Broadcasting";
+
+      alert(
+        "The broadcast could not be started. Please try again."
+      );
+    }
+
+  } else {
+
+    broadcasting =
+      false;
+
+    if (
+      mediaRecorder &&
+      mediaRecorder.state ===
+        "recording"
+    ) {
+
+      mediaRecorder.stop();
+    }
+
+    if (mediaStream) {
+
+      mediaStream
+        .getTracks()
+        .forEach(
+          track => track.stop()
+        );
+    }
+
+    mediaStream =
+      null;
+
+    stopBroadcastTimer();
+
+    stopBroadcastHeartbeat();
+
+    stopRoomStatusPolling();
+
+    await releaseBroadcastRoom();
+
+    document.getElementById(
+      "inputLanguage"
+    ).disabled =
+      false;
+
+    broadcastButton.textContent =
+      "Start Broadcasting";
+
+    broadcastButton
+      .classList
+      .remove(
+        "lb-btn-danger"
+      );
+
+    broadcastButton
+      .classList
+      .add(
+        "lb-btn-primary"
+      );
+
+    document.getElementById(
+      "broadcastDot"
+    ).classList.remove(
+      "live"
+    );
+
+    document.getElementById(
+      "broadcastStatus"
+    ).textContent =
+      "NOT BROADCASTING";
+  }
+}
 
 
-      azureDemoUrl =
-        objectUrl;
+/* =====================================================
+   HEARTBEAT
+===================================================== */
 
-      azureDemoAudio =
-        audio;
+function startBroadcastHeartbeat() {
 
+  stopBroadcastHeartbeat();
 
-      await new Promise(
-        resolve => {
+  broadcastHeartbeat =
+    setInterval(
+      async () => {
 
-          let finished =
-            false;
+        if (
+          !broadcasting ||
+          !ROOM_ID ||
+          !roomReserved
+        ) {
+          return;
+        }
 
+        try {
 
-          const finish =
-            function(){
+          const heartbeatToken =
+            await getBroadcasterSessionToken();
 
-              if(finished){
-                return;
+          if (!heartbeatToken) {
+            return;
+          }
+
+          lastBroadcastAuthToken =
+            heartbeatToken;
+
+          const response =
+            await fetch(
+              WORKER_URL +
+              "/broadcast-heartbeat",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json",
+
+                  "Authorization":
+                    "Bearer " +
+                    heartbeatToken
+                },
+
+                body: JSON.stringify({
+                  room: ROOM_ID
+                })
               }
+            );
 
 
-              finished =
-                true;
-
-
-              if(
-                azureDemoAudio ===
-                audio
-              ){
-
-                azureDemoAudio =
-                  null;
-              }
-
-
-              if(
-                azureDemoUrl ===
-                objectUrl
-              ){
-
-                azureDemoUrl =
-                  null;
-              }
-
-
-              try{
-
-                URL.revokeObjectURL(
-                  objectUrl
-                );
-
-              }catch{}
-
-
-              resolve();
-            };
-
-
-          audio.addEventListener(
-            "ended",
-            finish,
-            {
-              once:true
-            }
-          );
-
-
-          audio.addEventListener(
-            "error",
-            finish,
-            {
-              once:true
-            }
-          );
+          const data =
+            await response.json();
 
 
           if(
-            myRequest !==
-              azureDemoRequestId ||
-            !demoRunning ||
-            !audioEnabled
+            !response.ok ||
+            !data.success
           ){
 
-            finish();
+            if(
+              data.code ===
+              "BROADCAST_TIME_EXHAUSTED"
+            ){
+
+              await endBroadcastForTimeLimit();
+
+              return;
+            }
+
+
+            if(
+              data.code ===
+              "ACCOUNT_NOT_ACTIVE"
+            ){
+
+              await endBroadcastForTimeLimit();
+
+              return;
+            }
+
+
+            console.warn(
+              "Broadcast heartbeat rejected:",
+              data
+            );
 
             return;
           }
 
 
-          audio.play()
-            .catch(
-              function(error){
+          if(
+            data.remainingSeconds !==
+            null &&
+            data.remainingSeconds !==
+            undefined
+          ){
 
-                console.error(
-                  "LiveBridge demo Azure playback failed:",
-                  error
-                );
-
-
-                finish();
-              }
+            maybeShowRemainingTimeWarning(
+              Number(
+                data.remainingSeconds
+              )
             );
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Broadcast room heartbeat failed:",
+            error
+          );
         }
+
+      },
+      30000
+    );
+}
+
+
+function stopBroadcastHeartbeat() {
+
+  if (broadcastHeartbeat) {
+
+    clearInterval(
+      broadcastHeartbeat
+    );
+
+    broadcastHeartbeat =
+      null;
+  }
+}
+
+
+/* =====================================================
+   RELEASE ROOM
+===================================================== */
+
+async function releaseBroadcastRoom() {
+
+  if (
+    !ROOM_ID ||
+    !roomReserved
+  ) {
+    return;
+  }
+
+  try {
+
+    const stopToken =
+      await getBroadcasterSessionToken();
+
+    if (!stopToken) {
+      return;
+    }
+
+    lastBroadcastAuthToken =
+      stopToken;
+
+    const response =
+      await fetch(
+        WORKER_URL +
+        "/broadcast-stop",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+
+            "Authorization":
+              "Bearer " +
+              stopToken
+          },
+
+          body: JSON.stringify({
+            room: ROOM_ID
+          }),
+
+          keepalive: true
+        }
+      );
+
+    const data =
+      await response.json();
+
+    console.log(
+      "LIVEBRIDGE BROADCAST SUMMARY:",
+      data
+    );
+
+    if (
+      response.ok &&
+      data.success &&
+      data.summary
+    ) {
+
+      showBroadcastSummary(
+        data.summary
+      );
+
+    } else {
+
+      console.warn(
+        "No broadcast summary returned:",
+        data
+      );
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Broadcast room release failed:",
+      error
+    );
+  }
+
+  roomReserved =
+    false;
+
+  lastBroadcastAuthToken =
+    null;
+}
+
+
+window.addEventListener(
+  "pagehide",
+  () => {
+
+    if (
+      !ROOM_ID ||
+      !roomReserved ||
+      !lastBroadcastAuthToken
+    ) {
+      return;
+    }
+
+    fetch(
+      WORKER_URL +
+      "/broadcast-stop",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+
+          "Authorization":
+            "Bearer " +
+            lastBroadcastAuthToken
+        },
+
+        body: JSON.stringify({
+          room: ROOM_ID
+        }),
+
+        keepalive: true
+      }
+    ).catch(
+      () => {}
+    );
+  }
+);
+
+
+/* =====================================================
+   RECORDING
+===================================================== */
+
+function recordNextChunk() {
+
+  if (
+    !broadcasting ||
+    !mediaStream
+  ) {
+    return;
+  }
+
+  const chunks = [];
+
+  mediaRecorder =
+    new MediaRecorder(
+      mediaStream
+    );
+
+  mediaRecorder.ondataavailable =
+    function(event) {
+
+      if (
+        event.data.size > 0
+      ) {
+
+        chunks.push(
+          event.data
+        );
+      }
+    };
+
+  mediaRecorder.onstop =
+    function() {
+
+      if (
+        chunks.length > 0
+      ) {
+
+        const audioBlob =
+          new Blob(
+            chunks,
+            {
+              type:
+                mediaRecorder.mimeType ||
+                "audio/webm"
+            }
+          );
+
+        sendAudioChunk(
+          audioBlob
+        );
+      }
+
+      if (broadcasting) {
+        recordNextChunk();
+      }
+    };
+
+  mediaRecorder.start();
+
+  setTimeout(
+    () => {
+
+      if (
+        mediaRecorder &&
+        mediaRecorder.state ===
+          "recording"
+      ) {
+
+        mediaRecorder.stop();
+      }
+
+    },
+    3000
+  );
+}
+
+
+/* =====================================================
+   TRANSCRIPTION + DELIVERY
+===================================================== */
+
+async function sendAudioChunk(
+  audioBlob
+) {
+
+  try {
+
+    const formData =
+      new FormData();
+
+    const inputLanguage =
+      document.getElementById(
+        "inputLanguage"
+      ).value;
+
+    formData.append(
+      "audio",
+      audioBlob,
+      "broadcast.webm"
+    );
+
+    formData.append(
+      "language",
+      inputLanguage
+    );
+
+    const response =
+      await fetch(
+        WORKER_URL +
+        "/transcribe-audio",
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+    const data =
+      await response.json();
+
+    console.log(
+      "TRANSCRIPTION:",
+      data
+    );
+
+    if (
+      !response.ok ||
+      !data.success ||
+      !data.text
+    ) {
+
+      if (data.error) {
+
+        console.error(
+          "Transcription failed:",
+          data.error
+        );
+      }
+
+      return;
+    }
+
+    showTranscription(
+      data.text
+    );
+
+    broadcastMessageId++;
+
+    const chunkId =
+      broadcastSessionId +
+      "-" +
+      broadcastMessageId;
+
+    const sourceToken =
+      await getBroadcasterSessionToken();
+
+    if (!sourceToken) {
+      console.error(
+        "LiveBridge session could not be verified for shared feed delivery."
+      );
+      return;
+    }
+
+    lastBroadcastAuthToken =
+      sourceToken;
+
+    const feedResponse =
+      await fetch(
+        WORKER_URL +
+        "/source-final",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+
+            "Authorization":
+              "Bearer " +
+              sourceToken
+          },
+
+          body: JSON.stringify({
+            room:
+              ROOM_ID,
+
+            text:
+              data.text,
+
+            chunkId,
+
+            sourceLanguage:
+              inputLanguage
+          })
+        }
+      );
+
+    const feedData =
+      await feedResponse.json();
+
+    console.log(
+      "LIVEBRIDGE SHARED FEED:",
+      feedData
+    );
+
+    if (
+      !feedResponse.ok ||
+      !feedData.success
+    ) {
+
+      console.error(
+        "Shared feed delivery failed:",
+        feedData
+      );
+
+      return;
+    }
+
+    const listeners =
+      Number(
+        feedData.listeners ||
+        0
+      );
+
+    if (
+      listeners > 0
+    ) {
+
+      messagesSentCount++;
+
+      document.getElementById(
+        "messagesSent"
+      ).textContent =
+        messagesSentCount;
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Audio upload / shared delivery failed:",
+      error
+    );
+  }
+}
+
+
+function showTranscription(
+  text
+) {
+
+  const transcriptBox =
+    document.getElementById(
+      "liveTranscript"
+    );
+
+  if (
+    transcriptBox.textContent.includes(
+      "Transcription will appear"
+    )
+  ) {
+
+    transcriptBox.innerHTML =
+      "";
+  }
+
+  const line =
+    document.createElement(
+      "div"
+    );
+
+  line.textContent =
+    text;
+
+  line.style.marginBottom =
+    "12px";
+
+  transcriptBox.appendChild(
+    line
+  );
+
+  transcriptBox.scrollTop =
+    transcriptBox.scrollHeight;
+}
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+function startBroadcastTimer() {
+
+  broadcastStartedAt =
+    Date.now();
+
+  clearInterval(
+    broadcastTimer
+  );
+
+  broadcastTimer =
+    setInterval(
+      () => {
+
+        const totalSeconds =
+          Math.floor(
+            (
+              Date.now() -
+              broadcastStartedAt
+            ) / 1000
+          );
+
+        const hours =
+          Math.floor(
+            totalSeconds /
+            3600
+          );
+
+        const minutes =
+          Math.floor(
+            (
+              totalSeconds %
+              3600
+            ) / 60
+          );
+
+        const seconds =
+          totalSeconds %
+          60;
+
+        const formatted =
+          String(hours)
+            .padStart(2,"0") +
+          ":" +
+          String(minutes)
+            .padStart(2,"0") +
+          ":" +
+          String(seconds)
+            .padStart(2,"0");
+
+        document.getElementById(
+          "elapsedTime"
+        ).textContent =
+          formatted;
+
+        document.getElementById(
+          "metricElapsed"
+        ).textContent =
+          formatted;
+
+      },
+      1000
+    );
+}
+
+
+function stopBroadcastTimer() {
+
+  clearInterval(
+    broadcastTimer
+  );
+
+  broadcastTimer =
+    null;
+}
+
+</script>
+
+
+<script>
+
+/* =====================================================
+   ROOM STATUS
+===================================================== */
+
+function startRoomStatusPolling() {
+
+  stopRoomStatusPolling();
+
+  updateRoomStatus();
+
+  roomStatusTimer =
+    setInterval(
+      updateRoomStatus,
+      3000
+    );
+}
+
+
+function stopRoomStatusPolling() {
+
+  if (roomStatusTimer) {
+
+    clearInterval(
+      roomStatusTimer
+    );
+
+    roomStatusTimer =
+      null;
+  }
+}
+
+
+async function updateRoomStatus() {
+
+  const currentRoom =
+    document
+      .getElementById(
+        "roomName"
+      )
+      .value
+      .trim()
+      .toUpperCase();
+
+  if (!currentRoom) {
+    return;
+  }
+
+  try {
+
+    const response =
+      await fetch(
+        WORKER_URL +
+        "/room-status?room=" +
+        encodeURIComponent(
+          currentRoom
+        )
+      );
+
+    const data =
+      await response.json();
+    try {
+
+  await fetch(
+    WORKER_URL +
+    "/analytics-live",
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type":
+          "application/json"
+      },
+
+      body: JSON.stringify({
+        room: currentRoom
+      })
+    }
+  );
+
+} catch (error) {
+
+  console.error(
+    "Live analytics update failed:",
+    error
+  );
+}
+
+    const status =
+      data.durableObject ||
+      data.roomStatus ||
+      data;
+
+    const listeners =
+      Number(
+        status.listeners ||
+        0
+      );
+
+    const languages =
+      status.languages &&
+      typeof status.languages ===
+        "object"
+        ? status.languages
+        : {};
+
+    const maxQueueDepth =
+      Number(
+        data.maxQueueDepth ||
+        0
+      );
+
+    const audioQueueBox =
+      document.getElementById(
+        "audioQueueStatus"
+      );
+
+    if (
+      maxQueueDepth === 0
+    ) {
+
+      audioQueueBox.style.background =
+        "rgba(34,197,94,.10)";
+
+      audioQueueBox.style.borderColor =
+        "rgba(34,197,94,.22)";
+
+      audioQueueBox.style.color =
+        "#5cf09a";
+
+      audioQueueBox.innerHTML =
+        `🟢 Audio Queue · Caught Up · <span id="audioQueueCount">0</span> waiting`;
+
+    } else if (
+      maxQueueDepth <= 2
+    ) {
+
+      audioQueueBox.style.background =
+        "rgba(234,179,8,.10)";
+
+      audioQueueBox.style.borderColor =
+        "rgba(234,179,8,.25)";
+
+      audioQueueBox.style.color =
+        "#facc15";
+
+      audioQueueBox.innerHTML =
+        `🟡 Audio Queue · Slight Delay · <span id="audioQueueCount">${maxQueueDepth}</span> waiting`;
+
+    } else {
+
+      audioQueueBox.style.background =
+        "rgba(239,68,68,.10)";
+
+      audioQueueBox.style.borderColor =
+        "rgba(239,68,68,.25)";
+
+      audioQueueBox.style.color =
+        "#f87171";
+
+      audioQueueBox.innerHTML =
+        `🔴 Audio Queue · Backlogged · <span id="audioQueueCount">${maxQueueDepth}</span> waiting`;
+    }
+
+    const languageEntries =
+      Object
+        .entries(
+          languages
+        )
+        .filter(
+          ([,count]) =>
+            Number(count) > 0
+        );
+
+    document.getElementById(
+      "viewerCount"
+    ).textContent =
+      listeners +
+      " / 50";
+
+    document.getElementById(
+      "viewerTop"
+    ).textContent =
+      listeners +
+      " / 50 Viewers";
+
+    document.getElementById(
+      "languageCount"
+    ).textContent =
+      languageEntries.length;
+
+    renderActiveLanguages(
+      languageEntries
+    );
+
+    renderListenerDistribution(
+      languageEntries,
+      listeners
+    );
+
+    renderConnectedActivity(
+      languageEntries
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Room status failed:",
+      error
+    );
+  }
+}
+
+
+/* =====================================================
+   LANGUAGE HELPERS
+===================================================== */
+
+function getLanguageName(
+  code
+) {
+
+  const names = {
+    en:"English",
+    fr:"French",
+    es:"Spanish",
+    de:"German",
+    pt:"Portuguese",
+    it:"Italian",
+    pl:"Polish",
+    ru:"Russian",
+    uk:"Ukrainian",
+    nl:"Dutch",
+    cs:"Czech",
+    fil:"Filipino (Tagalog)",
+    he:"Hebrew",
+    yo:"Yoruba",
+    ig:"Igbo",
+    ha:"Hausa"
+  };
+
+  return (
+    names[code] ||
+    String(code)
+      .toUpperCase()
+  );
+}
+
+
+function renderActiveLanguages(
+  languageEntries
+) {
+
+  const languageBox =
+    document.getElementById(
+      "activeLanguages"
+    );
+
+  if (
+    languageEntries.length ===
+    0
+  ) {
+
+    languageBox.innerHTML =
+      '<div class="lb-muted">No active listener languages yet.</div>';
+
+    return;
+  }
+
+  languageBox.innerHTML =
+    languageEntries
+      .map(
+        ([code,count]) => `
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:10px 0;
+            border-bottom:1px solid rgba(255,255,255,.08);
+          ">
+            <span>
+              🌎 ${getLanguageName(code)}
+            </span>
+
+            <strong>
+              ${Number(count)}
+            </strong>
+          </div>
+        `
+      )
+      .join("");
+}
+
+
+function renderListenerDistribution(
+  languageEntries,
+  totalListeners
+) {
+
+  const distributionBox =
+    document.querySelector(
+      ".lb-bottom-grid .lb-card:nth-child(3)"
+    );
+
+  if (!distributionBox) {
+    return;
+  }
+
+  if (
+    !totalListeners ||
+    languageEntries.length ===
+      0
+  ) {
+
+    distributionBox.innerHTML =
+      '<div class="lb-section-title">Listener Distribution</div><div class="lb-muted">No active listeners yet.</div>';
+
+    return;
+  }
+
+  const rows =
+    languageEntries
+      .map(
+        ([code,count]) => {
+
+          const numericCount =
+            Number(count);
+
+          const percentage =
+            Math.round(
+              (
+                numericCount /
+                totalListeners
+              ) * 100
+            );
+
+          return `
+            <div style="
+              margin-bottom:16px;
+            ">
+
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                margin-bottom:7px;
+                font-size:14px;
+              ">
+                <span>
+                  ${getLanguageName(code)}
+                </span>
+
+                <strong>
+                  ${numericCount} · ${percentage}%
+                </strong>
+              </div>
+
+              <div style="
+                height:8px;
+                background:rgba(255,255,255,.08);
+                border-radius:20px;
+                overflow:hidden;
+              ">
+
+                <div style="
+                  width:${percentage}%;
+                  height:100%;
+                  background:linear-gradient(90deg,#34d4bd,#2897ff,#9b4dff);
+                  border-radius:20px;
+                ">
+                </div>
+
+              </div>
+
+            </div>
+          `;
+        }
+      )
+      .join("");
+
+  distributionBox.innerHTML =
+    '<div class="lb-section-title">Listener Distribution</div>' +
+    rows;
+}
+
+
+/* =====================================================
+   JOIN / DISCONNECT ACTIVITY
+===================================================== */
+
+function renderConnectedActivity(
+  languageEntries
+) {
+
+  const currentCounts =
+    Object.fromEntries(
+      languageEntries.map(
+        ([code,count]) => [
+          code,
+          Number(count)
+        ]
+      )
+    );
+
+  const allLanguages =
+    new Set([
+      ...Object.keys(
+        previousListenerCounts
+      ),
+      ...Object.keys(
+        currentCounts
+      )
+    ]);
+
+  for (
+    const code of allLanguages
+  ) {
+
+    const before =
+      previousListenerCounts[
+        code
+      ] || 0;
+
+    const now =
+      currentCounts[
+        code
+      ] || 0;
+
+    const difference =
+      now - before;
+
+    if (
+      difference > 0
+    ) {
+
+      addListenerActivity(
+        "joinedActivity",
+        `🌎 ${getLanguageName(code)} · ${difference}`
+      );
+    }
+
+    if (
+      difference < 0
+    ) {
+
+      addListenerActivity(
+        "disconnectedActivity",
+        `🌎 ${getLanguageName(code)} · ${Math.abs(difference)}`
+      );
+    }
+  }
+
+  previousListenerCounts =
+    currentCounts;
+}
+
+
+function addListenerActivity(
+  targetId,
+  text
+) {
+
+  const box =
+    document.getElementById(
+      targetId
+    );
+
+  if (!box) {
+    return;
+  }
+
+  if (
+    box.textContent.includes(
+      "None yet"
+    )
+  ) {
+
+    box.innerHTML =
+      "";
+  }
+
+  const row =
+    document.createElement(
+      "div"
+    );
+
+  row.className =
+    "lb-activity-row";
+
+  row.textContent =
+    text;
+
+  box.prepend(
+    row
+  );
+}
+
+
+/* =====================================================
+   EMAIL
+===================================================== */
+
+function askForBroadcastEmail() {
+
+  return new Promise(
+    resolve => {
+
+      const overlay =
+        document.createElement(
+          "div"
+        );
+
+      overlay.innerHTML = `
+        <div style="
+          position:fixed;
+          inset:0;
+          background:rgba(0,0,0,.72);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          z-index:999999;
+          padding:20px;
+        ">
+
+          <div style="
+            width:100%;
+            max-width:430px;
+            background:#101d2d;
+            border:1px solid rgba(255,255,255,.15);
+            border-radius:18px;
+            padding:24px;
+            color:white;
+            box-shadow:0 25px 70px rgba(0,0,0,.5);
+          ">
+
+            <div style="
+              font-size:22px;
+              font-weight:900;
+              margin-bottom:6px;
+            ">
+              LiveBridge Email
+            </div>
+
+            <div style="
+              color:#9fb1c7;
+              margin-bottom:18px;
+            ">
+              Send your full transcript + AI notes
+            </div>
+
+            <input
+              id="lbBroadcastEmailInput"
+              type="email"
+              placeholder="Email address"
+              style="
+                width:100%;
+                padding:14px;
+                border-radius:10px;
+                border:1px solid rgba(255,255,255,.15);
+                background:#07111f;
+                color:white;
+                font-size:16px;
+                margin-bottom:14px;
+              "
+            >
+
+            <div style="
+              display:flex;
+              gap:10px;
+            ">
+
+              <button
+                id="lbBroadcastEmailCancel"
+                style="
+                  flex:1;
+                  padding:13px;
+                  border-radius:10px;
+                  border:1px solid rgba(255,255,255,.15);
+                  background:#16283d;
+                  color:white;
+                  cursor:pointer;
+                "
+              >
+                Cancel
+              </button>
+
+              <button
+                id="lbBroadcastEmailSend"
+                style="
+                  flex:1;
+                  padding:13px;
+                  border:0;
+                  border-radius:10px;
+                  background:linear-gradient(135deg,#2588ff,#6f43df);
+                  color:white;
+                  font-weight:800;
+                  cursor:pointer;
+                "
+              >
+                Send Email
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+      document.body.appendChild(
+        overlay
+      );
+
+      const input =
+        overlay.querySelector(
+          "#lbBroadcastEmailInput"
+        );
+
+      input.focus();
+
+      overlay
+        .querySelector(
+          "#lbBroadcastEmailCancel"
+        )
+        .onclick =
+          () => {
+
+            overlay.remove();
+
+            resolve(
+              null
+            );
+          };
+
+      overlay
+        .querySelector(
+          "#lbBroadcastEmailSend"
+        )
+        .onclick =
+          () => {
+
+            const email =
+              input.value.trim();
+
+            if (!email) {
+              return;
+            }
+
+            overlay.remove();
+
+            resolve(
+              email
+            );
+          };
+
+      input.addEventListener(
+        "keydown",
+        event => {
+
+          if (
+            event.key ===
+            "Enter"
+          ) {
+
+            overlay
+              .querySelector(
+                "#lbBroadcastEmailSend"
+              )
+              .click();
+          }
+        }
+      );
+    }
+  );
+}
+
+
+async function emailBroadcastTranscript() {
+
+  const transcriptBox =
+    document.getElementById(
+      "liveTranscript"
+    );
+
+  const transcript =
+    transcriptBox.innerText.trim();
+
+  if (
+    !transcript ||
+    transcript.includes(
+      "Transcription will appear here once broadcasting begins."
+    )
+  ) {
+
+    alert(
+      "There is no transcript to email yet."
+    );
+
+    return;
+  }
+
+  const email =
+    await askForBroadcastEmail();
+
+  if (!email) {
+    return;
+  }
+
+  const language =
+    document.getElementById(
+      "inputLanguage"
+    ).value;
+
+  try {
+
+    emailBroadcastButton.disabled =
+      true;
+
+    emailBroadcastButton.textContent =
+      "Sending...";
+
+    const response =
+      await fetch(
+        WORKER_URL +
+        "/email-transcript",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            email,
+            transcript,
+            language
+          })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+
+      throw new Error(
+        data.error ||
+        "Email failed."
+      );
+    }
+
+    alert(
+      "Transcript and AI notes sent successfully!"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Broadcast email failed:",
+      error
+    );
+
+    alert(
+      "The email could not be sent. Please try again."
+    );
+
+  } finally {
+
+    emailBroadcastButton.disabled =
+      false;
+
+    emailBroadcastButton.textContent =
+      "✉ Email Transcript & AI Notes";
+  }
+}
+
+
+/* =====================================================
+   LISTENER LINK
+===================================================== */
+
+  function updateBroadcasterSharePanel() {
+
+  const room =
+    document
+      .getElementById("roomName")
+      .value
+      .trim()
+      .toUpperCase();
+
+  const listenerURL =
+    LISTENER_BASE_URL +
+    "?room=" +
+    encodeURIComponent(room);
+
+  window.currentBroadcasterListenerURL =
+    listenerURL;
+
+  document.getElementById(
+    "shareRoomName"
+  ).textContent =
+    room;
+
+  document.getElementById(
+    "shareRoomURL"
+  ).textContent =
+    listenerURL;
+
+  document.getElementById(
+    "shareRoomQR"
+  ).src =
+    "https://api.qrserver.com/v1/create-qr-code/" +
+    "?size=300x300" +
+    "&margin=5" +
+    "&data=" +
+    encodeURIComponent(
+      listenerURL
+    );
+}
+
+
+document.getElementById(
+  "shareCopyButton"
+).addEventListener(
+  "click",
+  async function() {
+
+    const url =
+      window.currentBroadcasterListenerURL;
+
+    try {
+
+      await navigator.clipboard
+        .writeText(url);
+
+      const oldText =
+        this.textContent;
+
+      this.textContent =
+        "✓ Copied";
+
+      setTimeout(
+        () => {
+          this.textContent =
+            oldText;
+        },
+        1800
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Share copy failed:",
+        error
+      );
+
+      alert(
+        "Listener link: " +
+        url
+      );
+    }
+  }
+);
+
+
+const shareInviteTranslations = {
+  en:{title:"Join Our Live Broadcast Now",subtitle:"Listen in your own language",message:"We’re live now. Join our LiveBridge broadcast and listen in your own language.",room:"ROOM"},
+  fr:{title:"Rejoignez notre diffusion en direct",subtitle:"Écoutez dans votre propre langue",message:"Nous sommes en direct. Rejoignez notre diffusion LiveBridge et écoutez dans votre propre langue.",room:"SALLE"},
+  es:{title:"Únase a nuestra transmisión en vivo",subtitle:"Escuche en su propio idioma",message:"Estamos en vivo. Únase a nuestra transmisión de LiveBridge y escuche en su propio idioma.",room:"SALA"},
+  de:{title:"Jetzt unserer Live-Übertragung beitreten",subtitle:"Hören Sie in Ihrer eigenen Sprache",message:"Wir sind jetzt live. Treten Sie unserer LiveBridge-Übertragung bei und hören Sie in Ihrer eigenen Sprache.",room:"RAUM"},
+  pt:{title:"Entre na nossa transmissão ao vivo",subtitle:"Ouça no seu próprio idioma",message:"Estamos ao vivo. Entre na nossa transmissão LiveBridge e ouça no seu próprio idioma.",room:"SALA"},
+  it:{title:"Partecipa alla nostra diretta",subtitle:"Ascolta nella tua lingua",message:"Siamo in diretta. Partecipa alla nostra trasmissione LiveBridge e ascolta nella tua lingua.",room:"STANZA"},
+  nl:{title:"Doe nu mee met onze live-uitzending",subtitle:"Luister in uw eigen taal",message:"We zijn nu live. Doe mee met onze LiveBridge-uitzending en luister in uw eigen taal.",room:"KAMER"},
+  pl:{title:"Dołącz do naszej transmisji na żywo",subtitle:"Słuchaj w swoim języku",message:"Jesteśmy na żywo. Dołącz do transmisji LiveBridge i słuchaj w swoim języku.",room:"POKÓJ"},
+  uk:{title:"Приєднуйтесь до нашої прямої трансляції",subtitle:"Слухайте своєю мовою",message:"Ми вже в ефірі. Приєднуйтесь до трансляції LiveBridge і слухайте своєю мовою.",room:"КІМНАТА"},
+  ru:{title:"Присоединяйтесь к нашей прямой трансляции",subtitle:"Слушайте на своем языке",message:"Мы уже в эфире. Присоединяйтесь к трансляции LiveBridge и слушайте на своем языке.",room:"КОМНАТА"},
+  ar:{title:"انضم إلى البث المباشر الآن",subtitle:"استمع بلغتك الخاصة",message:"نحن على الهواء الآن. انضم إلى بث LiveBridge واستمع بلغتك الخاصة.",room:"الغرفة"},
+  zh:{title:"立即加入我们的直播",subtitle:"用您自己的语言收听",message:"我们正在直播。加入 LiveBridge 直播，用您自己的语言收听。",room:"房间"},
+  ja:{title:"ライブ配信に今すぐ参加",subtitle:"あなたの言語でお聴きください",message:"現在ライブ配信中です。LiveBridgeに参加して、あなたの言語でお聴きください。",room:"ルーム"},
+  ko:{title:"지금 라이브 방송에 참여하세요",subtitle:"자신의 언어로 들으세요",message:"지금 라이브 중입니다. LiveBridge 방송에 참여해 자신의 언어로 들으세요.",room:"방"},
+  hi:{title:"अभी हमारे लाइव प्रसारण से जुड़ें",subtitle:"अपनी भाषा में सुनें",message:"हम अभी लाइव हैं। हमारे LiveBridge प्रसारण से जुड़ें और अपनी भाषा में सुनें।",room:"रूम"}
+};
+
+function wrapInviteText(ctx,text,maxWidth){
+  const words=String(text).split(/\s+/), lines=[];
+  let line="";
+  for(const word of words){
+    const test=line?line+" "+word:word;
+    if(ctx.measureText(test).width>maxWidth && line){lines.push(line);line=word;}
+    else line=test;
+  }
+  if(line) lines.push(line);
+  return lines;
+}
+
+async function makeShareInviteGraphic(){
+  const lang=document.getElementById("shareInviteLanguage")?.value||"en";
+  const t=shareInviteTranslations[lang]||shareInviteTranslations.en;
+  const room=document.getElementById("roomName").value.trim().toUpperCase();
+  const org=document.getElementById("broadcasterOrganization")?.textContent?.trim()||"LiveBridge Organization";
+  const url=window.currentBroadcasterListenerURL;
+
+  const qr=new Image();
+  qr.crossOrigin="anonymous";
+  qr.src="https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=8&data="+encodeURIComponent(url);
+  await new Promise((resolve,reject)=>{qr.onload=resolve;qr.onerror=reject;});
+
+  const canvas=document.createElement("canvas");
+  canvas.width=1600; canvas.height=1000;
+  const ctx=canvas.getContext("2d");
+
+  const g=ctx.createLinearGradient(0,0,1600,1000);
+  g.addColorStop(0,"#061325"); g.addColorStop(.65,"#0a2747"); g.addColorStop(1,"#04111e");
+  ctx.fillStyle=g; ctx.fillRect(0,0,1600,1000);
+
+  ctx.font="900 70px Arial";
+  ctx.fillStyle="#fff"; ctx.fillText("Live",70,105);
+  ctx.fillStyle="#42f5a1"; ctx.fillText("Bridge",205,105);
+
+  ctx.font="700 20px Arial"; ctx.fillStyle="#90a9c4"; ctx.fillText(org,72,145);
+
+  ctx.font="900 78px Arial"; ctx.fillStyle="#fff";
+  let y=275;
+  for(const line of wrapInviteText(ctx,t.title,930)){ctx.fillText(line,70,y);y+=88;}
+
+  ctx.font="700 46px Arial"; ctx.fillStyle="#42f5a1";
+  for(const line of wrapInviteText(ctx,t.subtitle,900)){ctx.fillText(line,72,y);y+=56;}
+
+  ctx.fillStyle="#fff"; ctx.beginPath(); ctx.roundRect(1110,180,365,365,24); ctx.fill();
+  ctx.drawImage(qr,1132,202,321,321);
+  ctx.font="800 26px Arial"; ctx.fillStyle="#fff"; ctx.fillText("Scan QR to join live",1130,600);
+
+  ctx.fillStyle="rgba(3,19,34,.82)"; ctx.strokeStyle="#24d98b"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.roundRect(70,700,1460,165,24); ctx.fill(); ctx.stroke();
+
+  ctx.font="800 20px Arial"; ctx.fillStyle="#42f5a1"; ctx.fillText(t.room,105,742);
+  ctx.font="900 44px Arial"; ctx.fillStyle="#fff"; ctx.fillText(room,105,805);
+
+  ctx.fillStyle="#42f5a1";
+  let urlFontSize=25;
+  let urlLines=[];
+
+  while(urlFontSize>=17){
+    ctx.font="700 "+urlFontSize+"px Arial";
+    urlLines=wrapInviteText(ctx,url,1000);
+
+    if(
+      urlLines.length<=2 &&
+      (
+        !urlLines[0] ||
+        ctx.measureText(urlLines[0]).width<=1000
+      )
+    ){
+      break;
+    }
+
+    urlFontSize-=2;
+  }
+
+  if(
+    urlLines.length===1 &&
+    ctx.measureText(urlLines[0]).width>1000
+  ){
+    const pieces=String(url)
+      .replace(/([/?&=])/g,"$1 ")
+      .split(/\s+/)
+      .filter(Boolean);
+
+    let line="";
+    urlLines=[];
+
+    pieces.forEach(piece=>{
+      const test=line?line+piece:piece;
+
+      if(
+        ctx.measureText(test).width>1000 &&
+        line
+      ){
+        urlLines.push(line);
+        line=piece;
+      }else{
+        line=test;
+      }
+    });
+
+    if(line){
+      urlLines.push(line);
+    }
+  }
+
+  urlLines.slice(0,2).forEach(
+    (line,i)=>{
+      ctx.fillText(
+        line,
+        430,
+        755+(i*(urlFontSize+8))
+      );
+    }
+  );
+
+  ctx.font="700 20px Arial"; ctx.fillStyle="#91a8c0";
+  ctx.fillText("English  •  Français  •  Español  •  Deutsch  •  Português  •  中文  •  العربية  •  + many more",74,930);
+
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png",.96));
+
+  return {
+    canvas, blob,
+    filename:"LiveBridge-"+room+"-"+lang+".png",
+    message:t.message+"\n\n"+org+"\n"+t.room+": "+room+"\n"+url
+  };
+}
+
+async function previewShareInvite(){
+  const generated=await makeShareInviteGraphic();
+  document.getElementById("shareInvitePreviewImage").src=generated.canvas.toDataURL("image/png");
+  document.getElementById("shareInvitePreview").classList.add("show");
+  window.currentShareInvite=generated;
+  return generated;
+}
+
+document.getElementById("shareInviteLanguage")?.addEventListener("change",async()=>{
+  if(document.getElementById("shareInvitePreview")?.classList.contains("show")){
+    await previewShareInvite();
+  }
+});
+
+document.getElementById(
+  "shareSendButton"
+).addEventListener(
+  "click",
+  async function() {
+    try{
+      const generated=await previewShareInvite();
+      const file=new File([generated.blob],generated.filename,{type:"image/png"});
+
+      if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({
+          title:"LiveBridge Live Room",
+          text:generated.message,
+          files:[file]
+        });
+        return;
+      }
+
+      if(navigator.share){
+        await navigator.share({
+          title:"LiveBridge Live Room",
+          text:generated.message,
+          url:window.currentBroadcasterListenerURL
+        });
+        return;
+      }
+
+      await navigator.clipboard.writeText(generated.message);
+      alert("Invite text copied. The share graphic is shown below.");
+    }catch(error){
+      if(error?.name!=="AbortError"){
+        console.error("LiveBridge invite sharing failed:",error);
+        alert("The invite preview is shown below.");
+      }
+    }
+  }
+);
+
+document.getElementById("shareInviteDownloadButton")?.addEventListener("click",async function(){
+  const generated=window.currentShareInvite||await previewShareInvite();
+  const link=document.createElement("a");
+  link.href=generated.canvas.toDataURL("image/png");
+  link.download=generated.filename;
+  link.click();
+});
+
+document.getElementById("shareInviteCopyTextButton")?.addEventListener("click",async function(){
+  const generated=window.currentShareInvite||await previewShareInvite();
+  await navigator.clipboard.writeText(generated.message);
+  const old=this.textContent; this.textContent="✓ Copied";
+  setTimeout(()=>this.textContent=old,1500);
+});
+
+
+document.getElementById(
+  "shareOpenButton"
+).addEventListener(
+  "click",
+  function() {
+
+    window.open(
+      window.currentBroadcasterListenerURL,
+      "_blank"
+    );
+  }
+);
+async function copyListenerLink(
+  button
+) {
+
+  const roomName =
+    document
+      .getElementById(
+        "roomName"
+      )
+      .value
+      .trim()
+      .toUpperCase();
+
+  const listenerURL =
+    LISTENER_BASE_URL +
+    "?room=" +
+    encodeURIComponent(
+      roomName
+    );
+
+  try {
+
+    await navigator.clipboard
+      .writeText(
+        listenerURL
+      );
+
+    const originalText =
+      button.textContent;
+
+    button.textContent =
+      "✓ Link Copied!";
+
+    setTimeout(
+      () => {
+
+        button.textContent =
+          originalText;
+
+      },
+      2000
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Copy link failed:",
+      error
+    );
+
+    alert(
+      "Listener link: " +
+      listenerURL
+    );
+  }
+}
+
+
+document
+  .getElementById(
+    "viewListenerPageButton"
+  )
+  .addEventListener(
+    "click",
+    function(event) {
+
+      event.preventDefault();
+
+      const roomName =
+        document
+          .getElementById(
+            "roomName"
+          )
+          .value
+          .trim()
+          .toUpperCase();
+
+      window.open(
+        LISTENER_BASE_URL +
+        "?room=" +
+        encodeURIComponent(
+          roomName
+        ),
+        "_blank"
+      );
+    }
+  );
+
+
+/* =====================================================
+   BROADCAST SUMMARY
+===================================================== */
+
+function formatLiveBridgeDuration(
+  ms
+) {
+
+  const totalSeconds =
+    Math.max(
+      0,
+      Math.round(
+        Number(ms || 0) /
+        1000
+      )
+    );
+
+  const hours =
+    Math.floor(
+      totalSeconds /
+      3600
+    );
+
+  const minutes =
+    Math.floor(
+      (
+        totalSeconds %
+        3600
+      ) / 60
+    );
+
+  const seconds =
+    totalSeconds %
+    60;
+
+  if (
+    hours > 0
+  ) {
+
+    return (
+      hours +
+      "h " +
+      minutes +
+      "m"
+    );
+  }
+
+  if (
+    minutes > 0
+  ) {
+
+    return (
+      minutes +
+      "m " +
+      seconds +
+      "s"
+    );
+  }
+
+  return (
+    seconds +
+    "s"
+  );
+}
+
+
+function showBroadcastSummary(
+  summary
+) {
+
+  if (!summary) {
+    return;
+  }
+
+  const card =
+    document.getElementById(
+      "broadcastSummaryCard"
+    );
+
+  if (!card) {
+    return;
+  }
+
+  document.getElementById(
+    "summaryTotalListeners"
+  ).textContent =
+    summary.totalListeners ||
+    0;
+
+  document.getElementById(
+    "summaryPeakListeners"
+  ).textContent =
+    summary.peakListeners ||
+    0;
+
+  document.getElementById(
+    "summaryTotalListening"
+  ).textContent =
+    formatLiveBridgeDuration(
+      summary.totalListeningMs
+    );
+
+  document.getElementById(
+    "summaryAverageListening"
+  ).textContent =
+    formatLiveBridgeDuration(
+      summary.averageListeningMs
+    );
+
+  document.getElementById(
+    "summaryBroadcastDuration"
+  ).textContent =
+    formatLiveBridgeDuration(
+      summary.durationMs
+    );
+
+  document.getElementById(
+    "broadcastSummarySubtitle"
+  ).textContent =
+    "Room " +
+    (summary.room || "") +
+    " • Completed broadcast";
+
+  const languages =
+    document.getElementById(
+      "summaryLanguages"
+    );
+
+  languages.innerHTML =
+    "";
+
+  if (
+    !summary.languages ||
+    summary.languages.length ===
+      0
+  ) {
+
+    languages.innerHTML =
+      '<div class="lb-summary-language-row"><span>No listener languages recorded</span><span>—</span></div>';
+
+  } else {
+
+    summary.languages.forEach(
+      item => {
+
+        const row =
+          document.createElement(
+            "div"
+          );
+
+        row.className =
+          "lb-summary-language-row";
+
+        const left =
+          document.createElement(
+            "span"
+          );
+
+        left.textContent =
+          String(
+            item.language ||
+            ""
+          )
+          .toUpperCase() +
+          " • " +
+          (
+            item.listeners ||
+            0
+          ) +
+          " listener" +
+          (
+            (
+              item.listeners ||
+              0
+            ) === 1
+              ? ""
+              : "s"
+          );
+
+        const right =
+          document.createElement(
+            "span"
+          );
+
+        right.textContent =
+          "Avg " +
+          formatLiveBridgeDuration(
+            item.averageListeningMs
+          );
+
+        row.appendChild(
+          left
+        );
+
+        row.appendChild(
+          right
+        );
+
+        languages.appendChild(
+          row
+        );
+      }
+    );
+  }
+
+  card.hidden =
+    false;
+
+  card.scrollIntoView({
+    behavior:
+      "smooth",
+
+    block:
+      "start"
+  });
+}
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+window.addEventListener(
+  "load",
+  initializeLiveBridgeBroadcaster
+);
+
+</script>
+
+
+<style>
+/* =====================================================
+   LIVEBRIDGE BASIC / ADVANCED VIEW
+   UI-ONLY ADD-ON
+   Does not modify broadcaster, audio, room, or API logic.
+===================================================== */
+
+#lbViewModeBar{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  padding:18px 18px 0;
+  background:#07111f;
+}
+
+#lbViewModeBar .lb-view-switch{
+  width:min(470px,100%);
+  display:flex;
+  gap:14px;
+}
+
+#lbViewModeBar .lb-view-button{
+  flex:1;
+  min-height:82px;
+  border-radius:17px;
+  border:1px solid rgba(255,255,255,.13);
+  background:#101d2d;
+  color:#8fa6bd;
+  cursor:pointer;
+  font-family:Arial,Helvetica,sans-serif;
+  font-weight:900;
+  transition:.18s ease;
+}
+
+#lbViewModeBar .lb-view-button:hover{
+  transform:translateY(-2px);
+  border-color:rgba(40,151,255,.45);
+}
+
+#lbViewModeBar .lb-view-button.active{
+  color:white;
+  border-color:rgba(40,151,255,.60);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(37,136,255,.24),
+      rgba(111,67,223,.24)
+    ),
+    #101d2d;
+  box-shadow:0 12px 32px rgba(0,0,0,.24);
+}
+
+#lbViewModeBar .lb-view-icon{
+  display:block;
+  font-size:27px;
+  line-height:1;
+  margin-bottom:7px;
+}
+
+#lbViewModeBar .lb-view-title{
+  display:block;
+  font-size:16px;
+}
+
+#lbViewModeBar .lb-view-sub{
+  display:block;
+  margin-top:4px;
+  color:#718aa3;
+  font-size:10px;
+  font-weight:700;
+}
+
+
+/* BASIC MODE ONLY */
+
+.lb-dashboard.lb-basic-mode .lb-basic-hide{
+  display:none !important;
+}
+
+.lb-dashboard.lb-basic-mode .lb-content-grid{
+  display:none !important;
+}
+
+.lb-dashboard.lb-basic-mode .lb-share-room{
+  display:none !important;
+}
+
+.lb-dashboard.lb-basic-mode .lb-banner{
+  display:none !important;
+}
+
+.lb-dashboard.lb-basic-mode .lb-metrics{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.lb-dashboard.lb-basic-mode .lb-metrics > .lb-card:nth-child(3),
+.lb-dashboard.lb-basic-mode .lb-metrics > .lb-card:nth-child(4){
+  display:none !important;
+}
+
+.lb-dashboard.lb-basic-mode .lb-bottom-grid{
+  grid-template-columns:1fr;
+  max-width:720px;
+}
+
+.lb-dashboard.lb-basic-mode .lb-bottom-grid > .lb-card:nth-child(2),
+.lb-dashboard.lb-basic-mode .lb-bottom-grid > .lb-card:nth-child(3){
+  display:none !important;
+}
+
+
+/* Broadcast summary stays available after broadcast. */
+
+
+@media(max-width:600px){
+
+  #lbViewModeBar{
+    padding:12px 12px 0;
+  }
+
+  #lbViewModeBar .lb-view-switch{
+    gap:8px;
+  }
+
+  #lbViewModeBar .lb-view-button{
+    min-height:72px;
+    padding:9px 7px;
+  }
+
+  #lbViewModeBar .lb-view-icon{
+    font-size:23px;
+  }
+
+  .lb-dashboard.lb-basic-mode .lb-metrics{
+    grid-template-columns:1fr 1fr;
+  }
+}
+</style>
+
+
+<script>
+(function(){
+
+  function installLiveBridgeViewMode(){
+
+    const dashboard =
+      document.querySelector(
+        ".lb-dashboard"
+      );
+
+    if(!dashboard){
+      return;
+    }
+
+
+    /* Prevent duplicate installation. */
+
+    if(
+      document.getElementById(
+        "lbViewModeBar"
+      )
+    ){
+      return;
+    }
+
+
+    /* Mark only visual controls that Basic mode should hide.
+       Nothing is removed and no broadcaster logic is changed. */
+
+    const inputLanguage =
+      document.getElementById(
+        "inputLanguage"
+      );
+
+    const audioInput =
+      document.getElementById(
+        "audioInput"
+      );
+
+
+    if(inputLanguage){
+
+      inputLanguage.classList.add(
+        "lb-basic-hide"
+      );
+
+      const label =
+        inputLanguage.previousElementSibling;
+
+      if(
+        label &&
+        label.classList.contains(
+          "lb-label"
+        )
+      ){
+        label.classList.add(
+          "lb-basic-hide"
+        );
+      }
+    }
+
+
+    if(audioInput){
+
+      audioInput.classList.add(
+        "lb-basic-hide"
+      );
+
+      const label =
+        audioInput.previousElementSibling;
+
+      if(
+        label &&
+        label.classList.contains(
+          "lb-label"
+        )
+      ){
+        label.classList.add(
+          "lb-basic-hide"
+        );
+      }
+    }
+
+
+    /* Quick Tips */
+
+    document
+      .querySelectorAll(
+        ".lb-sidebar .lb-muted"
+      )
+      .forEach(
+        function(item){
+
+          if(
+            item.textContent.includes(
+              "Quick Tips"
+            )
+          ){
+            item.classList.add(
+              "lb-basic-hide"
+            );
+          }
+        }
+      );
+
+
+    /* Pause button only */
+
+    document
+      .querySelectorAll(
+        ".lb-sidebar-actions .lb-btn"
+      )
+      .forEach(
+        function(button){
+
+          if(
+            button.textContent.includes(
+              "Pause Broadcast"
+            )
+          ){
+            button.classList.add(
+              "lb-basic-hide"
+            );
+          }
+        }
+      );
+
+
+    /* Create view selector ABOVE the original dashboard.
+       The original dashboard stays exactly where it is. */
+
+    const bar =
+      document.createElement(
+        "div"
+      );
+
+    bar.id =
+      "lbViewModeBar";
+
+    bar.innerHTML = `
+      <div
+        class="lb-view-switch"
+        aria-label="Broadcaster view"
+      >
+
+        <button
+          type="button"
+          id="lbBasicViewButton"
+          class="lb-view-button active"
+          aria-pressed="true"
+        >
+          <span class="lb-view-icon">⚡</span>
+          <span class="lb-view-title">Basic</span>
+          <span class="lb-view-sub">
+            Simple Broadcast View
+          </span>
+        </button>
+
+
+        <button
+          type="button"
+          id="lbAdvancedViewButton"
+          class="lb-view-button"
+          aria-pressed="false"
+        >
+          <span class="lb-view-icon">⚙️</span>
+          <span class="lb-view-title">Advanced</span>
+          <span class="lb-view-sub">
+            Full Dashboard
+          </span>
+        </button>
+
+      </div>
+    `;
+
+
+    dashboard.parentNode.insertBefore(
+      bar,
+      dashboard
+    );
+
+
+    const basicButton =
+      document.getElementById(
+        "lbBasicViewButton"
+      );
+
+    const advancedButton =
+      document.getElementById(
+        "lbAdvancedViewButton"
+      );
+
+
+    function setView(mode){
+
+      const basic =
+        mode !== "advanced";
+
+
+      dashboard.classList.toggle(
+        "lb-basic-mode",
+        basic
+      );
+
+
+      basicButton.classList.toggle(
+        "active",
+        basic
+      );
+
+
+      advancedButton.classList.toggle(
+        "active",
+        !basic
+      );
+
+
+      basicButton.setAttribute(
+        "aria-pressed",
+        basic ? "true" : "false"
+      );
+
+
+      advancedButton.setAttribute(
+        "aria-pressed",
+        basic ? "false" : "true"
+      );
+    }
+
+
+    basicButton.addEventListener(
+      "click",
+      function(){
+        setView(
+          "basic"
+        );
+      }
+    );
+
+
+    advancedButton.addEventListener(
+      "click",
+      function(){
+        setView(
+          "advanced"
+        );
+      }
+    );
+
+
+    /* Default every page load to Basic. */
+
+    setView(
+      "basic"
+    );
+  }
+
+
+  /*
+    Embed #4 may execute before or after Clerk initialization.
+    The DOM already exists because this embed is placed after
+    the original three embeds.
+  */
+
+  if(
+    document.readyState ===
+    "loading"
+  ){
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      installLiveBridgeViewMode
+    );
+
+  } else {
+
+    installLiveBridgeViewMode();
+  }
+
+})();
+</script>
+
+
+<!-- LiveBridge /sunday ADMIN-ONLY Microphone Mute Add-On v2 -->
+<style>
+  #lbAdminMicMuteWrap{
+    display:none;
+    margin-top:10px;
+  }
+
+  #lbAdminMicMuteButton{
+    width:100%;
+    min-height:52px;
+    border:0;
+    border-radius:12px;
+    cursor:pointer;
+    background:linear-gradient(135deg,#f59e0b,#d97706);
+    color:#fff;
+    font-size:15px;
+    font-weight:900;
+    box-shadow:0 10px 24px rgba(0,0,0,.18);
+  }
+
+  #lbAdminMicMuteButton.lb-muted{
+    background:linear-gradient(135deg,#475569,#334155);
+  }
+</style>
+
+<script>
+(function(){
+
+  const WORKER =
+    "https://livebridge.northstarventures-ca.workers.dev";
+
+  let adminVerified =
+    false;
+
+  let capturedBroadcastStream =
+    null;
+
+  let micMuted =
+    false;
+
+  /*
+    IMPORTANT:
+    The broadcaster's mediaStream is declared with "let" in another
+    Webflow Embed, so a separate Embed cannot read it directly.
+
+    Instead we safely wrap getUserMedia and remember the stream that
+    is created when Start Broadcasting is pressed.
+  */
+  const originalGetUserMedia =
+    navigator.mediaDevices
+      .getUserMedia
+      .bind(
+        navigator.mediaDevices
+      );
+
+
+  navigator.mediaDevices.getUserMedia =
+    async function(constraints){
+
+      const stream =
+        await originalGetUserMedia(
+          constraints
+        );
+
+
+      const broadcastButton =
+        document.getElementById(
+          "broadcastButton"
+        );
+
+
+      /*
+        The page also briefly opens a permission stream while loading
+        microphone choices. Only keep the stream when the broadcaster
+        is in its Start/Checking/End broadcast flow.
+      */
+      const buttonText =
+        String(
+          broadcastButton
+            ?.textContent ||
+          ""
+        ).trim();
+
+
+      if(
+        buttonText ===
+          "Checking Room..." ||
+        buttonText ===
+          "Start Broadcasting" ||
+        buttonText ===
+          "End Broadcast"
+      ){
+
+        capturedBroadcastStream =
+          stream;
+      }
+
+
+      return stream;
+    };
+
+
+  function getBroadcastButton(){
+    return document.getElementById(
+      "broadcastButton"
+    );
+  }
+
+
+  function createMuteButton(){
+
+    if(
+      document.getElementById(
+        "lbAdminMicMuteWrap"
+      )
+    ){
+      return;
+    }
+
+
+    const broadcastButton =
+      getBroadcastButton();
+
+
+    if(!broadcastButton){
+      return;
+    }
+
+
+    const wrap =
+      document.createElement(
+        "div"
+      );
+
+
+    wrap.id =
+      "lbAdminMicMuteWrap";
+
+
+    wrap.innerHTML = `
+      <button
+        type="button"
+        id="lbAdminMicMuteButton"
+      >
+        🔇 MUTE MICROPHONE
+      </button>
+    `;
+
+
+    broadcastButton
+      .insertAdjacentElement(
+        "afterend",
+        wrap
+      );
+
+
+    document.getElementById(
+      "lbAdminMicMuteButton"
+    ).onclick =
+      toggleMute;
+  }
+
+
+  async function getClerkToken(){
+
+    try{
+
+      if(
+        !window.Clerk
+      ){
+        return null;
+      }
+
+
+      const sessions =
+        Clerk.client?.sessions ||
+        Clerk.client?.signedInSessions ||
+        [];
+
+
+      let session =
+        Clerk.session ||
+        sessions.find(
+          item =>
+            item.status ===
+            "active"
+        ) ||
+        sessions[0] ||
+        null;
+
+
+      if(!session){
+        return null;
+      }
+
+
+      if(
+        Clerk.session?.id !==
+        session.id
+      ){
+
+        await Clerk.setActive({
+          session:
+            session.id
+        });
+      }
+
+
+      return await session.getToken();
+
+
+    }catch(error){
+
+      console.error(
+        "Admin mute Clerk token error:",
+        error
+      );
+
+      return null;
+    }
+  }
+
+
+  async function verifyAdmin(){
+
+    try{
+
+      const token =
+        await getClerkToken();
+
+
+      if(!token){
+        return false;
+      }
+
+
+      const response =
+        await fetch(
+          WORKER +
+          "/admin/me",
+          {
+            headers:{
+              "Authorization":
+                "Bearer " +
+                token
+            }
+          }
+        );
+
+
+      if(!response.ok){
+        return false;
+      }
+
+
+      const data =
+        await response.json();
+
+
+      return (
+        data.success ===
+        true
       );
 
 
     }catch(error){
 
       console.error(
-        "LiveBridge demo Azure TTS failed:",
+        "Admin mute verification failed:",
         error
       );
+
+      return false;
     }
   }
 
 
-  function appendDemoLine(
-    text
+  function isBroadcastingNow(){
+
+    const button =
+      getBroadcastButton();
+
+
+    if(!button){
+      return false;
+    }
+
+
+    return (
+      String(
+        button.textContent ||
+        ""
+      )
+      .trim() ===
+      "End Broadcast"
+    );
+  }
+
+
+  function findActiveBroadcastStream(){
+
+    if(
+      capturedBroadcastStream &&
+      capturedBroadcastStream
+        .getAudioTracks()
+        .some(
+          track =>
+            track.readyState ===
+            "live"
+        )
+    ){
+      return capturedBroadcastStream;
+    }
+
+
+    return null;
+  }
+
+
+  function renderMuteState(){
+
+    const button =
+      document.getElementById(
+        "lbAdminMicMuteButton"
+      );
+
+
+    if(!button){
+      return;
+    }
+
+
+    button.classList.toggle(
+      "lb-muted",
+      micMuted
+    );
+
+
+    button.textContent =
+      micMuted
+        ? "🎙 UNMUTE MICROPHONE"
+        : "🔇 MUTE MICROPHONE";
+  }
+
+
+  function toggleMute(){
+
+    if(
+      !adminVerified ||
+      !isBroadcastingNow()
+    ){
+      return;
+    }
+
+
+    const stream =
+      findActiveBroadcastStream();
+
+
+    if(!stream){
+      console.warn(
+        "LiveBridge admin mute: active broadcaster stream not found."
+      );
+
+      return;
+    }
+
+
+    micMuted =
+      !micMuted;
+
+
+    stream
+      .getAudioTracks()
+      .forEach(
+        track => {
+
+          track.enabled =
+            !micMuted;
+        }
+      );
+
+
+    renderMuteState();
+  }
+
+
+  function watch(){
+
+    const wrap =
+      document.getElementById(
+        "lbAdminMicMuteWrap"
+      );
+
+
+    if(!wrap){
+      return;
+    }
+
+
+    const live =
+      adminVerified &&
+      isBroadcastingNow();
+
+
+    wrap.style.display =
+      live
+        ? "block"
+        : "none";
+
+
+    if(!live){
+
+      if(micMuted){
+
+        const stream =
+          findActiveBroadcastStream();
+
+
+        stream
+          ?.getAudioTracks()
+          .forEach(
+            track => {
+
+              track.enabled =
+                true;
+            }
+          );
+      }
+
+
+      micMuted =
+        false;
+
+
+      renderMuteState();
+    }
+  }
+
+
+  async function init(){
+
+    createMuteButton();
+
+
+    /*
+      Clerk can finish loading after Webflow code.
+      Retry briefly instead of removing the button too early.
+    */
+    for(
+      let attempt = 0;
+      attempt < 20;
+      attempt += 1
+    ){
+
+      adminVerified =
+        await verifyAdmin();
+
+
+      if(adminVerified){
+        break;
+      }
+
+
+      await new Promise(
+        resolve =>
+          setTimeout(
+            resolve,
+            300
+          )
+      );
+    }
+
+
+    if(
+      !adminVerified
+    ){
+
+      document.getElementById(
+        "lbAdminMicMuteWrap"
+      )?.remove();
+
+      return;
+    }
+
+
+    setInterval(
+      watch,
+      200
+    );
+
+
+    watch();
+  }
+
+
+  if(
+    document.readyState ===
+    "loading"
   ){
 
-    const box =
-      document.getElementById(
-        "lbDemoTranscript"
-      );
-
-
-    if(
-      box.textContent.includes(
-        "Press Start Demo"
-      )
-    ){
-      box.innerHTML =
-        "";
-    }
-
-
-    const line =
-      document.createElement(
-        "div"
-      );
-
-
-    line.className =
-      "lb-demo-line";
-
-
-    line.textContent =
-      text;
-
-
-    box.appendChild(
-      line
+    document.addEventListener(
+      "DOMContentLoaded",
+      init
     );
 
 
-    box.scrollTop =
-      box.scrollHeight;
+  }else{
+
+    init();
   }
-
-
-  async function runDemoLine(){
-
-    if(!demoRunning){
-      return;
-    }
-
-
-    const language =
-      document.getElementById(
-        "lbDemoLanguage"
-      ).value;
-
-
-    const lines =
-      demoData[language];
-
-
-    if(
-      demoIndex >=
-      lines.length
-    ){
-
-      demoIndex = 0;
-
-
-      document.getElementById(
-        "lbDemoTranscript"
-      ).innerHTML =
-        "";
-
-
-      demoTimer =
-        setTimeout(
-          runDemoLine,
-          900
-        );
-
-
-      return;
-    }
-
-
-    const text =
-      lines[demoIndex];
-
-
-    appendDemoLine(
-      text
-    );
-
-
-    demoIndex++;
-
-
-    if(
-      audioEnabled
-    ){
-
-      /*
-        No fixed 6.5-second timer anymore.
-        The next sentence waits only until THIS Azure sentence
-        finishes speaking, then starts after a tiny natural pause.
-      */
-      await speakDemoLine(
-        text,
-        language
-      );
-
-
-      if(!demoRunning){
-        return;
-      }
-
-
-      demoTimer =
-        setTimeout(
-          runDemoLine,
-          275
-        );
-
-
-    }else{
-
-      /*
-        If audio is turned off, leave enough time to read each line,
-        but don't use the old fixed 6.5-second delay.
-      */
-      const readingDelay =
-        Math.max(
-          1700,
-          Math.min(
-            3600,
-            900 +
-            (
-              text.length *
-              24
-            )
-          )
-        );
-
-
-      demoTimer =
-        setTimeout(
-          runDemoLine,
-          readingDelay
-        );
-    }
-  }
-
-
-  function startDemo(){
-
-    clearDemo();
-
-
-    document.getElementById(
-      "lbDemoTranscript"
-    ).innerHTML =
-      "";
-
-
-    demoRunning =
-      true;
-
-
-    document.getElementById(
-      "lbDemoStart"
-    ).textContent =
-      "↻ Restart Demo";
-
-
-    runDemoLine();
-  }
-
-
-  document.getElementById(
-    "lbLaunchDemo"
-  ).addEventListener(
-    "click",
-    function(){
-
-      modal.classList.add(
-        "open"
-      );
-
-
-      document.body.style.overflow =
-        "hidden";
-    }
-  );
-
-
-  document.getElementById(
-    "lbDemoClose"
-  ).addEventListener(
-    "click",
-    function(){
-
-      clearDemo();
-
-
-      modal.classList.remove(
-        "open"
-      );
-
-
-      document.body.style.overflow =
-        "";
-    }
-  );
-
-
-  document.getElementById(
-    "lbDemoStart"
-  ).addEventListener(
-    "click",
-    startDemo
-  );
-
-
-  document.getElementById(
-    "lbDemoLanguage"
-  ).addEventListener(
-    "change",
-    function(){
-
-      document.getElementById(
-        "lbDemoLanguagePill"
-      ).textContent =
-        "Language: " +
-        languageNames[
-          this.value
-        ];
-
-
-      if(demoRunning){
-        startDemo();
-      }
-    }
-  );
-
-
-  document.getElementById(
-    "lbDemoAudioToggle"
-  ).addEventListener(
-    "click",
-    function(){
-
-      audioEnabled =
-        !audioEnabled;
-
-
-      this.textContent =
-        audioEnabled
-          ? "🔊 Audio On"
-          : "🔇 Audio Off";
-
-
-      if(!audioEnabled){
-
-        if(
-          "speechSynthesis" in window
-        ){
-          speechSynthesis.cancel();
-        }
-
-
-        stopAzureDemoAudio();
-
-      } else if(demoRunning){
-
-        const language =
-          document.getElementById(
-            "lbDemoLanguage"
-          ).value;
-
-
-        const lines =
-          demoData[language];
-
-
-        const currentIndex =
-          Math.max(
-            0,
-            demoIndex - 1
-          );
-
-
-        if(lines[currentIndex]){
-
-          speakDemoLine(
-            lines[currentIndex],
-            language
-          );
-        }
-      }
-    }
-  );
-
-
-  modal.addEventListener(
-    "click",
-    function(event){
-
-      if(
-        event.target === modal
-      ){
-
-        clearDemo();
-
-
-        modal.classList.remove(
-          "open"
-        );
-
-
-        document.body.style.overflow =
-          "";
-      }
-    }
-  );
 
 })();
 </script>
-
-</div>
-</div>
 
 </body>
 </html>
