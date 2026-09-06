@@ -1413,31 +1413,12 @@ listenerAudioButton.addEventListener("click", () => {
           };
 
           /*
-            Start generating the Azure MP3 immediately when the
-            translation arrives, even if the previous clip is still
-            speaking. Playback remains strictly one-at-a-time below.
+            Queue the translation immediately. Audio is prepared with
+            ONE-CLIP LOOKAHEAD by processListenerQueue instead of
+            pre-generating the entire backlog. This lets catch-up speed
+            react to the CURRENT queue depth and makes voice changes
+            take effect within roughly one queued clip.
           */
-          if (
-            !listenerAudioMuted &&
-            typeof listenerAudioPreparer ===
-              "function"
-          ) {
-
-            queueItem.preparedPromise =
-              listenerAudioPreparer(
-                translatedText,
-                ttsLang
-              ).catch(
-                error => {
-                  console.error(
-                    "Azure pre-generation failed:",
-                    error
-                  );
-                  return null;
-                }
-              );
-          }
-
           listenerDisplayQueue.push(
             queueItem
           );
@@ -2956,12 +2937,20 @@ Keep the existing listener embeds unchanged.
 
       let catchUpBoost = 0;
 
+      /*
+        Stronger real-time catch-up. Because only the next clip is
+        pre-generated, this rate is recalculated as the queue changes
+        instead of being frozen into a long backlog of already-created
+        MP3 files.
+      */
       if (pendingDepth >= 8) {
+        catchUpBoost = 0.40;
+      } else if (pendingDepth >= 5) {
+        catchUpBoost = 0.30;
+      } else if (pendingDepth >= 3) {
         catchUpBoost = 0.20;
-      } else if (pendingDepth >= 4) {
+      } else if (pendingDepth >= 1) {
         catchUpBoost = 0.10;
-      } else if (pendingDepth >= 2) {
-        catchUpBoost = 0.05;
       }
 
       const effectiveSpeechRate =
@@ -3347,6 +3336,41 @@ Keep the existing listener embeds unchanged.
                 await prepareAzureAudio(
                   translatedText,
                   queuedTtsLang
+                );
+            }
+          }
+
+          /*
+            ONE-CLIP LOOKAHEAD:
+            While the current prepared MP3 is about to play, start
+            preparing ONLY the next queued item. This hides Azure
+            generation time without freezing the speed/voice settings
+            for a long backlog.
+          */
+          if (
+            !listenerAudioMuted &&
+            listenerDisplayQueue.length > 0
+          ) {
+            const nextItem =
+              listenerDisplayQueue[0];
+
+            if (
+              typeof nextItem !== "string" &&
+              nextItem &&
+              !nextItem.preparedPromise
+            ) {
+              nextItem.preparedPromise =
+                prepareAzureAudio(
+                  String(nextItem.text || ""),
+                  nextItem.ttsLang || queuedTtsLang
+                ).catch(
+                  error => {
+                    console.error(
+                      "Azure one-clip pre-generation failed:",
+                      error
+                    );
+                    return null;
+                  }
                 );
             }
           }
