@@ -1961,12 +1961,6 @@ const emailBroadcastButton =
     "emailBroadcastButton"
   );
 
-emailBroadcastButton.addEventListener(
-  "click",
-  emailBroadcastTranscript
-);
-
-
 /* =====================================================
    PAGE-OPEN BROADCAST SCHEDULER
    The page must remain open. This scheduler intentionally
@@ -4796,6 +4790,11 @@ async function emailBroadcastTranscript() {
       "✉ Email Transcript & AI Notes";
   }
 }
+
+emailBroadcastButton.addEventListener(
+  "click",
+  emailBroadcastTranscript
+);
 
 
 /* =====================================================
