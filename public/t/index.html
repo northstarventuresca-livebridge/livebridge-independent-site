@@ -564,6 +564,15 @@
   let listenerDisplayQueue = [];
 let listenerQueueRunning = false;
 
+/*
+  v1.0.1 queue pipeline:
+  Azure audio preparation is exposed to the live message handler so
+  the NEXT translated clip can be generated while the CURRENT clip
+  is still playing. This removes TTS-generation time from the serial
+  playback bottleneck without allowing audio overlap.
+*/
+let listenerAudioPreparer = null;
+
 async function processListenerQueue(ttsLang) {
 
   if (listenerQueueRunning) return;
@@ -572,8 +581,18 @@ async function processListenerQueue(ttsLang) {
 
   while (listenerDisplayQueue.length > 0) {
 
-    const translatedText =
+    const queueItem =
       listenerDisplayQueue.shift();
+
+    const translatedText =
+      typeof queueItem === "string"
+        ? queueItem
+        : String(queueItem?.text || "");
+
+    const queuedTtsLang =
+      typeof queueItem === "string"
+        ? ttsLang
+        : (queueItem?.ttsLang || ttsLang);
 
     const line =
       document.createElement("div");
@@ -591,7 +610,7 @@ async function processListenerQueue(ttsLang) {
     if (!listenerAudioMuted) {
       await speakListenerText(
         translatedText,
-        ttsLang
+        queuedTtsLang
       );
     }
   }
@@ -1387,8 +1406,40 @@ listenerAudioButton.addEventListener("click", () => {
           fullTranslatedTranscript +=
             translatedText + "\n\n";
 
+          const queueItem = {
+            text: translatedText,
+            ttsLang,
+            preparedPromise: null
+          };
+
+          /*
+            Start generating the Azure MP3 immediately when the
+            translation arrives, even if the previous clip is still
+            speaking. Playback remains strictly one-at-a-time below.
+          */
+          if (
+            !listenerAudioMuted &&
+            typeof listenerAudioPreparer ===
+              "function"
+          ) {
+
+            queueItem.preparedPromise =
+              listenerAudioPreparer(
+                translatedText,
+                ttsLang
+              ).catch(
+                error => {
+                  console.error(
+                    "Azure pre-generation failed:",
+                    error
+                  );
+                  return null;
+                }
+              );
+          }
+
           listenerDisplayQueue.push(
-            translatedText
+            queueItem
           );
 
           processListenerQueue(
@@ -2892,6 +2943,36 @@ Keep the existing listener embeds unchanged.
         .trim()
         .toUpperCase();
 
+      /*
+        Adaptive catch-up speed. The organization's configured rate
+        remains the base. A small temporary boost is added only when
+        audio is beginning to queue, so sustained speech cannot drift
+        farther and farther behind the live speaker.
+      */
+      const pendingDepth =
+        listenerDisplayQueue.length +
+        (listenerQueueRunning ? 1 : 0) +
+        1;
+
+      let catchUpBoost = 0;
+
+      if (pendingDepth >= 8) {
+        catchUpBoost = 0.20;
+      } else if (pendingDepth >= 4) {
+        catchUpBoost = 0.10;
+      } else if (pendingDepth >= 2) {
+        catchUpBoost = 0.05;
+      }
+
+      const effectiveSpeechRate =
+        Math.round(
+          Math.min(
+            1.50,
+            listenerSpeechRate +
+              catchUpBoost
+          ) * 100
+        ) / 100;
+
       const response =
         await fetch(
           AZURE_WORKER +
@@ -2913,7 +2994,7 @@ Keep the existing listener embeds unchanged.
                 locale:
                   ttsLang,
                 rate:
-                  listenerSpeechRate
+                  effectiveSpeechRate
               })
           }
         );
@@ -3069,6 +3150,15 @@ Keep the existing listener embeds unchanged.
   }
 
 
+  /*
+    Expose the Azure preparer to the WebSocket message handler above.
+    This is what lets incoming audio pre-generate during current
+    playback instead of waiting its turn to start generation.
+  */
+  listenerAudioPreparer =
+    prepareAzureAudio;
+
+
   async function playPreparedAudio(
     prepared
   ) {
@@ -3203,8 +3293,30 @@ Keep the existing listener embeds unchanged.
           0
         ) {
 
-          const translatedText =
+          const queueItem =
             listenerDisplayQueue.shift();
+
+          const translatedText =
+            typeof queueItem ===
+              "string"
+              ? queueItem
+              : String(
+                  queueItem?.text ||
+                  ""
+                );
+
+          const queuedTtsLang =
+            typeof queueItem ===
+              "string"
+              ? ttsLang
+              : (
+                  queueItem?.ttsLang ||
+                  ttsLang
+                );
+
+          if (!translatedText) {
+            continue;
+          }
 
           let prepared =
             null;
@@ -3213,11 +3325,30 @@ Keep the existing listener embeds unchanged.
             !listenerAudioMuted
           ) {
 
-            prepared =
-              await prepareAzureAudio(
-                translatedText,
-                ttsLang
-              );
+            /*
+              Normally this promise already started the moment the
+              WebSocket translation arrived, while the prior clip was
+              playing. Awaiting it here therefore adds little or no
+              extra delay.
+            */
+            if (
+              typeof queueItem !==
+                "string" &&
+              queueItem?.preparedPromise
+            ) {
+
+              prepared =
+                await queueItem
+                  .preparedPromise;
+
+            } else {
+
+              prepared =
+                await prepareAzureAudio(
+                  translatedText,
+                  queuedTtsLang
+                );
+            }
           }
 
           const line =
@@ -3255,6 +3386,20 @@ Keep the existing listener embeds unchanged.
 
         listenerQueueRunning =
           false;
+
+        /*
+          A translation can arrive in the tiny window between the last
+          loop check and listenerQueueRunning being cleared. If that
+          happened, immediately restart the queue.
+        */
+        if (
+          listenerDisplayQueue.length >
+          0
+        ) {
+          processListenerQueue(
+            ttsLang
+          );
+        }
       }
     };
 
