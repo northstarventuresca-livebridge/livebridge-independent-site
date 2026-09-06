@@ -1517,7 +1517,86 @@ listenerAudioButton.addEventListener("click", () => {
     "change",
     async function () {
 
-      await hardRejoinListenerForLanguageChange();
+      if (
+        !ROOM_ID
+      ) {
+        return;
+      }
+
+      document.getElementById(
+        "listenerStatus"
+      ).textContent =
+        "Switching language…";
+
+      document.getElementById(
+        "listenerDot"
+      ).classList.remove("live");
+
+      /*
+        Stop old-language audio and queued items first.
+      */
+      window.speechSynthesis?.cancel();
+
+      if (
+        typeof stopAzureAudio ===
+        "function"
+      ) {
+        try {
+          stopAzureAudio();
+        } catch {}
+      }
+
+      listenerDisplayQueue = [];
+      listenerQueueRunning = false;
+
+      /*
+        Fully release the old listener connection.
+      */
+      listenerConnectionWanted = false;
+      clearListenerReconnectTimer();
+
+      if (listenerSocket) {
+        try {
+          listenerSocket.onopen = null;
+          listenerSocket.onmessage = null;
+          listenerSocket.onerror = null;
+          listenerSocket.onclose = null;
+          listenerSocket.__lbIntentionalClose = true;
+          listenerSocket.close();
+        } catch {}
+        listenerSocket = null;
+      }
+
+      try {
+        stopListenerTracking();
+      } catch {}
+
+      /*
+        Give the old socket a moment to close, then perform the
+        exact same Join Live Room action that works manually.
+      */
+      await new Promise(
+        resolve =>
+          setTimeout(
+            resolve,
+            500
+          )
+      );
+
+      const joinButton =
+        document.getElementById(
+          "joinRoomButton"
+        );
+
+      if (joinButton) {
+        joinButton.click();
+      } else {
+        /*
+          Fallback in case the button ID ever changes.
+        */
+        listenerConnectionWanted = true;
+        await joinLiveRoom();
+      }
     }
   );
 
