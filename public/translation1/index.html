@@ -990,6 +990,105 @@ listenerAudioButton.addEventListener("click", () => {
     }
   }
 
+  async function hardRejoinListenerForLanguageChange() {
+
+    if (
+      !listenerConnectionWanted ||
+      !ROOM_ID
+    ) {
+      return;
+    }
+
+    document.getElementById(
+      "listenerStatus"
+    ).textContent =
+      "Switching language…";
+
+    document.getElementById(
+      "listenerDot"
+    ).classList.remove("live");
+
+    /*
+      Stop any old-language audio immediately.
+    */
+    window.speechSynthesis?.cancel();
+
+    if (
+      typeof stopAzureAudio ===
+      "function"
+    ) {
+      try {
+        stopAzureAudio();
+      } catch {}
+    }
+
+    /*
+      Clear anything waiting locally from the old language.
+    */
+    listenerDisplayQueue = [];
+    listenerQueueRunning = false;
+
+    /*
+      Stop reconnect watchdogs from racing this deliberate rejoin.
+    */
+    listenerConnectionWanted = false;
+    clearListenerReconnectTimer();
+    listenerReconnectInProgress = false;
+    listenerReconnectAttempts = 0;
+
+    /*
+      Destroy the old socket completely.
+    */
+    if (listenerSocket) {
+
+      try {
+        listenerSocket.onopen = null;
+        listenerSocket.onmessage = null;
+        listenerSocket.onerror = null;
+        listenerSocket.onclose = null;
+        listenerSocket.__lbIntentionalClose = true;
+        listenerSocket.close();
+      } catch {}
+
+      listenerSocket = null;
+    }
+
+    /*
+      Close the old listener analytics session.
+    */
+    try {
+      stopListenerTracking();
+    } catch {}
+
+    /*
+      Fresh listener identity = fresh server-side language subscription.
+    */
+    listenerSessionId =
+      createListenerSessionId();
+
+    /*
+      Small pause gives the Durable Object / server side enough time
+      to release the previous socket before we subscribe again.
+    */
+    await new Promise(
+      resolve =>
+        setTimeout(
+          resolve,
+          450
+        )
+    );
+
+    listenerConnectionWanted = true;
+
+    await joinLiveRoom({
+      preserveTranscript: true,
+      preserveSession: true,
+      reconnect: false
+    });
+
+    refreshListenerShare();
+  }
+
 
   function closeListenerSocketIntentionally() {
 
@@ -1418,76 +1517,7 @@ listenerAudioButton.addEventListener("click", () => {
     "change",
     async function () {
 
-      if (
-        !listenerConnectionWanted ||
-        !ROOM_ID
-      ) {
-        return;
-      }
-
-      document.getElementById(
-        "listenerStatus"
-      ).textContent =
-        "Switching language…";
-
-      document.getElementById(
-        "listenerDot"
-      ).classList.remove("live");
-
-      /*
-        Stop anything still playing from the old language.
-      */
-      window.speechSynthesis?.cancel();
-
-      if (
-        typeof stopAzureAudio ===
-        "function"
-      ) {
-        try {
-          stopAzureAudio();
-        } catch {}
-      }
-
-      listenerDisplayQueue = [];
-      listenerQueueRunning = false;
-
-      /*
-        Fully shut down the old listener subscription first.
-      */
-      listenerConnectionWanted = false;
-
-      clearListenerReconnectTimer();
-
-      if (listenerSocket) {
-        try {
-          listenerSocket.__lbIntentionalClose = true;
-          listenerSocket.close();
-        } catch {}
-        listenerSocket = null;
-      }
-
-      stopListenerTracking();
-
-      /*
-        Create a fresh listener identity so the backend cannot
-        continue using the old language subscription.
-      */
-      listenerSessionId =
-        createListenerSessionId();
-
-      listenerConnectionWanted = true;
-
-      /*
-        Fresh rejoin of the same room using the newly selected
-        language. No manual Join button or page refresh required.
-      */
-      await joinLiveRoom({
-        preserveTranscript: true,
-        preserveSession: true,
-        reconnect: false
-      });
-
-      refreshListenerShare();
+      await hardRejoinListenerForLanguageChange();
     }
   );
 
