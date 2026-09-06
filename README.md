@@ -1,6 +1,6 @@
 # LiveBridge Independent Site
 
-This repository contains ONLY the independent static LiveBridge website. 
+This repository contains ONLY the independent static LiveBridge website.  
 
 ## Included
 - Landing page
