@@ -1425,16 +1425,6 @@ listenerAudioButton.addEventListener("click", () => {
         return;
       }
 
-      /*
-        A language change is treated as a brand-new listener
-        subscription for the same room.
-
-        This is intentionally different from an ordinary socket
-        reconnect. Reusing the previous listenerSessionId can leave
-        the server-side listener subscription associated with the
-        previous language until the page is manually refreshed.
-      */
-
       document.getElementById(
         "listenerStatus"
       ).textContent =
@@ -1445,8 +1435,7 @@ listenerAudioButton.addEventListener("click", () => {
       ).classList.remove("live");
 
       /*
-        Stop anything still speaking in the old language and discard
-        any old-language items that were waiting locally.
+        Stop anything still playing from the old language.
       */
       window.speechSynthesis?.cancel();
 
@@ -1454,30 +1443,48 @@ listenerAudioButton.addEventListener("click", () => {
         typeof stopAzureAudio ===
         "function"
       ) {
-        stopAzureAudio();
+        try {
+          stopAzureAudio();
+        } catch {}
       }
 
       listenerDisplayQueue = [];
       listenerQueueRunning = false;
 
       /*
-        End the old analytics/listener session and create a fresh
-        listener identity for the newly selected language. This
-        matches what a full page refresh previously accomplished,
-        but happens invisibly in the background.
+        Fully shut down the old listener subscription first.
       */
+      listenerConnectionWanted = false;
+
+      clearListenerReconnectTimer();
+
+      if (listenerSocket) {
+        try {
+          listenerSocket.__lbIntentionalClose = true;
+          listenerSocket.close();
+        } catch {}
+        listenerSocket = null;
+      }
+
       stopListenerTracking();
 
+      /*
+        Create a fresh listener identity so the backend cannot
+        continue using the old language subscription.
+      */
       listenerSessionId =
         createListenerSessionId();
 
-      clearListenerReconnectTimer();
-      closeListenerSocketIntentionally();
+      listenerConnectionWanted = true;
 
+      /*
+        Fresh rejoin of the same room using the newly selected
+        language. No manual Join button or page refresh required.
+      */
       await joinLiveRoom({
         preserveTranscript: true,
         preserveSession: true,
-        reconnect: true
+        reconnect: false
       });
 
       refreshListenerShare();
