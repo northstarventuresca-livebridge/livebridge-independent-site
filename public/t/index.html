@@ -565,8 +565,8 @@
 let listenerQueueRunning = false;
 
 /*
-  v1.0.1 queue pipeline:
-  Azure audio preparation is exposed to the live message handler so
+  v1.0.3 queue pipeline:
+  Azure audio preparation uses cache-stable MP3s and one-clip lookahead so
   the NEXT translated clip can be generated while the CURRENT clip
   is still playing. This removes TTS-generation time from the serial
   playback bottleneck without allowing audio overlap.
@@ -2925,42 +2925,16 @@ Keep the existing listener embeds unchanged.
         .toUpperCase();
 
       /*
-        Adaptive catch-up speed. The organization's configured rate
-        remains the base. A small temporary boost is added only when
-        audio is beginning to queue, so sustained speech cannot drift
-        farther and farther behind the live speaker.
+        v1.0.3 CACHE-STABLE AUDIO:
+        Always ask Azure for the SAME base-rate MP3 for identical
+        text + language + voice. This lets listeners share the R2/DO
+        cache instead of generating separate MP3s merely because
+        their local queue depths differ.
+
+        Catch-up speed is now applied locally at PLAYBACK time below,
+        so it can react instantly without creating another Azure file.
       */
-      const pendingDepth =
-        listenerDisplayQueue.length +
-        (listenerQueueRunning ? 1 : 0) +
-        1;
-
-      let catchUpBoost = 0;
-
-      /*
-        Stronger real-time catch-up. Because only the next clip is
-        pre-generated, this rate is recalculated as the queue changes
-        instead of being frozen into a long backlog of already-created
-        MP3 files.
-      */
-      if (pendingDepth >= 8) {
-        catchUpBoost = 0.40;
-      } else if (pendingDepth >= 5) {
-        catchUpBoost = 0.30;
-      } else if (pendingDepth >= 3) {
-        catchUpBoost = 0.20;
-      } else if (pendingDepth >= 1) {
-        catchUpBoost = 0.10;
-      }
-
-      const effectiveSpeechRate =
-        Math.round(
-          Math.min(
-            1.50,
-            listenerSpeechRate +
-              catchUpBoost
-          ) * 100
-        ) / 100;
+      const azureSynthesisRate = 1.00;
 
       const response =
         await fetch(
@@ -2983,7 +2957,7 @@ Keep the existing listener embeds unchanged.
                 locale:
                   ttsLang,
                 rate:
-                  effectiveSpeechRate
+                  azureSynthesisRate
               })
           }
         );
@@ -3177,6 +3151,63 @@ Keep the existing listener embeds unchanged.
 
         azureAudio =
           audio;
+
+        /*
+          v1.0.3 LOCAL REAL-TIME CATCH-UP
+
+          The MP3 itself is cached at a fixed Azure rate. Playback speed
+          is decided NOW from this listener's current backlog.
+
+          Benefits:
+          - same-language/same-voice listeners reuse identical Azure audio
+          - adding listeners does not fragment the cache by queue depth
+          - catch-up can change immediately from clip to clip
+          - no regeneration is required just to play faster
+        */
+        const pendingDepth =
+          listenerDisplayQueue.length +
+          1;
+
+        let catchUpMultiplier =
+          1.00;
+
+        if (pendingDepth >= 12) {
+          catchUpMultiplier = 1.45;
+        } else if (pendingDepth >= 8) {
+          catchUpMultiplier = 1.35;
+        } else if (pendingDepth >= 5) {
+          catchUpMultiplier = 1.25;
+        } else if (pendingDepth >= 3) {
+          catchUpMultiplier = 1.15;
+        } else if (pendingDepth >= 1) {
+          catchUpMultiplier = 1.08;
+        }
+
+        const localPlaybackRate =
+          Math.max(
+            0.75,
+            Math.min(
+              1.70,
+              Number(listenerSpeechRate || 1.15) *
+                catchUpMultiplier
+            )
+          );
+
+        try {
+          audio.defaultPlaybackRate =
+            localPlaybackRate;
+
+          audio.playbackRate =
+            localPlaybackRate;
+
+          if ("preservesPitch" in audio) {
+            audio.preservesPitch = true;
+          }
+
+          if ("webkitPreservesPitch" in audio) {
+            audio.webkitPreservesPitch = true;
+          }
+        } catch (error) {}
 
         let finished =
           false;
