@@ -1192,7 +1192,7 @@ const WORKER_URL =
   "https://livebridge.northstarventures-ca.workers.dev";
 
 const LISTENER_BASE_URL =
-  window.location.origin + "/translation1";
+  window.location.origin + "/t/";
 
 let ROOM_ID = "";
 let broadcastHeartbeat = null;
@@ -4589,9 +4589,67 @@ async function makeShareInviteGraphic(){
   ctx.font="800 20px Arial"; ctx.fillStyle="#42f5a1"; ctx.fillText(t.room,105,742);
   ctx.font="900 44px Arial"; ctx.fillStyle="#fff"; ctx.fillText(room,105,805);
 
-  ctx.font="700 25px Arial"; ctx.fillStyle="#42f5a1";
-  const urlLines=wrapInviteText(ctx,url,1000).slice(0,2);
-  urlLines.forEach((line,i)=>ctx.fillText(line,430,760+(i*34)));
+  ctx.fillStyle="#42f5a1";
+  let urlFontSize=25;
+  let urlLines=[];
+
+  while(urlFontSize>=17){
+    ctx.font="700 "+urlFontSize+"px Arial";
+    urlLines=wrapInviteText(ctx,url,1000);
+
+    if(
+      urlLines.length<=2 &&
+      (
+        !urlLines[0] ||
+        ctx.measureText(urlLines[0]).width<=1000
+      )
+    ){
+      break;
+    }
+
+    urlFontSize-=2;
+  }
+
+  if(
+    urlLines.length===1 &&
+    ctx.measureText(urlLines[0]).width>1000
+  ){
+    const pieces=String(url)
+      .replace(/([/?&=])/g,"$1 ")
+      .split(/\s+/)
+      .filter(Boolean);
+
+    let line="";
+    urlLines=[];
+
+    pieces.forEach(piece=>{
+      const test=line?line+piece:piece;
+
+      if(
+        ctx.measureText(test).width>1000 &&
+        line
+      ){
+        urlLines.push(line);
+        line=piece;
+      }else{
+        line=test;
+      }
+    });
+
+    if(line){
+      urlLines.push(line);
+    }
+  }
+
+  urlLines.slice(0,2).forEach(
+    (line,i)=>{
+      ctx.fillText(
+        line,
+        430,
+        755+(i*(urlFontSize+8))
+      );
+    }
+  );
 
   ctx.font="700 20px Arial"; ctx.fillStyle="#91a8c0";
   ctx.fillText("English  •  Français  •  Español  •  Deutsch  •  Português  •  中文  •  العربية  •  + many more",74,930);
