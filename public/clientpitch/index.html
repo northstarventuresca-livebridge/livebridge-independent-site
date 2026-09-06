@@ -1002,22 +1002,77 @@ body{margin:0;background:#07111f;color:white;font-family:Arial,Helvetica,sans-se
 
 
       /*
-        Queue all complete phrases into LiveBridge quickly.
+        IMPORTANT:
+        Do NOT dump the entire prerecorded transcript into the room
+        in the first few seconds.
 
-        /translation1 still speaks them strictly one-at-a-time, so this
-        does NOT overlap or duplicate speech. It simply keeps the next
-        sentence waiting in the listener queue instead of waiting several
-        seconds for /clientpitch to submit it.
+        When every phrase is sent immediately, a listener who changes
+        language halfway through the recording has already received
+        the remaining queue in the OLD language. Reconnecting cannot
+        retroactively change those already-delivered messages.
+
+        Instead, send phrases progressively across the actual duration
+        of the source recording. That keeps future phrases "live", so a
+        listener can change language mid-file and the next incoming
+        phrases are delivered using the newly selected language.
       */
+
+      const phraseWeights =
+        phrases.map(
+          phrase =>
+            Math.max(
+              1,
+              phrase
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean)
+                .length
+            )
+        );
+
+
+      const totalWeight =
+        phraseWeights.reduce(
+          (sum, value) =>
+            sum + value,
+          0
+        );
+
+
+      let elapsedWeight =
+        0;
+
+
       phrases.forEach(
         function(
           phrase,
           index
         ){
 
+          /*
+            Estimate this phrase's position in the recording by its
+            share of the transcript word count. Keep a small head-start
+            so translation/TTS can prepare before the local source audio
+            reaches the same point.
+          */
+          const progress =
+            totalWeight
+              ? elapsedWeight / totalWeight
+              : index / Math.max(1, phrases.length);
+
+
           const delayMs =
-            index *
-            350;
+            Math.max(
+              0,
+              Math.round(
+                (duration * 1000 * progress) -
+                450
+              )
+            );
+
+
+          elapsedWeight +=
+            phraseWeights[index];
 
 
           const prewarmTimer =
@@ -1039,7 +1094,7 @@ body{margin:0;background:#07111f;color:white;font-family:Arial,Helvetica,sans-se
               Math.max(
                 0,
                 delayMs -
-                300
+                700
               )
             );
 
