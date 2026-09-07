@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.14 queue severity thresholds + continuous transcription reliability mode -->
+<!-- LiveBridge v1.0.16 event-driven broadcast watchdog + scheduled-start alert integration -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -2054,6 +2054,111 @@ let lbScheduleEndAt = null;
 let lbScheduleStartTriggered = false;
 let lbScheduleStopTriggered = false;
 
+async function lbArmScheduledBroadcastAlert(
+  startAt,
+  endAt
+) {
+
+  const token =
+    await getBroadcasterSessionToken();
+
+  if (!token) {
+    throw new Error(
+      "LiveBridge session could not be verified."
+    );
+  }
+
+  const response =
+    await fetch(
+      WORKER_URL +
+      "/broadcast-schedule-arm",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+
+          "Authorization":
+            "Bearer " +
+            token
+        },
+
+        body: JSON.stringify({
+          room: ROOM_ID,
+          startAt:
+            startAt.getTime(),
+          endAt:
+            endAt.getTime()
+        })
+      }
+    );
+
+  const data =
+    await response.json();
+
+  if (
+    !response.ok ||
+    !data.success
+  ) {
+    throw new Error(
+      data.error ||
+      "Unable to arm scheduled-start monitoring."
+    );
+  }
+
+  return data;
+}
+
+
+async function lbClearScheduledBroadcastAlert() {
+
+  if (!ROOM_ID) {
+    return;
+  }
+
+  try {
+
+    const token =
+      await getBroadcasterSessionToken();
+
+    if (!token) {
+      return;
+    }
+
+    await fetch(
+      WORKER_URL +
+      "/broadcast-schedule-clear",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+
+          "Authorization":
+            "Bearer " +
+            token
+        },
+
+        body: JSON.stringify({
+          room: ROOM_ID
+        }),
+
+        keepalive: true
+      }
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Scheduled-start alert cleanup failed:",
+      error
+    );
+  }
+}
+
+
 function lbFormatScheduleTime(value) {
   return new Intl.DateTimeFormat(
     undefined,
@@ -2178,6 +2283,8 @@ async function lbCheckBroadcastSchedule() {
       await toggleBroadcast();
     }
 
+    await lbClearScheduledBroadcastAlert();
+
     lbClearBroadcastSchedule(
       "Scheduled broadcast window completed."
     );
@@ -2201,7 +2308,7 @@ async function lbCheckBroadcastSchedule() {
 
 lbEnableSchedule.addEventListener(
   "click",
-  () => {
+  async () => {
     const authorityConfirmation =
       document.getElementById(
         "lbBroadcastAuthorityConfirm"
@@ -2261,6 +2368,41 @@ lbEnableSchedule.addEventListener(
       return;
     }
 
+    lbEnableSchedule.disabled =
+      true;
+
+    lbEnableSchedule.textContent =
+      "Arming Schedule...";
+
+    try {
+
+      await lbArmScheduledBroadcastAlert(
+        startAt,
+        endAt
+      );
+
+    } catch (error) {
+
+      lbEnableSchedule.disabled =
+        false;
+
+      lbEnableSchedule.textContent =
+        "Enable Scheduled Broadcast";
+
+      showLiveBridgeAccountNotice(
+        error.message ||
+        "The scheduled broadcast could not be armed."
+      );
+
+      return;
+    }
+
+    lbEnableSchedule.disabled =
+      false;
+
+    lbEnableSchedule.textContent =
+      "Enable Scheduled Broadcast";
+
     lbScheduleStartAt =
       startAt;
 
@@ -2299,7 +2441,10 @@ lbEnableSchedule.addEventListener(
 
 lbCancelSchedule.addEventListener(
   "click",
-  () => {
+  async () => {
+
+    await lbClearScheduledBroadcastAlert();
+
     lbClearBroadcastSchedule(
       "Scheduled broadcast cancelled."
     );
