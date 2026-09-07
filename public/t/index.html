@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.14 lazy Scripture references + Scripture above Live Notes -->
+<!-- LiveBridge v1.0.17 unified share graphic system -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -501,6 +501,16 @@
     cursor:pointer;
   }
 
+  .lb-listener-share-language-row{display:flex;align-items:center;gap:10px;margin:14px 0 12px;flex-wrap:wrap;}
+  .lb-listener-share-language-label{color:#9fb4ca;font-size:12px;font-weight:800;}
+  .lb-listener-share-language-select{min-width:210px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#102338;color:#fff;font-weight:800;}
+  .lb-listener-share-language-note{color:#7890aa;font-size:11px;}
+  .lb-listener-share-preview{display:none;margin-top:16px;border:1px solid rgba(52,211,153,.28);border-radius:14px;overflow:hidden;background:#061321;}
+  .lb-listener-share-preview.show{display:block;}
+  .lb-listener-share-preview img{width:100%;display:block;}
+  .lb-listener-share-preview-actions{display:flex;gap:8px;flex-wrap:wrap;padding:10px;background:#0a1928;}
+  .lb-listener-share-preview-actions button{padding:10px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:#13263c;color:white;cursor:pointer;font-weight:800;font-size:12px;}
+
 </style>
 
 <style>
@@ -722,7 +732,15 @@
       <div>
         <div class="lb-listener-share-title">Share This Room</div>
         <div class="lb-listener-share-copy">
-          Send this listener link to someone else so they can join the same LiveBridge room.
+          Send this link or QR code to someone else so they can join the same LiveBridge room.
+        </div>
+
+        <div class="lb-listener-share-language-row">
+          <div class="lb-listener-share-language-label">Share invite language</div>
+          <select class="lb-listener-share-language-select" id="lbListenerShareLanguage">
+            <option value="en">English</option><option value="fr">Français — French</option><option value="es">Español — Spanish</option><option value="de">Deutsch — German</option><option value="pt">Português — Portuguese</option><option value="it">Italiano — Italian</option><option value="nl">Nederlands — Dutch</option><option value="pl">Polski — Polish</option><option value="uk">Українська — Ukrainian</option><option value="ru">Русский — Russian</option><option value="ar">العربية — Arabic</option><option value="zh">中文 — Chinese</option><option value="ja">日本語 — Japanese</option><option value="ko">한국어 — Korean</option><option value="hi">हिन्दी — Hindi</option>
+          </select>
+          <div class="lb-listener-share-language-note">Invite text and graphic use this language.</div>
         </div>
 
         <div class="lb-listener-share-row">
@@ -731,12 +749,18 @@
           <button type="button" class="lb-listener-share-button green" id="lbListenerShare">Send / Share</button>
           <button type="button" class="lb-listener-share-button" id="lbListenerOpen">Open</button>
         </div>
+
+        <div class="lb-listener-share-preview" id="lbListenerSharePreview">
+          <img id="lbListenerSharePreviewImage" alt="LiveBridge invite preview">
+          <div class="lb-listener-share-preview-actions">
+            <button id="lbListenerDownloadGraphic" type="button">Download Graphic</button>
+            <button id="lbListenerCopyInviteText" type="button">Copy Invite Text</button>
+          </div>
+        </div>
       </div>
 
       <div class="lb-listener-qr-wrap">
-        <div class="lb-listener-qr-box">
-          <img id="lbListenerQR" alt="LiveBridge room QR code">
-        </div>
+        <div class="lb-listener-qr-box"><img id="lbListenerQR" alt="LiveBridge room QR code"></div>
         <div class="lb-listener-qr-caption">Scan to join this room</div>
       </div>
     </div>
@@ -4933,189 +4957,82 @@ Keep the existing listener embeds unchanged.
 })();
 
   function getListenerShareURL(){
-
-    const room =
-      String(
-        document.getElementById(
-          "listenerRoom"
-        )?.value ||
-        new URLSearchParams(
-          window.location.search
-        ).get("room") ||
-        ""
-      )
-      .trim()
-      .toUpperCase();
-
-
-    const url =
-      new URL(
-        "/t/",
-        window.location.origin
-      );
-
-
-    if(room){
-      url.searchParams.set(
-        "room",
-        room
-      );
-    }
-
-
+    const room=String(document.getElementById("listenerRoom")?.value||new URLSearchParams(window.location.search).get("room")||"").trim().toUpperCase();
+    const url=new URL("/t/",window.location.origin);
+    if(room) url.searchParams.set("room",room);
     return url.toString();
   }
 
-
   function refreshListenerShare(){
-
-    const url =
-      getListenerShareURL();
-
-
-    const text =
-      document.getElementById(
-        "lbListenerShareURL"
-      );
-
-
-    const qr =
-      document.getElementById(
-        "lbListenerQR"
-      );
-
-
-    if(text){
-      text.textContent =
-        url;
-    }
-
-
-    if(qr){
-
-      qr.src =
-        "https://api.qrserver.com/v1/create-qr-code/" +
-        "?size=300x300&margin=5&data=" +
-        encodeURIComponent(
-          url
-        );
-    }
+    const url=getListenerShareURL();
+    const text=document.getElementById("lbListenerShareURL");
+    const qr=document.getElementById("lbListenerQR");
+    if(text) text.textContent=url;
+    if(qr) qr.src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=5&data="+encodeURIComponent(url);
   }
 
+  const lbListenerShareTranslations={
+    en:{title:"Join Our Live Broadcast Now",subtitle:"Listen in your own language",message:"We’re live now. Join our LiveBridge broadcast and listen in your own language.",room:"ROOM"},
+    fr:{title:"Rejoignez notre diffusion en direct",subtitle:"Écoutez dans votre propre langue",message:"Nous sommes en direct. Rejoignez notre diffusion LiveBridge et écoutez dans votre propre langue.",room:"SALLE"},
+    es:{title:"Únase a nuestra transmisión en vivo",subtitle:"Escuche en su propio idioma",message:"Estamos en vivo. Únase a nuestra transmisión de LiveBridge y escuche en su propio idioma.",room:"SALA"},
+    de:{title:"Jetzt unserer Live-Übertragung beitreten",subtitle:"Hören Sie in Ihrer eigenen Sprache",message:"Wir sind jetzt live. Treten Sie unserer LiveBridge-Übertragung bei und hören Sie in Ihrer eigenen Sprache.",room:"RAUM"},
+    pt:{title:"Entre na nossa transmissão ao vivo",subtitle:"Ouça no seu próprio idioma",message:"Estamos ao vivo. Entre na nossa transmissão LiveBridge e ouça no seu próprio idioma.",room:"SALA"},
+    it:{title:"Partecipa alla nostra diretta",subtitle:"Ascolta nella tua lingua",message:"Siamo in diretta. Partecipa alla nostra trasmissione LiveBridge e ascolta nella tua lingua.",room:"STANZA"},
+    nl:{title:"Doe nu mee met onze live-uitzending",subtitle:"Luister in uw eigen taal",message:"We zijn nu live. Doe mee met onze LiveBridge-uitzending en luister in uw eigen taal.",room:"KAMER"},
+    pl:{title:"Dołącz do naszej transmisji na żywo",subtitle:"Słuchaj w swoim języku",message:"Jesteśmy na żywo. Dołącz do transmisji LiveBridge i słuchaj w swoim języku.",room:"POKÓJ"},
+    uk:{title:"Приєднуйтесь до нашої прямої трансляції",subtitle:"Слухайте своєю мовою",message:"Ми вже в ефірі. Приєднуйтесь до трансляції LiveBridge і слухайте своєю мовою.",room:"КІМНАТА"},
+    ru:{title:"Присоединяйтесь к нашей прямой трансляции",subtitle:"Слушайте на своем языке",message:"Мы уже в эфире. Присоединяйтесь к трансляции LiveBridge и слушайте на своем языке.",room:"КОМНАТА"},
+    ar:{title:"انضم إلى البث المباشر الآن",subtitle:"استمع بلغتك الخاصة",message:"نحن على الهواء الآن. انضم إلى بث LiveBridge واستمع بلغتك الخاصة.",room:"الغرفة"},
+    zh:{title:"立即加入我们的直播",subtitle:"用您自己的语言收听",message:"我们正在直播。加入 LiveBridge 直播，用您自己的语言收听。",room:"房间"},
+    ja:{title:"ライブ配信に今すぐ参加",subtitle:"あなたの言語でお聴きください",message:"現在ライブ配信中です。LiveBridgeに参加して、あなたの言語でお聴きください。",room:"ルーム"},
+    ko:{title:"지금 라이브 방송에 참여하세요",subtitle:"자신의 언어로 들으세요",message:"지금 라이브 중입니다. LiveBridge 방송에 참여해 자신의 언어로 들으세요.",room:"방"},
+    hi:{title:"अभी हमारे लाइव प्रसारण से जुड़ें",subtitle:"अपनी भाषा में सुनें",message:"हम अभी लाइव हैं। हमारे LiveBridge प्रसारण से जुड़ें और अपनी भाषा में सुनें।",room:"रूम"}
+  };
 
-  document.getElementById(
-    "lbListenerCopy"
-  )?.addEventListener(
-    "click",
-    async function(){
+  function wrapListenerInviteText(ctx,text,maxWidth){
+    const words=String(text).split(/\s+/),lines=[]; let line="";
+    for(const word of words){const test=line?line+" "+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word;}else line=test;}
+    if(line) lines.push(line); return lines;
+  }
 
-      const url =
-        getListenerShareURL();
+  async function makeListenerShareGraphic(){
+    const lang=document.getElementById("lbListenerShareLanguage")?.value||"en";
+    const t=lbListenerShareTranslations[lang]||lbListenerShareTranslations.en;
+    const room=String(document.getElementById("listenerRoom")?.value||"").trim().toUpperCase();
+    const url=getListenerShareURL();
+    const qr=new Image(); qr.crossOrigin="anonymous"; qr.src="https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=8&data="+encodeURIComponent(url);
+    await new Promise((resolve,reject)=>{qr.onload=resolve;qr.onerror=reject;});
+    const canvas=document.createElement("canvas"); canvas.width=1600; canvas.height=1000; const ctx=canvas.getContext("2d");
+    const g=ctx.createLinearGradient(0,0,1600,1000); g.addColorStop(0,"#061325"); g.addColorStop(.65,"#0a2747"); g.addColorStop(1,"#04111e"); ctx.fillStyle=g; ctx.fillRect(0,0,1600,1000);
+    ctx.font="900 70px Arial"; ctx.fillStyle="#fff"; ctx.fillText("Live",70,105); ctx.fillStyle="#42f5a1"; ctx.fillText("Bridge",205,105);
+    ctx.font="700 20px Arial"; ctx.fillStyle="#90a9c4"; ctx.fillText("Live multilingual translation",72,145);
+    ctx.font="900 78px Arial"; ctx.fillStyle="#fff"; let y=275; for(const line of wrapListenerInviteText(ctx,t.title,930)){ctx.fillText(line,70,y);y+=88;}
+    ctx.font="700 46px Arial"; ctx.fillStyle="#42f5a1"; for(const line of wrapListenerInviteText(ctx,t.subtitle,900)){ctx.fillText(line,72,y);y+=56;}
+    ctx.fillStyle="#fff"; ctx.beginPath(); ctx.roundRect(1110,180,365,365,24); ctx.fill(); ctx.drawImage(qr,1132,202,321,321);
+    ctx.font="800 26px Arial"; ctx.fillStyle="#fff"; ctx.fillText("Scan QR to join live",1130,600);
+    ctx.fillStyle="rgba(3,19,34,.82)"; ctx.strokeStyle="#24d98b"; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(70,700,1460,165,24); ctx.fill(); ctx.stroke();
+    ctx.font="800 20px Arial"; ctx.fillStyle="#42f5a1"; ctx.fillText(t.room,105,742); ctx.font="900 44px Arial"; ctx.fillStyle="#fff"; ctx.fillText(room||"LIVE",105,805);
+    ctx.fillStyle="#42f5a1"; let fs=25; let lines=[]; while(fs>=17){ctx.font="700 "+fs+"px Arial";lines=wrapListenerInviteText(ctx,url,1000);if(lines.length<=2) break;fs-=2;} lines.slice(0,2).forEach((line,i)=>ctx.fillText(line,430,755+i*(fs+8)));
+    ctx.font="700 20px Arial"; ctx.fillStyle="#91a8c0"; ctx.fillText("English  •  Français  •  Español  •  Deutsch  •  Português  •  中文  •  العربية  •  + many more",74,930);
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png",.96));
+    return {canvas,blob,filename:"LiveBridge-"+(room||"Room")+"-"+lang+".png",message:t.message+"\n\n"+t.room+": "+(room||"")+"\n"+url};
+  }
 
+  async function previewListenerShareInvite(){
+    const generated=await makeListenerShareGraphic();
+    document.getElementById("lbListenerSharePreviewImage").src=generated.canvas.toDataURL("image/png");
+    document.getElementById("lbListenerSharePreview").classList.add("show");
+    window.currentListenerShareInvite=generated; return generated;
+  }
 
-      await navigator.clipboard.writeText(
-        url
-      );
-
-
-      const old =
-        this.textContent;
-
-
-      this.textContent =
-        "✓ Copied";
-
-
-      setTimeout(
-        () =>
-          this.textContent =
-            old,
-        1400
-      );
-    }
-  );
-
-
-  document.getElementById(
-    "lbListenerShare"
-  )?.addEventListener(
-    "click",
-    async function(){
-
-      const url =
-        getListenerShareURL();
-
-
-      if(
-        navigator.share
-      ){
-
-        try{
-
-          await navigator.share({
-            title:
-              "LiveBridge Room",
-
-            text:
-              "Join this LiveBridge room.",
-
-            url
-          });
-
-        }catch{}
-
-
-      }else{
-
-        await navigator.clipboard.writeText(
-          url
-        );
-
-
-        alert(
-          "Room link copied."
-        );
-      }
-    }
-  );
-
-
-  document.getElementById(
-    "lbListenerOpen"
-  )?.addEventListener(
-    "click",
-    function(){
-
-      window.open(
-        getListenerShareURL(),
-        "_blank"
-      );
-    }
-  );
-
-
-  document.getElementById(
-    "listenerRoom"
-  )?.addEventListener(
-    "input",
-    refreshListenerShare
-  );
-
-
-  document.getElementById(
-    "joinRoomButton"
-  )?.addEventListener(
-    "click",
-    function(){
-
-      setTimeout(
-        refreshListenerShare,
-        50
-      );
-    }
-  );
-
-
+  document.getElementById("lbListenerCopy")?.addEventListener("click",async function(){const url=getListenerShareURL();await navigator.clipboard.writeText(url);const old=this.textContent;this.textContent="✓ Copied";setTimeout(()=>this.textContent=old,1400);});
+  document.getElementById("lbListenerShare")?.addEventListener("click",async function(){try{const generated=await previewListenerShareInvite();const file=new File([generated.blob],generated.filename,{type:"image/png"});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"LiveBridge Live Room",text:generated.message,files:[file]});return;}if(navigator.share){await navigator.share({title:"LiveBridge Live Room",text:generated.message,url:getListenerShareURL()});return;}await navigator.clipboard.writeText(generated.message);alert("Invite text copied. The share graphic is shown below.");}catch(error){if(error?.name!=="AbortError"){console.error("LiveBridge invite sharing failed:",error);alert("The invite preview is shown below.");}}});
+  document.getElementById("lbListenerOpen")?.addEventListener("click",()=>window.open(getListenerShareURL(),"_blank"));
+  document.getElementById("lbListenerShareLanguage")?.addEventListener("change",async()=>{if(document.getElementById("lbListenerSharePreview")?.classList.contains("show")) await previewListenerShareInvite();});
+  document.getElementById("lbListenerDownloadGraphic")?.addEventListener("click",async function(){const generated=window.currentListenerShareInvite||await previewListenerShareInvite();const link=document.createElement("a");link.href=generated.canvas.toDataURL("image/png");link.download=generated.filename;link.click();});
+  document.getElementById("lbListenerCopyInviteText")?.addEventListener("click",async function(){const generated=window.currentListenerShareInvite||await previewListenerShareInvite();await navigator.clipboard.writeText(generated.message);const old=this.textContent;this.textContent="✓ Copied";setTimeout(()=>this.textContent=old,1500);});
+  document.getElementById("listenerRoom")?.addEventListener("input",refreshListenerShare);
+  document.getElementById("joinRoomButton")?.addEventListener("click",()=>setTimeout(refreshListenerShare,50));
   refreshListenerShare();
 
 
