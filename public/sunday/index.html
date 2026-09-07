@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.16 event-driven broadcast watchdog + scheduled-start alert integration -->
+<!-- LiveBridge v1.0.18 event-driven watchdog + localized livebridge.ca share links -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -1304,7 +1304,7 @@ const WORKER_URL =
   "https://livebridge.northstarventures-ca.workers.dev";
 
 const LISTENER_BASE_URL =
-  window.location.origin + "/t/";
+  "https://livebridge.ca/t/";
 
 let ROOM_ID = "";
 let broadcastHeartbeat = null;
@@ -5472,10 +5472,24 @@ emailBroadcastButton.addEventListener(
       .trim()
       .toUpperCase();
 
+  const shareLanguage =
+    String(
+      document.getElementById(
+        "shareInviteLanguage"
+      )?.value ||
+      "en"
+    )
+    .trim()
+    .toLowerCase();
+
   const listenerURL =
     LISTENER_BASE_URL +
     "?room=" +
-    encodeURIComponent(room);
+    encodeURIComponent(room) +
+    "&lang=" +
+    encodeURIComponent(
+      shareLanguage
+    );
 
   window.currentBroadcasterListenerURL =
     listenerURL;
@@ -5703,6 +5717,8 @@ async function previewShareInvite(){
 }
 
 document.getElementById("shareInviteLanguage")?.addEventListener("change",async()=>{
+  updateBroadcasterSharePanel();
+
   if(document.getElementById("shareInvitePreview")?.classList.contains("show")){
     await previewShareInvite();
   }
