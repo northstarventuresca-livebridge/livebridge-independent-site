@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- LiveBridge v1.0.8 live notes language lock + scrolling history + scripture visibility -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -375,10 +376,33 @@
   }
 
   .lb-live-notes-summary{
-    white-space:pre-wrap;
+    white-space:normal;
     line-height:1.6;
     color:#d7e3ef;
     font-size:14px;
+    max-height:340px;
+    overflow-y:auto;
+    padding-right:8px;
+    scrollbar-width:thin;
+  }
+
+  .lb-live-note-entry{
+    white-space:pre-wrap;
+    padding:0 0 14px;
+    margin:0 0 14px;
+    border-bottom:1px solid rgba(255,255,255,.07);
+  }
+
+  .lb-live-note-entry:last-child{
+    margin-bottom:0;
+    border-bottom:0;
+  }
+
+  .lb-scripture-waiting{
+    color:#7890aa;
+    font-size:12px;
+    line-height:1.5;
+    padding:12px 0 2px;
   }
 
   .lb-live-notes-empty{
@@ -598,7 +622,7 @@
               ✨ Live Notes
             </div>
             <div class="lb-live-notes-subtitle">
-              AI-generated rolling notes use only what has been spoken in this live message.
+              AI-generated notes build as the message continues. Scroll to review earlier notes.
             </div>
           </div>
 
@@ -2127,6 +2151,17 @@ listenerAudioButton.addEventListener("click", () => {
         data?.summary || ""
       ).trim();
 
+    const noteEntries =
+      Array.isArray(
+        data?.noteEntries
+      )
+        ? data.noteEntries
+            .map(value =>
+              String(value || "").trim()
+            )
+            .filter(Boolean)
+        : [];
+
     const scriptures =
       Array.isArray(
         data?.scriptures
@@ -2143,55 +2178,77 @@ listenerAudioButton.addEventListener("click", () => {
           )
         : "Waiting";
 
-    if (summary) {
+    if (
+      noteEntries.length ||
+      summary
+    ) {
 
-      let safeSummary =
-        escapeLiveNotesHtml(
-          summary
-        );
-
-      for (
-        const scripture of
-          scriptures
-      ) {
-
-        const reference =
-          String(
-            scripture?.reference ||
-            ""
-          ).trim();
-
-        if (!reference) {
-          continue;
-        }
-
-        const pattern =
-          new RegExp(
-            escapeLiveNotesRegExp(
-              reference
-            ),
-            "gi"
-          );
-
-        safeSummary =
-          safeSummary.replace(
-            pattern,
-            matched =>
-              `<button type="button" class="lb-scripture-link" data-scripture-ref="${escapeLiveNotesHtml(reference)}">${matched}</button>`
-          );
-      }
-
-      safeSummary =
-        safeSummary.replace(
-          /\n/g,
-          "<br>"
-        );
+      const entriesToRender =
+        noteEntries.length
+          ? noteEntries
+          : [summary];
 
       summaryBox.className =
         "lb-live-notes-summary";
 
       summaryBox.innerHTML =
-        safeSummary;
+        entriesToRender
+          .map(
+            entry => {
+
+              let safeEntry =
+                escapeLiveNotesHtml(
+                  entry
+                );
+
+              for (
+                const scripture of
+                  scriptures
+              ) {
+
+                const reference =
+                  String(
+                    scripture?.reference ||
+                    ""
+                  ).trim();
+
+                if (!reference) {
+                  continue;
+                }
+
+                const pattern =
+                  new RegExp(
+                    escapeLiveNotesRegExp(
+                      reference
+                    ),
+                    "gi"
+                  );
+
+                safeEntry =
+                  safeEntry.replace(
+                    pattern,
+                    matched =>
+                      `<button type="button" class="lb-scripture-link" data-scripture-ref="${escapeLiveNotesHtml(reference)}">${matched}</button>`
+                  );
+              }
+
+              safeEntry =
+                safeEntry.replace(
+                  /\n/g,
+                  "<br>"
+                );
+
+              return `
+                <div class="lb-live-note-entry">
+                  ${safeEntry}
+                </div>
+              `;
+            }
+          )
+          .join("");
+
+      summaryBox.scrollTop =
+        summaryBox.scrollHeight;
 
     } else {
 
@@ -2204,17 +2261,18 @@ listenerAudioButton.addEventListener("click", () => {
     }
 
     if (
-      data?.scriptureEnabled &&
-      scriptures.length
+      data?.scriptureEnabled
     ) {
 
       scriptureArea.style.display =
         "block";
 
-      scriptureCards.innerHTML =
-        scriptures
-          .map(
-            scripture => {
+      if (scriptures.length) {
+
+        scriptureCards.innerHTML =
+          scriptures
+            .map(
+              scripture => {
 
               const reference =
                 escapeLiveNotesHtml(
@@ -2253,8 +2311,14 @@ listenerAudioButton.addEventListener("click", () => {
                 </div>
               `;
             }
-          )
-          .join("");
+            )
+            .join("");
+
+      } else {
+
+        scriptureCards.innerHTML =
+          '<div class="lb-scripture-waiting">Scripture detection is on. When a Bible reference is mentioned, the reference and verse text will appear here.</div>';
+      }
 
     } else {
 
