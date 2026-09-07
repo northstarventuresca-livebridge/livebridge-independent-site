@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.10 collapsible scheduler + no-audio safety panels -->
+<!-- LiveBridge v1.0.11 HOTFIX continuous transcription reliability mode -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -3749,8 +3749,8 @@ function renderNoAudioSafetyControl() {
 
     <div style="padding:0 14px 14px;">
     <div style="font-size:11px;color:#8fa6be;line-height:1.5;margin-bottom:10px;">
-      LiveBridge stops sending silent transcription audio after about 15 seconds.
-      If no meaningful audio returns for the selected time, the broadcast ends automatically.
+      Reliability mode is active. LiveBridge will keep sending transcription audio
+      for the entire broadcast. Automatic no-audio ending is temporarily disabled.
     </div>
 
     <label style="display:block;font-size:11px;color:#9fb2c6;margin-bottom:5px;">
@@ -3759,6 +3759,7 @@ function renderNoAudioSafetyControl() {
 
     <select
       id="lbNoAudioTimeout"
+      disabled
       style="
         width:100%;
         padding:9px 10px;
@@ -4028,19 +4029,13 @@ function startAudioSafetyMonitoring() {
 
 function shouldUploadTranscriptionChunk() {
 
-  if (!broadcasting) {
-    return false;
-  }
-
-  if (!lastMeaningfulAudioAt) {
-    return true;
-  }
-
-  return (
-    Date.now() -
-    lastMeaningfulAudioAt
-  ) <=
-    TRANSCRIPTION_SILENCE_HOLD_MS;
+  /*
+    v1.0.11 HOTFIX:
+    Reliability mode. Never stop transcription uploads because of a local
+    RMS/noise-floor reading. If the dashboard says Broadcasting, audio chunks
+    continue to be sent for transcription.
+  */
+  return broadcasting === true;
 }
 
 
@@ -4059,148 +4054,25 @@ function renderAudioSafetyStatus(
 
   if (!broadcasting) {
     status.textContent =
-      "Waiting for broadcast.";
+      "Reliability mode • automatic no-audio ending is temporarily disabled.";
     return;
   }
 
-  const silentForSeconds =
-    lastMeaningfulAudioAt
-      ? Math.max(
-          0,
-          Math.floor(
-            (
-              Date.now() -
-              lastMeaningfulAudioAt
-            ) / 1000
-          )
-        )
-      : 0;
-
-  const uploadsPaused =
-    silentForSeconds >= 15;
-
-  if (uploadsPaused) {
-
-    if (noAudioTimeoutMinutes > 0) {
-
-      const remainingSeconds =
-        Math.max(
-          0,
-          noAudioTimeoutMinutes *
-          60 -
-          silentForSeconds
-        );
-
-      const remainingMinutes =
-        Math.floor(
-          remainingSeconds / 60
-        );
-
-      const remainingSecs =
-        remainingSeconds % 60;
-
-      status.textContent =
-        "Silent audio uploads paused • Auto-end in " +
-        remainingMinutes +
-        ":" +
-        String(remainingSecs)
-          .padStart(2,"0") +
-        " if audio does not return.";
-
-    } else {
-
-      status.textContent =
-        "Silent audio uploads paused • Automatic ending is OFF.";
-    }
-
-  } else {
-
-    status.textContent =
-      "Audio active • 7-second transcription uploads enabled.";
-  }
+  status.textContent =
+    "Reliability mode • transcription remains active continuously while broadcasting.";
 }
 
 
 async function endBroadcastForNoAudio() {
 
-  if (!broadcasting) {
-    return;
-  }
-
-  broadcasting =
-    false;
-
-  if (
-    mediaRecorder &&
-    mediaRecorder.state ===
-      "recording"
-  ) {
-    mediaRecorder.stop();
-  }
-
-  if (mediaStream) {
-    mediaStream
-      .getTracks()
-      .forEach(
-        track =>
-          track.stop()
-      );
-  }
-
-  mediaStream =
-    null;
-
-  stopBroadcastTimer();
-  stopBroadcastHeartbeat();
-  stopRoomStatusPolling();
-  stopAudioSafetyMonitoring();
-
-  await releaseBroadcastRoom(
-    "no_audio"
-  );
-
-  document.getElementById(
-    "inputLanguage"
-  ).disabled =
-    false;
-
-  broadcastButton.disabled =
-    false;
-
-  broadcastButton.textContent =
-    "Start Broadcasting";
-
-  broadcastButton
-    .classList
-    .remove(
-      "lb-btn-danger"
-    );
-
-  broadcastButton
-    .classList
-    .add(
-      "lb-btn-primary"
-    );
-
-  document.getElementById(
-    "broadcastDot"
-  ).classList.remove(
-    "live"
-  );
-
-  document.getElementById(
-    "broadcastStatus"
-  ).textContent =
-    "NOT BROADCASTING";
-
-  showLiveBridgeAccountNotice(
-    "Broadcast automatically ended because no meaningful audio was detected for " +
-    noAudioTimeoutMinutes +
-    " minutes. An alert was sent to your organization."
-  );
-
-  audioSafetyAutoEnding =
-    false;
+  /*
+    v1.0.11 HOTFIX:
+    Automatic no-audio ending is temporarily disabled while the RMS detector
+    is reworked. Manual End Broadcast, scheduling, and account-limit ending
+    continue to work normally.
+  */
+  audioSafetyAutoEnding = false;
+  return;
 }
 
 
