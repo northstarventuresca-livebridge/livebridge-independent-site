@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.17 unified share graphic system -->
+<!-- LiveBridge v1.0.18 livebridge.ca short URLs + localized translation share -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -730,10 +730,30 @@ const ROOM_ID = "TRANSLATION";
 const REFRESH_EVERY_MS = 5000;
 
 const STATS_SHARE_URL =
-  window.location.origin + "/live-stats/";
+  "https://livebridge.ca/live-stats/";
 
-const TRANSLATION_SHARE_URL =
-  window.location.origin + "/t/?room=TRANSLATION";
+function getTranslationShareURL(){
+  const lang =
+    String(
+      document.getElementById(
+        "translationShareLanguage"
+      )?.value ||
+      "en"
+    )
+    .trim()
+    .toLowerCase();
+
+  return (
+    "https://livebridge.ca/t/?room=" +
+    encodeURIComponent(
+      ROOM_ID
+    ) +
+    "&lang=" +
+    encodeURIComponent(
+      lang
+    )
+  );
+}
 
 let observedLiveStart = null;
 
@@ -1301,6 +1321,12 @@ function configureShareBlock({
   mode
 }) {
 
+  const resolveURL =
+    () =>
+      typeof url === "function"
+        ? url()
+        : url;
+
   const urlElement =
     document.getElementById(
       urlElementId
@@ -1330,14 +1356,15 @@ function configureShareBlock({
     qrElement.src =
       "https://api.qrserver.com/v1/create-qr-code/" +
       "?size=500x500&margin=5&data=" +
-      encodeURIComponent(url);
+      encodeURIComponent(resolveURL());
   }
 
   async function preview(){
 
     const generated =
       await makeUnifiedShareGraphic({
-        url,
+        url:
+          resolveURL(),
         languageSelectId,
         mode
       });
@@ -1394,7 +1421,7 @@ function configureShareBlock({
 
           prompt(
             "Copy this link:",
-            url
+            resolveURL()
           );
         }
       }
@@ -1449,7 +1476,8 @@ function configureShareBlock({
                 "LiveBridge",
               text:
                 generated.message,
-              url
+              url:
+                resolveURL()
             });
 
             return;
@@ -1489,6 +1517,20 @@ function configureShareBlock({
   )?.addEventListener(
     "change",
     async () => {
+
+      if (urlElement) {
+        urlElement.textContent =
+          resolveURL();
+      }
+
+      if (qrElement) {
+        qrElement.src =
+          "https://api.qrserver.com/v1/create-qr-code/" +
+          "?size=500x500&margin=5&data=" +
+          encodeURIComponent(
+            resolveURL()
+          );
+      }
 
       if(
         document.getElementById(
@@ -1601,7 +1643,7 @@ configureShareBlock({
 
 configureShareBlock({
   url:
-    TRANSLATION_SHARE_URL,
+    getTranslationShareURL,
   urlElementId:
     "translationShareURL",
   qrElementId:
