@@ -883,6 +883,45 @@ body{
                 >
               </div>
 
+              <div class="lb-field">
+                <label>Church Features</label>
+
+                <label style="
+                  display:flex;
+                  align-items:flex-start;
+                  gap:10px;
+                  padding:12px;
+                  border-radius:10px;
+                  border:1px solid rgba(255,255,255,.11);
+                  background:#0e1c2d;
+                  cursor:pointer;
+                  text-transform:none;
+                  letter-spacing:0;
+                  font-size:12px;
+                  line-height:1.45;
+                  color:#dbe8f5;
+                ">
+                  <input
+                    type="checkbox"
+                    id="editScriptureEnabled"
+                    style="
+                      width:auto;
+                      margin:2px 0 0;
+                      accent-color:#29d783;
+                    "
+                  >
+                  <span>
+                    <strong style="color:white;">
+                      Enable Scripture Detection
+                    </strong>
+                    <br>
+                    <span style="color:#839ab3;">
+                      Shows detected Bible verses in Live Notes for this organization.
+                    </span>
+                  </span>
+                </label>
+              </div>
+
             </div>
 
 
@@ -1851,6 +1890,11 @@ async function openOrganization(id){
       : account.viewerOverride;
 
   document.getElementById(
+    "editScriptureEnabled"
+  ).checked =
+    !!account.scriptureEnabled;
+
+  document.getElementById(
     "editAdminNotes"
   ).value =
     account.adminNotes || "";
@@ -2023,6 +2067,11 @@ async function saveOrganization(){
                 : Number(
                     overrideValue
                   ),
+
+            scriptureEnabled:
+              document.getElementById(
+                "editScriptureEnabled"
+              ).checked,
 
             accountStatus:
               document.getElementById(
