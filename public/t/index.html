@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.9 active-language lock + persistent scrolling notes + deterministic scripture detection -->
+<!-- LiveBridge v1.0.10 broadcast-session lock + STT scripture repair -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -755,6 +755,12 @@ let liveNotesLastLanguage = "";
 let liveNotesActiveLanguage = "en";
 
 /*
+  v1.0.10:
+  Lock Live Notes to the broadcast session accepted after this listener joins.
+*/
+let liveNotesAcceptedBroadcastId = "";
+
+/*
   v1.0.1 queue pipeline:
   Azure audio preparation is exposed to the live message handler so
   the NEXT translated clip can be generated while the CURRENT clip
@@ -1430,6 +1436,9 @@ listenerAudioButton.addEventListener("click", () => {
       )
         .trim()
         .toLowerCase();
+
+    liveNotesAcceptedBroadcastId =
+      "";
 
     const languageName =
       languageSelect.options[
@@ -2488,8 +2497,60 @@ listenerAudioButton.addEventListener("click", () => {
           return;
         }
 
+        const responseBroadcastId =
+          String(
+            data?.broadcastId || ""
+          ).trim();
+
+        if (data?.live) {
+
+          if (
+            !liveNotesAcceptedBroadcastId &&
+            responseBroadcastId
+          ) {
+            liveNotesAcceptedBroadcastId =
+              responseBroadcastId;
+          }
+
+          if (
+            liveNotesAcceptedBroadcastId &&
+            responseBroadcastId &&
+            responseBroadcastId !==
+              liveNotesAcceptedBroadcastId
+          ) {
+            console.warn(
+              "LiveBridge ignored cross-broadcast Live Notes:",
+              responseBroadcastId,
+              "expected:",
+              liveNotesAcceptedBroadcastId
+            );
+            return;
+          }
+        }
+
         liveNotesLastLanguage =
           translateLang;
+
+        /*
+          Preserve the final notes after the broadcast ends instead of
+          replacing them with stale/empty state from another session.
+        */
+        if (
+          data?.live === false &&
+          liveNotesAcceptedBroadcastId
+        ) {
+          const statusBox =
+            document.getElementById(
+              "liveNotesStatus"
+            );
+
+          if (statusBox) {
+            statusBox.textContent =
+              "Broadcast Ended";
+          }
+
+          return;
+        }
 
         renderLiveNotes(
           data
