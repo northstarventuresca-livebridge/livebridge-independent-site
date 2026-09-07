@@ -331,6 +331,125 @@
     margin-top:7px;
   }
 
+  .lb-live-notes-panel{
+    border-top:1px solid rgba(255,255,255,.07);
+    background:
+      linear-gradient(
+        180deg,
+        rgba(37,136,255,.055),
+        rgba(0,0,0,.08)
+      );
+    padding:20px;
+  }
+
+  .lb-live-notes-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+  }
+
+  .lb-live-notes-title{
+    font-size:18px;
+    font-weight:900;
+    color:white;
+  }
+
+  .lb-live-notes-subtitle{
+    margin-top:4px;
+    color:#88a0ba;
+    font-size:11px;
+    line-height:1.45;
+  }
+
+  .lb-live-notes-status{
+    border:1px solid rgba(52,211,153,.22);
+    background:rgba(52,211,153,.07);
+    color:#62e7b4;
+    padding:6px 9px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:900;
+  }
+
+  .lb-live-notes-summary{
+    white-space:pre-wrap;
+    line-height:1.6;
+    color:#d7e3ef;
+    font-size:14px;
+  }
+
+  .lb-live-notes-empty{
+    color:#7f96ae;
+    font-size:13px;
+    line-height:1.55;
+  }
+
+  .lb-scripture-area{
+    display:none;
+    margin-top:16px;
+    padding-top:16px;
+    border-top:1px solid rgba(255,255,255,.07);
+  }
+
+  .lb-scripture-heading{
+    color:#f7d879;
+    font-size:12px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    margin-bottom:10px;
+  }
+
+  .lb-scripture-card{
+    border:1px solid rgba(247,216,121,.20);
+    background:rgba(247,216,121,.055);
+    border-radius:12px;
+    padding:13px 14px;
+    margin-top:9px;
+    transition:.2s ease;
+  }
+
+  .lb-scripture-card.highlight{
+    border-color:#f7d879;
+    box-shadow:0 0 0 2px rgba(247,216,121,.12);
+  }
+
+  .lb-scripture-reference{
+    color:#ffe899;
+    font-weight:900;
+    font-size:13px;
+    margin-bottom:6px;
+  }
+
+  .lb-scripture-text{
+    color:#dbe5ef;
+    font-size:13px;
+    line-height:1.55;
+  }
+
+  .lb-scripture-version{
+    color:#758da7;
+    font-size:10px;
+    margin-top:7px;
+  }
+
+  .lb-scripture-link{
+    display:inline;
+    border:0;
+    padding:0;
+    margin:0;
+    background:transparent;
+    color:#ffe899;
+    text-decoration:underline;
+    text-underline-offset:2px;
+    font:inherit;
+    font-weight:900;
+    cursor:pointer;
+  }
+
 </style>
 
 <style>
@@ -471,6 +590,43 @@
         Join a room to begin receiving the live message.
       </div>
 
+      <div class="lb-live-notes-panel" id="liveNotesPanel">
+
+        <div class="lb-live-notes-head">
+          <div>
+            <div class="lb-live-notes-title">
+              ✨ Live Notes
+            </div>
+            <div class="lb-live-notes-subtitle">
+              AI-generated rolling notes use only what has been spoken in this live message.
+            </div>
+          </div>
+
+          <div class="lb-live-notes-status" id="liveNotesStatus">
+            Waiting
+          </div>
+        </div>
+
+        <div
+          class="lb-live-notes-empty"
+          id="liveNotesSummary"
+        >
+          Join the live room and notes will appear here as the message develops.
+        </div>
+
+        <div
+          class="lb-scripture-area"
+          id="liveScriptureArea"
+        >
+          <div class="lb-scripture-heading">
+            📖 Scripture Mentioned
+          </div>
+
+          <div id="liveScriptureCards"></div>
+        </div>
+
+      </div>
+
       <div style="
   padding:16px 20px;
   border-top:1px solid rgba(255,255,255,.07);
@@ -563,6 +719,9 @@
   let listenerAudioMuted = false;
   let listenerDisplayQueue = [];
 let listenerQueueRunning = false;
+let liveNotesTimer = null;
+let liveNotesBusy = false;
+let liveNotesLastLanguage = "";
 
 /*
   v1.0.1 queue pipeline:
@@ -1289,6 +1448,7 @@ listenerAudioButton.addEventListener("click", () => {
       output.innerHTML = "";
       fullTranslatedTranscript = "";
       listenerDisplayQueue = [];
+      resetLiveNotesUI();
     }
 
     if (!preserveSession) {
@@ -1354,6 +1514,8 @@ listenerAudioButton.addEventListener("click", () => {
         if (!preserveSession) {
           await startListenerTracking();
         }
+
+        startLiveNotesPolling();
       };
 
     thisSocket.onmessage =
@@ -1853,6 +2015,429 @@ listenerAudioButton.addEventListener("click", () => {
   });
 }
 
+  function resetLiveNotesUI() {
+
+    const summary =
+      document.getElementById(
+        "liveNotesSummary"
+      );
+
+    const status =
+      document.getElementById(
+        "liveNotesStatus"
+      );
+
+    const scriptureArea =
+      document.getElementById(
+        "liveScriptureArea"
+      );
+
+    const scriptureCards =
+      document.getElementById(
+        "liveScriptureCards"
+      );
+
+    if (summary) {
+      summary.className =
+        "lb-live-notes-empty";
+
+      summary.textContent =
+        "Listening now — live notes will appear here as the message develops.";
+    }
+
+    if (status) {
+      status.textContent =
+        "Waiting";
+    }
+
+    if (scriptureArea) {
+      scriptureArea.style.display =
+        "none";
+    }
+
+    if (scriptureCards) {
+      scriptureCards.innerHTML =
+        "";
+    }
+  }
+
+
+  function escapeLiveNotesHtml(
+    value
+  ) {
+
+    return String(
+      value || ""
+    )
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+  }
+
+
+  function escapeLiveNotesRegExp(
+    value
+  ) {
+
+    return String(
+      value || ""
+    ).replace(
+      /[.*+?^${}()|[\]\\]/g,
+      "\\$&"
+    );
+  }
+
+
+  function renderLiveNotes(
+    data
+  ) {
+
+    const summaryBox =
+      document.getElementById(
+        "liveNotesSummary"
+      );
+
+    const statusBox =
+      document.getElementById(
+        "liveNotesStatus"
+      );
+
+    const scriptureArea =
+      document.getElementById(
+        "liveScriptureArea"
+      );
+
+    const scriptureCards =
+      document.getElementById(
+        "liveScriptureCards"
+      );
+
+    if (
+      !summaryBox ||
+      !statusBox ||
+      !scriptureArea ||
+      !scriptureCards
+    ) {
+      return;
+    }
+
+    const summary =
+      String(
+        data?.summary || ""
+      ).trim();
+
+    const scriptures =
+      Array.isArray(
+        data?.scriptures
+      )
+        ? data.scriptures
+        : [];
+
+    statusBox.textContent =
+      data?.live
+        ? (
+            summary
+              ? "Live • Updated"
+              : "Live • Listening"
+          )
+        : "Waiting";
+
+    if (summary) {
+
+      let safeSummary =
+        escapeLiveNotesHtml(
+          summary
+        );
+
+      for (
+        const scripture of
+          scriptures
+      ) {
+
+        const reference =
+          String(
+            scripture?.reference ||
+            ""
+          ).trim();
+
+        if (!reference) {
+          continue;
+        }
+
+        const pattern =
+          new RegExp(
+            escapeLiveNotesRegExp(
+              reference
+            ),
+            "gi"
+          );
+
+        safeSummary =
+          safeSummary.replace(
+            pattern,
+            matched =>
+              `<button type="button" class="lb-scripture-link" data-scripture-ref="${escapeLiveNotesHtml(reference)}">${matched}</button>`
+          );
+      }
+
+      safeSummary =
+        safeSummary.replace(
+          /\n/g,
+          "<br>"
+        );
+
+      summaryBox.className =
+        "lb-live-notes-summary";
+
+      summaryBox.innerHTML =
+        safeSummary;
+
+    } else {
+
+      summaryBox.className =
+        "lb-live-notes-empty";
+
+      summaryBox.textContent =
+        data?.message ||
+        "Listening now — live notes will appear shortly.";
+    }
+
+    if (
+      data?.scriptureEnabled &&
+      scriptures.length
+    ) {
+
+      scriptureArea.style.display =
+        "block";
+
+      scriptureCards.innerHTML =
+        scriptures
+          .map(
+            scripture => {
+
+              const reference =
+                escapeLiveNotesHtml(
+                  scripture?.reference ||
+                  ""
+                );
+
+              const text =
+                escapeLiveNotesHtml(
+                  scripture?.text ||
+                  ""
+                );
+
+              const version =
+                escapeLiveNotesHtml(
+                  scripture?.version ||
+                  ""
+                );
+
+              return `
+                <div
+                  class="lb-scripture-card"
+                  data-scripture-card="${reference}"
+                >
+                  <div class="lb-scripture-reference">
+                    ${reference}
+                  </div>
+
+                  <div class="lb-scripture-text">
+                    ${text}
+                  </div>
+
+                  <div class="lb-scripture-version">
+                    ${version}
+                  </div>
+                </div>
+              `;
+            }
+          )
+          .join("");
+
+    } else {
+
+      scriptureArea.style.display =
+        "none";
+
+      scriptureCards.innerHTML =
+        "";
+    }
+
+    summaryBox
+      .querySelectorAll(
+        ".lb-scripture-link"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              const reference =
+                button.getAttribute(
+                  "data-scripture-ref"
+                ) || "";
+
+              const cards =
+                scriptureCards
+                  .querySelectorAll(
+                    ".lb-scripture-card"
+                  );
+
+              cards.forEach(
+                card =>
+                  card.classList.remove(
+                    "highlight"
+                  )
+              );
+
+              const target =
+                [...cards]
+                  .find(
+                    card =>
+                      card.getAttribute(
+                        "data-scripture-card"
+                      ) ===
+                      reference
+                  );
+
+              if (target) {
+
+                target.classList.add(
+                  "highlight"
+                );
+
+                target.scrollIntoView({
+                  behavior:
+                    "smooth",
+                  block:
+                    "nearest"
+                });
+
+                setTimeout(
+                  () =>
+                    target.classList.remove(
+                      "highlight"
+                    ),
+                  2500
+                );
+              }
+            }
+          );
+        }
+      );
+  }
+
+
+  async function pollLiveNotes() {
+
+    if (
+      liveNotesBusy ||
+      !ROOM_ID ||
+      !listenerConnectionWanted
+    ) {
+      return;
+    }
+
+    const languageSelect =
+      document.getElementById(
+        "listenerLanguage"
+      );
+
+    const translateLang =
+      String(
+        languageSelect?.value ||
+        "en|en-US"
+      ).split("|")[0];
+
+    liveNotesBusy =
+      true;
+
+    try {
+
+      const response =
+        await fetch(
+          WORKER_URL +
+          "/live-notes?room=" +
+          encodeURIComponent(
+            ROOM_ID
+          ) +
+          "&lang=" +
+          encodeURIComponent(
+            translateLang
+          ),
+          {
+            cache:
+              "no-store"
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (
+        response.ok &&
+        data.success !== false
+      ) {
+
+        liveNotesLastLanguage =
+          translateLang;
+
+        renderLiveNotes(
+          data
+        );
+      }
+
+    } catch (error) {
+
+      console.error(
+        "LiveBridge live notes failed:",
+        error
+      );
+
+    } finally {
+
+      liveNotesBusy =
+        false;
+    }
+  }
+
+
+  function startLiveNotesPolling() {
+
+    if (liveNotesTimer) {
+      clearInterval(
+        liveNotesTimer
+      );
+    }
+
+    pollLiveNotes();
+
+    liveNotesTimer =
+      setInterval(
+        pollLiveNotes,
+        30000
+      );
+  }
+
+
+  function stopLiveNotesPolling() {
+
+    if (liveNotesTimer) {
+
+      clearInterval(
+        liveNotesTimer
+      );
+
+      liveNotesTimer =
+        null;
+    }
+  }
+
+
   function markListenerLive() {
 
     const dot =
@@ -2275,6 +2860,7 @@ function askForEmail() {
     function () {
       listenerConnectionWanted = false;
       clearListenerReconnectTimer();
+      stopLiveNotesPolling();
       closeListenerSocketIntentionally();
       sendListenerStop();
     }
