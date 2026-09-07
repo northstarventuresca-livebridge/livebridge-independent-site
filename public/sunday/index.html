@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- LiveBridge v1.0.7 broadcaster safety + request optimization -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -1292,6 +1293,18 @@ let usageWarningShown = new Set();
 let broadcastStartingRemainingMinutes = null;
 let endingForTimeLimit = false;
 
+/* v1.0.7 broadcaster safety */
+let noAudioTimeoutMinutes = 30;
+let audioSafetyContext = null;
+let audioSafetyAnalyser = null;
+let audioSafetySource = null;
+let audioSafetyTimer = null;
+let lastMeaningfulAudioAt = null;
+let lastTranscriptionUploadAt = null;
+let audioSafetyAutoEnding = false;
+const AUDIO_ACTIVITY_THRESHOLD = 0.012;
+const TRANSCRIPTION_SILENCE_HOLD_MS = 15000;
+
 
 /* =====================================================
    ACCOUNT + ROOM INITIALIZATION
@@ -1850,6 +1863,18 @@ async function initializeLiveBridgeBroadcaster() {
         accountError
       );
     }
+
+    noAudioTimeoutMinutes =
+      Number(
+        serverAccount?.noAudioTimeoutMinutes ??
+        30
+      );
+
+    if (![0,15,30,60,90].includes(noAudioTimeoutMinutes)) {
+      noAudioTimeoutMinutes = 30;
+    }
+
+    renderNoAudioSafetyControl();
 
     let roomSelection = null;
 
@@ -2896,8 +2921,10 @@ async function endBroadcastForTimeLimit(){
 
   stopRoomStatusPolling();
 
+  stopAudioSafetyMonitoring();
 
-  await releaseBroadcastRoom();
+
+  await releaseBroadcastRoom("time_limit");
 
 
   document.getElementById(
@@ -3199,7 +3226,7 @@ async function toggleBroadcast() {
 
       } catch (micError) {
 
-        await releaseBroadcastRoom();
+        await releaseBroadcastRoom("manual");
 
         broadcastButton.disabled =
           false;
@@ -3247,6 +3274,8 @@ async function toggleBroadcast() {
 
       startRoomStatusPolling();
 
+      startAudioSafetyMonitoring();
+
       recordNextChunk();
 
       startBroadcastTimer();
@@ -3287,7 +3316,7 @@ async function toggleBroadcast() {
       );
 
       if (roomReserved) {
-        await releaseBroadcastRoom();
+        await releaseBroadcastRoom("manual");
       }
 
       document.getElementById(
@@ -3338,7 +3367,9 @@ async function toggleBroadcast() {
 
     stopRoomStatusPolling();
 
-    await releaseBroadcastRoom();
+    stopAudioSafetyMonitoring();
+
+    await releaseBroadcastRoom("manual");
 
     document.getElementById(
       "inputLanguage"
@@ -3492,7 +3523,7 @@ function startBroadcastHeartbeat() {
         }
 
       },
-      30000
+      45000
     );
 }
 
@@ -3515,7 +3546,7 @@ function stopBroadcastHeartbeat() {
    RELEASE ROOM
 ===================================================== */
 
-async function releaseBroadcastRoom() {
+async function releaseBroadcastRoom(reason = "manual") {
 
   if (
     !ROOM_ID ||
@@ -3553,7 +3584,8 @@ async function releaseBroadcastRoom() {
           },
 
           body: JSON.stringify({
-            room: ROOM_ID
+            room: ROOM_ID,
+            reason
           }),
 
           keepalive: true
@@ -3630,7 +3662,8 @@ window.addEventListener(
         },
 
         body: JSON.stringify({
-          room: ROOM_ID
+          room: ROOM_ID,
+          reason: "page_exit"
         }),
 
         keepalive: true
@@ -3641,6 +3674,545 @@ window.addEventListener(
   }
 );
 
+
+
+/* =====================================================
+   v1.0.7 NO-AUDIO SAFETY + LOCAL AUDIO GATING
+===================================================== */
+
+function renderNoAudioSafetyControl() {
+
+  if (document.getElementById("lbNoAudioSafetyWrap")) {
+    const existingSelect =
+      document.getElementById("lbNoAudioTimeout");
+
+    if (existingSelect) {
+      existingSelect.value =
+        String(noAudioTimeoutMinutes);
+    }
+    return;
+  }
+
+  const scheduler =
+    document.getElementById("lbBroadcastScheduler");
+
+  if (!scheduler) {
+    return;
+  }
+
+  const wrap =
+    document.createElement("div");
+
+  wrap.id =
+    "lbNoAudioSafetyWrap";
+
+  wrap.className =
+    "lb-basic-hide";
+
+  wrap.style.cssText = `
+    margin-top:12px;
+    padding:14px;
+    border:1px solid rgba(255,255,255,.11);
+    border-radius:12px;
+    background:rgba(255,255,255,.035);
+  `;
+
+  wrap.innerHTML = `
+    <div style="font-size:13px;font-weight:900;margin-bottom:8px;">
+      🛡 No-Audio Safety
+    </div>
+
+    <div style="font-size:11px;color:#8fa6be;line-height:1.5;margin-bottom:10px;">
+      LiveBridge stops sending silent transcription audio after about 15 seconds.
+      If no meaningful audio returns for the selected time, the broadcast ends automatically.
+    </div>
+
+    <label style="display:block;font-size:11px;color:#9fb2c6;margin-bottom:5px;">
+      Auto-end after no audio
+    </label>
+
+    <select
+      id="lbNoAudioTimeout"
+      style="
+        width:100%;
+        padding:9px 10px;
+        border-radius:8px;
+        border:1px solid rgba(255,255,255,.14);
+        background:#0d1b2a;
+        color:white;
+        font-size:12px;
+      "
+    >
+      <option value="15">15 minutes</option>
+      <option value="30">30 minutes — Recommended</option>
+      <option value="60">60 minutes</option>
+      <option value="90">90 minutes</option>
+      <option value="0">Off</option>
+    </select>
+
+    <div id="lbAudioSafetyStatus"
+      style="color:#7890aa;font-size:10px;line-height:1.45;margin-top:8px;">
+      Waiting for broadcast.
+    </div>
+  `;
+
+  scheduler.insertAdjacentElement(
+    "afterend",
+    wrap
+  );
+
+  const select =
+    document.getElementById("lbNoAudioTimeout");
+
+  select.value =
+    String(noAudioTimeoutMinutes);
+
+  select.addEventListener(
+    "change",
+    saveNoAudioTimeoutSetting
+  );
+}
+
+
+async function saveNoAudioTimeoutSetting() {
+
+  const select =
+    document.getElementById(
+      "lbNoAudioTimeout"
+    );
+
+  if (!select) {
+    return;
+  }
+
+  const requested =
+    Number(select.value);
+
+  if (![0,15,30,60,90].includes(requested)) {
+    return;
+  }
+
+  const previous =
+    noAudioTimeoutMinutes;
+
+  noAudioTimeoutMinutes =
+    requested;
+
+  try {
+
+    const token =
+      await getBroadcasterSessionToken();
+
+    if (!token) {
+      throw new Error(
+        "LiveBridge session unavailable."
+      );
+    }
+
+    const response =
+      await fetch(
+        WORKER_URL +
+        "/account-no-audio-timeout",
+        {
+          method:"POST",
+          headers:{
+            "Authorization":
+              "Bearer " + token,
+            "Content-Type":
+              "application/json"
+          },
+          body:JSON.stringify({
+            noAudioTimeoutMinutes:
+              requested
+          })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+      throw new Error(
+        data.error ||
+        "Unable to save no-audio timeout."
+      );
+    }
+
+    const status =
+      document.getElementById(
+        "lbAudioSafetyStatus"
+      );
+
+    if (status) {
+      status.textContent =
+        requested === 0
+          ? "Automatic no-audio ending is OFF."
+          : "Saved • Broadcast will auto-end after " +
+            requested +
+            " minutes without meaningful audio.";
+    }
+
+  } catch (error) {
+
+    noAudioTimeoutMinutes =
+      previous;
+
+    select.value =
+      String(previous);
+
+    alert(
+      error.message ||
+      "Unable to save no-audio safety setting."
+    );
+  }
+}
+
+
+function startAudioSafetyMonitoring() {
+
+  stopAudioSafetyMonitoring();
+
+  if (!mediaStream) {
+    return;
+  }
+
+  lastMeaningfulAudioAt =
+    Date.now();
+
+  lastTranscriptionUploadAt =
+    Date.now();
+
+  audioSafetyAutoEnding =
+    false;
+
+  try {
+
+    audioSafetyContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+    audioSafetyAnalyser =
+      audioSafetyContext
+        .createAnalyser();
+
+    audioSafetyAnalyser.fftSize =
+      1024;
+
+    audioSafetyAnalyser.smoothingTimeConstant =
+      0.55;
+
+    audioSafetySource =
+      audioSafetyContext
+        .createMediaStreamSource(
+          mediaStream
+        );
+
+    audioSafetySource.connect(
+      audioSafetyAnalyser
+    );
+
+    const samples =
+      new Uint8Array(
+        audioSafetyAnalyser.fftSize
+      );
+
+    audioSafetyTimer =
+      setInterval(
+        async () => {
+
+          if (
+            !broadcasting ||
+            !audioSafetyAnalyser
+          ) {
+            return;
+          }
+
+          audioSafetyAnalyser
+            .getByteTimeDomainData(
+              samples
+            );
+
+          let sumSquares =
+            0;
+
+          for (
+            let i = 0;
+            i < samples.length;
+            i++
+          ) {
+            const normalized =
+              (samples[i] - 128) / 128;
+
+            sumSquares +=
+              normalized * normalized;
+          }
+
+          const rms =
+            Math.sqrt(
+              sumSquares /
+              samples.length
+            );
+
+          if (
+            rms >=
+            AUDIO_ACTIVITY_THRESHOLD
+          ) {
+            lastMeaningfulAudioAt =
+              Date.now();
+          }
+
+          renderAudioSafetyStatus(
+            rms
+          );
+
+          if (
+            !audioSafetyAutoEnding &&
+            noAudioTimeoutMinutes > 0 &&
+            lastMeaningfulAudioAt &&
+            Date.now() -
+              lastMeaningfulAudioAt >=
+              noAudioTimeoutMinutes *
+              60 * 1000
+          ) {
+            audioSafetyAutoEnding =
+              true;
+
+            await endBroadcastForNoAudio();
+          }
+
+        },
+        500
+      );
+
+  } catch (error) {
+
+    console.error(
+      "LiveBridge audio safety monitor failed:",
+      error
+    );
+  }
+}
+
+
+function shouldUploadTranscriptionChunk() {
+
+  if (!broadcasting) {
+    return false;
+  }
+
+  if (!lastMeaningfulAudioAt) {
+    return true;
+  }
+
+  return (
+    Date.now() -
+    lastMeaningfulAudioAt
+  ) <=
+    TRANSCRIPTION_SILENCE_HOLD_MS;
+}
+
+
+function renderAudioSafetyStatus(
+  rms = 0
+) {
+
+  const status =
+    document.getElementById(
+      "lbAudioSafetyStatus"
+    );
+
+  if (!status) {
+    return;
+  }
+
+  if (!broadcasting) {
+    status.textContent =
+      "Waiting for broadcast.";
+    return;
+  }
+
+  const silentForSeconds =
+    lastMeaningfulAudioAt
+      ? Math.max(
+          0,
+          Math.floor(
+            (
+              Date.now() -
+              lastMeaningfulAudioAt
+            ) / 1000
+          )
+        )
+      : 0;
+
+  const uploadsPaused =
+    silentForSeconds >= 15;
+
+  if (uploadsPaused) {
+
+    if (noAudioTimeoutMinutes > 0) {
+
+      const remainingSeconds =
+        Math.max(
+          0,
+          noAudioTimeoutMinutes *
+          60 -
+          silentForSeconds
+        );
+
+      const remainingMinutes =
+        Math.floor(
+          remainingSeconds / 60
+        );
+
+      const remainingSecs =
+        remainingSeconds % 60;
+
+      status.textContent =
+        "Silent audio uploads paused • Auto-end in " +
+        remainingMinutes +
+        ":" +
+        String(remainingSecs)
+          .padStart(2,"0") +
+        " if audio does not return.";
+
+    } else {
+
+      status.textContent =
+        "Silent audio uploads paused • Automatic ending is OFF.";
+    }
+
+  } else {
+
+    status.textContent =
+      "Audio active • 7-second transcription uploads enabled.";
+  }
+}
+
+
+async function endBroadcastForNoAudio() {
+
+  if (!broadcasting) {
+    return;
+  }
+
+  broadcasting =
+    false;
+
+  if (
+    mediaRecorder &&
+    mediaRecorder.state ===
+      "recording"
+  ) {
+    mediaRecorder.stop();
+  }
+
+  if (mediaStream) {
+    mediaStream
+      .getTracks()
+      .forEach(
+        track =>
+          track.stop()
+      );
+  }
+
+  mediaStream =
+    null;
+
+  stopBroadcastTimer();
+  stopBroadcastHeartbeat();
+  stopRoomStatusPolling();
+  stopAudioSafetyMonitoring();
+
+  await releaseBroadcastRoom(
+    "no_audio"
+  );
+
+  document.getElementById(
+    "inputLanguage"
+  ).disabled =
+    false;
+
+  broadcastButton.disabled =
+    false;
+
+  broadcastButton.textContent =
+    "Start Broadcasting";
+
+  broadcastButton
+    .classList
+    .remove(
+      "lb-btn-danger"
+    );
+
+  broadcastButton
+    .classList
+    .add(
+      "lb-btn-primary"
+    );
+
+  document.getElementById(
+    "broadcastDot"
+  ).classList.remove(
+    "live"
+  );
+
+  document.getElementById(
+    "broadcastStatus"
+  ).textContent =
+    "NOT BROADCASTING";
+
+  showLiveBridgeAccountNotice(
+    "Broadcast automatically ended because no meaningful audio was detected for " +
+    noAudioTimeoutMinutes +
+    " minutes. An alert was sent to your organization."
+  );
+
+  audioSafetyAutoEnding =
+    false;
+}
+
+
+function stopAudioSafetyMonitoring() {
+
+  if (audioSafetyTimer) {
+    clearInterval(
+      audioSafetyTimer
+    );
+  }
+
+  audioSafetyTimer =
+    null;
+
+  try {
+    audioSafetySource
+      ?.disconnect();
+  } catch (error) {}
+
+  audioSafetySource =
+    null;
+
+  audioSafetyAnalyser =
+    null;
+
+  if (audioSafetyContext) {
+
+    try {
+      audioSafetyContext
+        .close();
+    } catch (error) {}
+  }
+
+  audioSafetyContext =
+    null;
+
+  lastMeaningfulAudioAt =
+    null;
+}
 
 /* =====================================================
    RECORDING
@@ -3692,9 +4264,13 @@ function recordNextChunk() {
             }
           );
 
-        sendAudioChunk(
-          audioBlob
-        );
+        if (shouldUploadTranscriptionChunk()) {
+          lastTranscriptionUploadAt = Date.now();
+
+          sendAudioChunk(
+            audioBlob
+          );
+        }
       }
 
       if (broadcasting) {
@@ -4026,7 +4602,7 @@ function startRoomStatusPolling() {
   roomStatusTimer =
     setInterval(
       updateRoomStatus,
-      3000
+      10000
     );
 }
 
@@ -4073,33 +4649,6 @@ async function updateRoomStatus() {
 
     const data =
       await response.json();
-    try {
-
-  await fetch(
-    WORKER_URL +
-    "/analytics-live",
-    {
-      method: "POST",
-
-      headers: {
-        "Content-Type":
-          "application/json"
-      },
-
-      body: JSON.stringify({
-        room: currentRoom
-      })
-    }
-  );
-
-} catch (error) {
-
-  console.error(
-    "Live analytics update failed:",
-    error
-  );
-}
-
     const status =
       data.durableObject ||
       data.roomStatus ||
