@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.10 broadcast-session lock + STT scripture repair -->
+<!-- LiveBridge v1.0.14 lazy Scripture references + Scripture above Live Notes -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -406,6 +406,32 @@
     padding:12px 0 2px;
   }
 
+  .lb-scripture-ref-button{
+    appearance:none;
+    border:0;
+    padding:0;
+    margin:0;
+    background:transparent;
+    color:#ffe899;
+    font:inherit;
+    font-weight:900;
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:2px;
+  }
+
+  .lb-scripture-loading{
+    color:#8fa6be;
+    font-size:11px;
+    margin-top:8px;
+  }
+
+  .lb-scripture-error{
+    color:#ff9c9c;
+    font-size:11px;
+    margin-top:8px;
+  }
+
   .lb-live-notes-empty{
     color:#7f96ae;
     font-size:13px;
@@ -617,6 +643,17 @@
 
       <div class="lb-live-notes-panel" id="liveNotesPanel">
 
+        <div
+          class="lb-scripture-area"
+          id="liveScriptureArea"
+        >
+          <div class="lb-scripture-heading">
+            📖 Scripture Mentioned
+          </div>
+
+          <div id="liveScriptureCards"></div>
+        </div>
+
         <div class="lb-live-notes-head">
           <div>
             <div class="lb-live-notes-title">
@@ -639,16 +676,7 @@
           Join the live room and notes will appear here as the message develops.
         </div>
 
-        <div
-          class="lb-scripture-area"
-          id="liveScriptureArea"
-        >
-          <div class="lb-scripture-heading">
-            📖 Scripture Mentioned
-          </div>
-
-          <div id="liveScriptureCards"></div>
-        </div>
+        
 
       </div>
 
@@ -2301,50 +2329,65 @@ listenerAudioButton.addEventListener("click", () => {
             .map(
               scripture => {
 
-              const reference =
-                escapeLiveNotesHtml(
-                  scripture?.reference ||
-                  ""
-                );
+                const reference =
+                  escapeLiveNotesHtml(
+                    scripture?.reference ||
+                    ""
+                  );
 
-              const text =
-                escapeLiveNotesHtml(
-                  scripture?.text ||
-                  ""
-                );
+                if (!reference) {
+                  return "";
+                }
 
-              const version =
-                escapeLiveNotesHtml(
-                  scripture?.version ||
-                  ""
-                );
+                return `
+                  <div
+                    class="lb-scripture-card"
+                    data-scripture-card="${reference}"
+                  >
+                    <button
+                      type="button"
+                      class="lb-scripture-ref-button"
+                      data-scripture-ref="${reference}"
+                      aria-expanded="false"
+                    >
+                      ${reference}
+                    </button>
 
-              return `
-                <div
-                  class="lb-scripture-card"
-                  data-scripture-card="${reference}"
-                >
-                  <div class="lb-scripture-reference">
-                    ${reference}
+                    <div
+                      class="lb-scripture-text"
+                      data-scripture-text
+                      style="display:none;"
+                    ></div>
+
+                    <div
+                      class="lb-scripture-version"
+                      data-scripture-version
+                      style="display:none;"
+                    ></div>
+
+                    <div
+                      class="lb-scripture-loading"
+                      data-scripture-loading
+                      style="display:none;"
+                    >
+                      Loading verse…
+                    </div>
+
+                    <div
+                      class="lb-scripture-error"
+                      data-scripture-error
+                      style="display:none;"
+                    ></div>
                   </div>
-
-                  <div class="lb-scripture-text">
-                    ${text}
-                  </div>
-
-                  <div class="lb-scripture-version">
-                    ${version}
-                  </div>
-                </div>
-              `;
-            }
+                `;
+              }
             )
             .join("");
 
       } else {
 
         scriptureCards.innerHTML =
-          '<div class="lb-scripture-waiting">Scripture detection is on. When a Bible reference is mentioned, the reference and verse text will appear here.</div>';
+          '<div class="lb-scripture-waiting">Scripture detection is on. When a Bible verse reference is mentioned, it will appear here.</div>';
       }
 
     } else {
@@ -2355,6 +2398,215 @@ listenerAudioButton.addEventListener("click", () => {
       scriptureCards.innerHTML =
         "";
     }
+
+    const openScriptureReference =
+      async reference => {
+
+        const cards =
+          scriptureCards
+            .querySelectorAll(
+              ".lb-scripture-card"
+            );
+
+        const target =
+          [...cards]
+            .find(
+              card =>
+                card.getAttribute(
+                  "data-scripture-card"
+                ) ===
+                reference
+            );
+
+        if (!target) {
+          return;
+        }
+
+        target.scrollIntoView({
+          behavior:
+            "smooth",
+          block:
+            "nearest"
+        });
+
+        const textBox =
+          target.querySelector(
+            "[data-scripture-text]"
+          );
+
+        const versionBox =
+          target.querySelector(
+            "[data-scripture-version]"
+          );
+
+        const loadingBox =
+          target.querySelector(
+            "[data-scripture-loading]"
+          );
+
+        const errorBox =
+          target.querySelector(
+            "[data-scripture-error]"
+          );
+
+        const referenceButton =
+          target.querySelector(
+            ".lb-scripture-ref-button"
+          );
+
+        if (
+          textBox?.dataset.loaded ===
+          "true"
+        ) {
+
+          const opening =
+            textBox.style.display ===
+            "none";
+
+          textBox.style.display =
+            opening
+              ? "block"
+              : "none";
+
+          if (versionBox) {
+            versionBox.style.display =
+              opening
+                ? "block"
+                : "none";
+          }
+
+          referenceButton?.setAttribute(
+            "aria-expanded",
+            opening
+              ? "true"
+              : "false"
+          );
+
+          return;
+        }
+
+        if (loadingBox) {
+          loadingBox.style.display =
+            "block";
+        }
+
+        if (errorBox) {
+          errorBox.style.display =
+            "none";
+
+          errorBox.textContent =
+            "";
+        }
+
+        try {
+
+          const response =
+            await fetch(
+              WORKER_URL +
+              "/scripture-verse?room=" +
+              encodeURIComponent(
+                ROOM_ID
+              ) +
+              "&lang=" +
+              encodeURIComponent(
+                liveNotesActiveLanguage ||
+                "en"
+              ) +
+              "&reference=" +
+              encodeURIComponent(
+                reference
+              )
+            );
+
+          const data =
+            await response.json();
+
+          if (
+            !response.ok ||
+            data?.success === false ||
+            !data?.verse
+          ) {
+            throw new Error(
+              data?.error ||
+              "Unable to load verse."
+            );
+          }
+
+          if (textBox) {
+            textBox.textContent =
+              String(
+                data.verse?.text || ""
+              ).trim();
+
+            textBox.dataset.loaded =
+              "true";
+
+            textBox.style.display =
+              "block";
+          }
+
+          if (versionBox) {
+            versionBox.textContent =
+              String(
+                data.verse?.version || ""
+              ).trim();
+
+            versionBox.style.display =
+              versionBox.textContent
+                ? "block"
+                : "none";
+          }
+
+          referenceButton?.setAttribute(
+            "aria-expanded",
+            "true"
+          );
+
+        } catch (error) {
+
+          if (errorBox) {
+            errorBox.textContent =
+              error.message ||
+              "Unable to load verse.";
+
+            errorBox.style.display =
+              "block";
+          }
+
+        } finally {
+
+          if (loadingBox) {
+            loadingBox.style.display =
+              "none";
+          }
+        }
+      };
+
+
+    scriptureCards
+      .querySelectorAll(
+        ".lb-scripture-ref-button"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              const reference =
+                button.getAttribute(
+                  "data-scripture-ref"
+                ) || "";
+
+              openScriptureReference(
+                reference
+              );
+            }
+          );
+        }
+      );
+
 
     summaryBox
       .querySelectorAll(
@@ -2372,50 +2624,9 @@ listenerAudioButton.addEventListener("click", () => {
                   "data-scripture-ref"
                 ) || "";
 
-              const cards =
-                scriptureCards
-                  .querySelectorAll(
-                    ".lb-scripture-card"
-                  );
-
-              cards.forEach(
-                card =>
-                  card.classList.remove(
-                    "highlight"
-                  )
+              openScriptureReference(
+                reference
               );
-
-              const target =
-                [...cards]
-                  .find(
-                    card =>
-                      card.getAttribute(
-                        "data-scripture-card"
-                      ) ===
-                      reference
-                  );
-
-              if (target) {
-
-                target.classList.add(
-                  "highlight"
-                );
-
-                target.scrollIntoView({
-                  behavior:
-                    "smooth",
-                  block:
-                    "nearest"
-                });
-
-                setTimeout(
-                  () =>
-                    target.classList.remove(
-                      "highlight"
-                    ),
-                  2500
-                );
-              }
             }
           );
         }
