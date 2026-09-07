@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.8 live notes language lock + scrolling history + scripture visibility -->
+<!-- LiveBridge v1.0.9 active-language lock + persistent scrolling notes + deterministic scripture detection -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -380,8 +380,9 @@
     line-height:1.6;
     color:#d7e3ef;
     font-size:14px;
-    max-height:340px;
-    overflow-y:auto;
+    max-height:260px;
+    overflow-y:scroll;
+    scrollbar-gutter:stable;
     padding-right:8px;
     scrollbar-width:thin;
   }
@@ -746,6 +747,12 @@ let listenerQueueRunning = false;
 let liveNotesTimer = null;
 let liveNotesBusy = false;
 let liveNotesLastLanguage = "";
+
+/*
+  v1.0.9:
+  Exact translation language bound to the currently joined listener socket.
+*/
+let liveNotesActiveLanguage = "en";
 
 /*
   v1.0.1 queue pipeline:
@@ -1412,6 +1419,17 @@ listenerAudioButton.addEventListener("click", () => {
       translateLang,
       ttsLang
     ] = languageSelect.value.split("|");
+
+    /*
+      v1.0.9:
+      Live Notes follow the same language as the translated listener feed.
+    */
+    liveNotesActiveLanguage =
+      String(
+        translateLang || "en"
+      )
+        .trim()
+        .toLowerCase();
 
     const languageName =
       languageSelect.options[
@@ -2406,16 +2424,18 @@ listenerAudioButton.addEventListener("click", () => {
       return;
     }
 
-    const languageSelect =
-      document.getElementById(
-        "listenerLanguage"
-      );
-
+    /*
+      v1.0.9:
+      Use the language of the active listener connection, not a fresh read
+      of the dropdown during each poll.
+    */
     const translateLang =
       String(
-        languageSelect?.value ||
-        "en|en-US"
-      ).split("|")[0];
+        liveNotesActiveLanguage ||
+        "en"
+      )
+        .trim()
+        .toLowerCase();
 
     liveNotesBusy =
       true;
@@ -2446,6 +2466,27 @@ listenerAudioButton.addEventListener("click", () => {
         response.ok &&
         data.success !== false
       ) {
+
+        const responseLanguage =
+          String(
+            data?.language ||
+            translateLang
+          )
+            .trim()
+            .toLowerCase();
+
+        if (
+          responseLanguage !==
+          translateLang
+        ) {
+          console.warn(
+            "LiveBridge ignored mismatched Live Notes language:",
+            responseLanguage,
+            "expected:",
+            translateLang
+          );
+          return;
+        }
 
         liveNotesLastLanguage =
           translateLang;
