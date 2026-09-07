@@ -417,11 +417,67 @@ body{
 
 .lb-history-row{
   display:grid;
-  grid-template-columns:1.4fr .8fr .7fr .7fr;
+  grid-template-columns:1.4fr .8fr .7fr .7fr .8fr;
   gap:12px;
   padding:12px 0;
   border-bottom:1px solid rgba(255,255,255,.07);
   font-size:11px;
+}
+
+.lb-history-mode{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.lb-history-mode button{
+  border:1px solid rgba(255,255,255,.12);
+  background:#14253a;
+  color:#9db1c6;
+  border-radius:8px;
+  padding:8px 10px;
+  cursor:pointer;
+  font-size:10px;
+  font-weight:900;
+}
+
+.lb-history-mode button.active{
+  color:white;
+  border-color:rgba(45,151,255,.5);
+  background:rgba(45,151,255,.15);
+}
+
+.lb-history-advanced-row{
+  display:none;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  padding:10px 0 14px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+#detailHistory.advanced .lb-history-advanced-row{
+  display:grid;
+}
+
+.lb-history-detail-stat{
+  padding:9px 10px;
+  border-radius:9px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.06);
+}
+
+.lb-history-detail-label{
+  color:#71879f;
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin-bottom:4px;
+}
+
+.lb-history-detail-value{
+  font-size:11px;
+  font-weight:900;
+  color:#dce9f5;
 }
 
 .lb-history-row.head{
@@ -1069,7 +1125,24 @@ body{
             <div class="lb-card" style="margin-top:16px;">
 
               <div class="lb-card-title" style="margin-bottom:12px;">
-                Recent Broadcasts
+                Recent Broadcasts Data
+              </div>
+
+              <div class="lb-history-mode">
+                <button
+                  type="button"
+                  id="historySimpleButton"
+                  class="active"
+                >
+                  Simple
+                </button>
+
+                <button
+                  type="button"
+                  id="historyAdvancedButton"
+                >
+                  Advanced
+                </button>
               </div>
 
               <div class="lb-history-row head">
@@ -1077,6 +1150,7 @@ body{
                 <div>Duration</div>
                 <div>Listeners</div>
                 <div>Peak</div>
+                <div>Requests</div>
               </div>
 
               <div id="detailHistory">
@@ -1906,16 +1980,22 @@ async function openOrganization(id){
 }
 
 
+let currentHistoryBroadcasts = [];
+let historyAdvancedMode = false;
+
 function renderDetailHistory(
   broadcasts
 ){
+
+  currentHistoryBroadcasts =
+    broadcasts || [];
 
   const box =
     document.getElementById(
       "detailHistory"
     );
 
-  if(!broadcasts.length){
+  if(!currentHistoryBroadcasts.length){
 
     box.innerHTML =
       '<div class="lb-empty">No completed broadcasts yet.</div>';
@@ -1923,14 +2003,44 @@ function renderDetailHistory(
     return;
   }
 
+  box.classList.toggle(
+    "advanced",
+    historyAdvancedMode
+  );
 
   box.innerHTML =
-    broadcasts.map(item => {
+    currentHistoryBroadcasts.map(item => {
 
       const date =
         new Date(
           Number(item.startedAt)
         ).toLocaleString();
+
+      const metrics =
+        item.requestMetrics || {};
+
+      const totalRequests =
+        Number(
+          metrics.totalWorkerRequests ||
+          0
+        );
+
+      const endReason =
+        String(
+          item.autoEndReason || ""
+        );
+
+      const endReasonLabel = {
+        no_audio:
+          "No audio safety",
+        page_exit:
+          "Page exited",
+        time_limit:
+          "Time limit",
+        scheduled_end:
+          "Scheduled end"
+      }[endReason] ||
+        "Manual / normal";
 
       return `
         <div class="lb-history-row">
@@ -1949,10 +2059,90 @@ function renderDetailHistory(
             ${Number(item.peakListeners || 0)}
           </div>
 
+          <div>
+            ${totalRequests.toLocaleString()}
+          </div>
+
+        </div>
+
+        <div class="lb-history-advanced-row">
+
+          <div class="lb-history-detail-stat">
+            <div class="lb-history-detail-label">Broadcast Heartbeats</div>
+            <div class="lb-history-detail-value">${Number(metrics.heartbeatRequests || 0).toLocaleString()}</div>
+          </div>
+
+          <div class="lb-history-detail-stat">
+            <div class="lb-history-detail-label">Room Status Polls</div>
+            <div class="lb-history-detail-value">${Number(metrics.statusPolls || 0).toLocaleString()}</div>
+          </div>
+
+          <div class="lb-history-detail-stat">
+            <div class="lb-history-detail-label">Analytics Calls</div>
+            <div class="lb-history-detail-value">${Number(metrics.analyticsRequests || 0).toLocaleString()}</div>
+          </div>
+
+          <div class="lb-history-detail-stat">
+            <div class="lb-history-detail-label">Audio / Transcription Chunks</div>
+            <div class="lb-history-detail-value">${Number(metrics.audioChunks || 0).toLocaleString()}</div>
+          </div>
+
+          <div class="lb-history-detail-stat">
+            <div class="lb-history-detail-label">Source Feed Calls</div>
+            <div class="lb-history-detail-value">${Number(metrics.sourceFinalRequests || 0).toLocaleString()}</div>
+          </div>
+
+          <div class="lb-history-detail-stat">
+            <div class="lb-history-detail-label">Listener Heartbeats</div>
+            <div class="lb-history-detail-value">${Number(metrics.listenerHeartbeats || 0).toLocaleString()}</div>
+          </div>
+
+          <div class="lb-history-detail-stat">
+            <div class="lb-history-detail-label">Listener TTS Requests</div>
+            <div class="lb-history-detail-value">${Number(metrics.ttsRequests || 0).toLocaleString()}</div>
+          </div>
+
+          <div class="lb-history-detail-stat">
+            <div class="lb-history-detail-label">Total Tracked Worker Requests</div>
+            <div class="lb-history-detail-value">${totalRequests.toLocaleString()}</div>
+          </div>
+
+          <div class="lb-history-detail-stat">
+            <div class="lb-history-detail-label">End Reason</div>
+            <div class="lb-history-detail-value">${escapeHtml(endReasonLabel)}</div>
+          </div>
+
         </div>
       `;
 
     }).join("");
+}
+
+
+function setHistoryMode(
+  advanced
+){
+
+  historyAdvancedMode =
+    !!advanced;
+
+  document.getElementById(
+    "historySimpleButton"
+  )?.classList.toggle(
+    "active",
+    !historyAdvancedMode
+  );
+
+  document.getElementById(
+    "historyAdvancedButton"
+  )?.classList.toggle(
+    "active",
+    historyAdvancedMode
+  );
+
+  renderDetailHistory(
+    currentHistoryBroadcasts
+  );
 }
 
 
@@ -2648,6 +2838,21 @@ document.getElementById(
 ).addEventListener(
   "click",
   showClientList
+);
+
+
+document.getElementById(
+  "historySimpleButton"
+)?.addEventListener(
+  "click",
+  () => setHistoryMode(false)
+);
+
+document.getElementById(
+  "historyAdvancedButton"
+)?.addEventListener(
+  "click",
+  () => setHistoryMode(true)
 );
 
 
