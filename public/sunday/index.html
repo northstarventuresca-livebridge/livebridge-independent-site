@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.7 broadcaster safety + request optimization -->
+<!-- LiveBridge v1.0.8 broadcaster safety + accurate transcription metrics -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -4325,6 +4325,12 @@ async function sendAudioChunk(
     formData.append(
       "language",
       inputLanguage
+    );
+
+    /* v1.0.8: identify the active room so backend can count transcription chunks per broadcast. */
+    formData.append(
+      "room",
+      ROOM_ID
     );
 
     const response =
