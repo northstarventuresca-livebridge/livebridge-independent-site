@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.17 unified share graphic system -->
+<!-- LiveBridge v1.0.18 localized listener links + livebridge.ca short URLs -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -771,6 +771,8 @@
 <script>
   const WORKER_URL =
   "https://livebridge.northstarventures-ca.workers.dev";
+
+  const LIVEBRIDGE_PUBLIC_BASE = "https://livebridge.ca";
 
   let ROOM_ID = "";
   let listenerSocket = null;
@@ -3268,6 +3270,69 @@ function askForEmail() {
   );
 
 
+
+  const LB_UI = {
+    en:{subtitle:"Join a room. Choose your language. Understand live.",room:"Room Name",listen:"Listening Language",join:"Join Live Room",share:"Share This Room",copy:"Copy Link",send:"Send / Share",open:"Open",scan:"Scan to join this room"},
+    fr:{subtitle:"Rejoignez une salle. Choisissez votre langue. Comprenez en direct.",room:"Nom de la salle",listen:"Langue d’écoute",join:"Rejoindre la salle en direct",share:"Partager cette salle",copy:"Copier le lien",send:"Envoyer / Partager",open:"Ouvrir",scan:"Scanner pour rejoindre cette salle"},
+    es:{subtitle:"Únase a una sala. Elija su idioma. Entienda en vivo.",room:"Nombre de la sala",listen:"Idioma de escucha",join:"Unirse a la sala en vivo",share:"Compartir esta sala",copy:"Copiar enlace",send:"Enviar / Compartir",open:"Abrir",scan:"Escanear para unirse a esta sala"},
+    de:{subtitle:"Raum beitreten. Sprache wählen. Live verstehen.",room:"Raumname",listen:"Hörsprache",join:"Live-Raum beitreten",share:"Diesen Raum teilen",copy:"Link kopieren",send:"Senden / Teilen",open:"Öffnen",scan:"Scannen, um diesem Raum beizutreten"},
+    pt:{subtitle:"Entre em uma sala. Escolha seu idioma. Entenda ao vivo.",room:"Nome da sala",listen:"Idioma de escuta",join:"Entrar na sala ao vivo",share:"Compartilhar esta sala",copy:"Copiar link",send:"Enviar / Compartilhar",open:"Abrir",scan:"Escaneie para entrar nesta sala"},
+    it:{subtitle:"Entra in una stanza. Scegli la tua lingua. Comprendi in diretta.",room:"Nome stanza",listen:"Lingua di ascolto",join:"Entra nella stanza live",share:"Condividi questa stanza",copy:"Copia link",send:"Invia / Condividi",open:"Apri",scan:"Scansiona per entrare"},
+    nl:{subtitle:"Word lid van een ruimte. Kies uw taal. Begrijp live.",room:"Ruimtenaam",listen:"Luistertaal",join:"Deelnemen aan live ruimte",share:"Deze ruimte delen",copy:"Link kopiëren",send:"Verzenden / Delen",open:"Openen",scan:"Scan om deel te nemen"},
+    pl:{subtitle:"Dołącz do pokoju. Wybierz język. Rozumiej na żywo.",room:"Nazwa pokoju",listen:"Język odsłuchu",join:"Dołącz do pokoju na żywo",share:"Udostępnij ten pokój",copy:"Kopiuj link",send:"Wyślij / Udostępnij",open:"Otwórz",scan:"Zeskanuj, aby dołączyć"},
+    uk:{subtitle:"Приєднайтеся до кімнати. Оберіть мову. Розумійте наживо.",room:"Назва кімнати",listen:"Мова прослуховування",join:"Приєднатися до прямої трансляції",share:"Поділитися кімнатою",copy:"Копіювати посилання",send:"Надіслати / Поділитися",open:"Відкрити",scan:"Скануйте, щоб приєднатися"},
+    ru:{subtitle:"Присоединитесь к комнате. Выберите язык. Понимайте в прямом эфире.",room:"Название комнаты",listen:"Язык прослушивания",join:"Присоединиться к эфиру",share:"Поделиться комнатой",copy:"Копировать ссылку",send:"Отправить / Поделиться",open:"Открыть",scan:"Сканируйте, чтобы присоединиться"},
+    ar:{subtitle:"انضم إلى غرفة. اختر لغتك. افهم البث المباشر.",room:"اسم الغرفة",listen:"لغة الاستماع",join:"الانضمام إلى الغرفة المباشرة",share:"مشاركة هذه الغرفة",copy:"نسخ الرابط",send:"إرسال / مشاركة",open:"فتح",scan:"امسح للانضمام إلى هذه الغرفة"},
+    zh:{subtitle:"加入房间。选择您的语言。实时理解。",room:"房间名称",listen:"收听语言",join:"加入直播房间",share:"分享此房间",copy:"复制链接",send:"发送 / 分享",open:"打开",scan:"扫码加入此房间"},
+    ja:{subtitle:"ルームに参加。言語を選択。ライブで理解。",room:"ルーム名",listen:"視聴言語",join:"ライブ配信に参加",share:"このルームを共有",copy:"リンクをコピー",send:"送信 / 共有",open:"開く",scan:"スキャンして参加"},
+    ko:{subtitle:"방에 참여하세요. 언어를 선택하세요. 실시간으로 이해하세요.",room:"방 이름",listen:"청취 언어",join:"라이브 방 참여",share:"이 방 공유",copy:"링크 복사",send:"보내기 / 공유",open:"열기",scan:"스캔하여 참여"},
+    hi:{subtitle:"कक्ष से जुड़ें। अपनी भाषा चुनें। लाइव समझें।",room:"कक्ष का नाम",listen:"सुनने की भाषा",join:"लाइव कक्ष से जुड़ें",share:"यह कक्ष साझा करें",copy:"लिंक कॉपी करें",send:"भेजें / साझा करें",open:"खोलें",scan:"जुड़ने के लिए स्कैन करें"}
+  };
+
+  function applyListenerUrlLanguage(){
+    const lang=String(new URLSearchParams(window.location.search).get("lang")||"en").trim().toLowerCase();
+    const t=LB_UI[lang]||LB_UI.en;
+    document.documentElement.lang=lang;
+    document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+
+    const subtitle=document.querySelector(".lb-live-subtitle");
+    if(subtitle) subtitle.textContent=t.subtitle;
+
+    const labels=document.querySelectorAll(".lb-live-controls .lb-live-label");
+    if(labels[0]) labels[0].textContent=t.room;
+    if(labels[1]) labels[1].textContent=t.listen;
+
+    const join=document.getElementById("joinRoomButton");
+    if(join) join.textContent=t.join;
+
+    const shareTitle=document.querySelector(".lb-listener-share-title");
+    if(shareTitle) shareTitle.textContent=t.share;
+
+    const copy=document.getElementById("lbListenerCopy");
+    if(copy) copy.textContent=t.copy;
+
+    const send=document.getElementById("lbListenerShare");
+    if(send) send.textContent=t.send;
+
+    const open=document.getElementById("lbListenerOpen");
+    if(open) open.textContent=t.open;
+
+    const scan=document.querySelector(".lb-listener-qr-caption");
+    if(scan) scan.textContent=t.scan;
+
+    const listenerLanguage=document.getElementById("listenerLanguage");
+    if(listenerLanguage){
+      const option=Array.from(listenerLanguage.options).find(item=>String(item.value).split("|")[0].toLowerCase()===lang);
+      if(option) listenerLanguage.value=option.value;
+    }
+
+    const shareLanguage=document.getElementById("lbListenerShareLanguage");
+    if(shareLanguage&&Array.from(shareLanguage.options).some(item=>item.value===lang)){
+      shareLanguage.value=lang;
+    }
+  }
+
+
   function loadRoomFromURL() {
 
     const params =
@@ -3291,6 +3356,7 @@ function askForEmail() {
 
 
   loadRoomFromURL();
+  applyListenerUrlLanguage();
   applyListenerFontSize();
 </script>
 
@@ -4958,8 +5024,10 @@ Keep the existing listener embeds unchanged.
 
   function getListenerShareURL(){
     const room=String(document.getElementById("listenerRoom")?.value||new URLSearchParams(window.location.search).get("room")||"").trim().toUpperCase();
-    const url=new URL("/t/",window.location.origin);
+    const lang=String(document.getElementById("lbListenerShareLanguage")?.value||document.getElementById("listenerLanguage")?.value?.split("|")[0]||"en").trim().toLowerCase();
+    const url=new URL("/t/",LIVEBRIDGE_PUBLIC_BASE);
     if(room) url.searchParams.set("room",room);
+    if(lang) url.searchParams.set("lang",lang);
     return url.toString();
   }
 
@@ -5028,7 +5096,7 @@ Keep the existing listener embeds unchanged.
   document.getElementById("lbListenerCopy")?.addEventListener("click",async function(){const url=getListenerShareURL();await navigator.clipboard.writeText(url);const old=this.textContent;this.textContent="✓ Copied";setTimeout(()=>this.textContent=old,1400);});
   document.getElementById("lbListenerShare")?.addEventListener("click",async function(){try{const generated=await previewListenerShareInvite();const file=new File([generated.blob],generated.filename,{type:"image/png"});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"LiveBridge Live Room",text:generated.message,files:[file]});return;}if(navigator.share){await navigator.share({title:"LiveBridge Live Room",text:generated.message,url:getListenerShareURL()});return;}await navigator.clipboard.writeText(generated.message);alert("Invite text copied. The share graphic is shown below.");}catch(error){if(error?.name!=="AbortError"){console.error("LiveBridge invite sharing failed:",error);alert("The invite preview is shown below.");}}});
   document.getElementById("lbListenerOpen")?.addEventListener("click",()=>window.open(getListenerShareURL(),"_blank"));
-  document.getElementById("lbListenerShareLanguage")?.addEventListener("change",async()=>{if(document.getElementById("lbListenerSharePreview")?.classList.contains("show")) await previewListenerShareInvite();});
+  document.getElementById("lbListenerShareLanguage")?.addEventListener("change",async()=>{refreshListenerShare();if(document.getElementById("lbListenerSharePreview")?.classList.contains("show")) await previewListenerShareInvite();});
   document.getElementById("lbListenerDownloadGraphic")?.addEventListener("click",async function(){const generated=window.currentListenerShareInvite||await previewListenerShareInvite();const link=document.createElement("a");link.href=generated.canvas.toDataURL("image/png");link.download=generated.filename;link.click();});
   document.getElementById("lbListenerCopyInviteText")?.addEventListener("click",async function(){const generated=window.currentListenerShareInvite||await previewListenerShareInvite();await navigator.clipboard.writeText(generated.message);const old=this.textContent;this.textContent="✓ Copied";setTimeout(()=>this.textContent=old,1500);});
   document.getElementById("listenerRoom")?.addEventListener("input",refreshListenerShare);
