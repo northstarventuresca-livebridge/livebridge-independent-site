@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.8 broadcaster safety + accurate transcription metrics -->
+<!-- LiveBridge v1.0.10 collapsible scheduler + no-audio safety panels -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -677,19 +677,32 @@ body{
         Start Broadcasting
       </button>
 
-      <div
+      <details
         id="lbBroadcastScheduler"
         style="
           margin-top:12px;
-          padding:14px;
+          padding:0;
           border:1px solid rgba(255,255,255,.11);
           border-radius:12px;
           background:rgba(255,255,255,.035);
+          overflow:hidden;
         "
       >
-        <div style="font-size:13px;font-weight:900;margin-bottom:10px;">
+        <summary
+          style="
+            cursor:pointer;
+            list-style:none;
+            padding:14px;
+            font-size:13px;
+            font-weight:900;
+            user-select:none;
+          "
+        >
           ⏰ Schedule Broadcast
-        </div>
+          <span style="float:right;color:#7890aa;font-size:11px;">▾</span>
+        </summary>
+
+        <div style="padding:0 14px 14px;">
 
         <label style="display:block;font-size:11px;color:#9fb2c6;margin-bottom:5px;">
           Start
@@ -755,7 +768,8 @@ body{
         >
           Page must remain open for automatic start and stop.
         </div>
-      </div>
+        </div>
+      </details>
 
       <button
         class="lb-btn"
@@ -3701,7 +3715,7 @@ function renderNoAudioSafetyControl() {
   }
 
   const wrap =
-    document.createElement("div");
+    document.createElement("details");
 
   wrap.id =
     "lbNoAudioSafetyWrap";
@@ -3711,17 +3725,29 @@ function renderNoAudioSafetyControl() {
 
   wrap.style.cssText = `
     margin-top:12px;
-    padding:14px;
+    padding:0;
     border:1px solid rgba(255,255,255,.11);
     border-radius:12px;
     background:rgba(255,255,255,.035);
+    overflow:hidden;
   `;
 
   wrap.innerHTML = `
-    <div style="font-size:13px;font-weight:900;margin-bottom:8px;">
+    <summary
+      style="
+        cursor:pointer;
+        list-style:none;
+        padding:14px;
+        font-size:13px;
+        font-weight:900;
+        user-select:none;
+      "
+    >
       🛡 No-Audio Safety
-    </div>
+      <span style="float:right;color:#7890aa;font-size:11px;">▾</span>
+    </summary>
 
+    <div style="padding:0 14px 14px;">
     <div style="font-size:11px;color:#8fa6be;line-height:1.5;margin-bottom:10px;">
       LiveBridge stops sending silent transcription audio after about 15 seconds.
       If no meaningful audio returns for the selected time, the broadcast ends automatically.
@@ -3753,6 +3779,7 @@ function renderNoAudioSafetyControl() {
     <div id="lbAudioSafetyStatus"
       style="color:#7890aa;font-size:10px;line-height:1.45;margin-top:8px;">
       Waiting for broadcast.
+    </div>
     </div>
   `;
 
