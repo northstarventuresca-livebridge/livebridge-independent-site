@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.20 polished dynamic pricing layout -->
+<!-- LiveBridge v1.0.21 Starter Stripe Checkout test -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -1732,12 +1732,26 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
               }
             </p>
 
-            <a
-              class="lb-btn ${featured ? "lb-btn-primary" : "lb-btn-secondary"}"
-              href="/signup/?plan=${encodeURIComponent(plan.planCode)}"
-            >
-              Choose ${escapePlanHtml(plan.planName)}
-            </a>
+            ${
+              String(plan.planCode || "").toLowerCase() === "starter"
+                ? `
+                  <button
+                    class="lb-btn ${featured ? "lb-btn-primary" : "lb-btn-secondary"}"
+                    type="button"
+                    data-livebridge-checkout="starter"
+                  >
+                    Choose ${escapePlanHtml(plan.planName)}
+                  </button>
+                `
+                : `
+                  <a
+                    class="lb-btn ${featured ? "lb-btn-primary" : "lb-btn-secondary"}"
+                    href="/signup/?plan=${encodeURIComponent(plan.planCode)}"
+                  >
+                    Choose ${escapePlanHtml(plan.planName)}
+                  </a>
+                `
+            }
 
           </div>
         `;
@@ -1785,6 +1799,97 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
         </div>
       `;
   }
+
+
+
+  async function startStarterCheckout(button){
+
+    if(!button){
+      return;
+    }
+
+    const originalText =
+      button.textContent;
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      "Opening Checkout...";
+
+    try{
+
+      const response =
+        await fetch(
+          "https://livebridge.northstarventures-ca.workers.dev/stripe/create-checkout-session",
+          {
+            method:"POST",
+            headers:{
+              "Content-Type":"application/json",
+              "Accept":"application/json"
+            },
+            body:JSON.stringify({
+              planCode:"starter"
+            })
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if(
+        !response.ok ||
+        !data.success ||
+        !data.checkoutUrl
+      ){
+        throw new Error(
+          data.error ||
+          "Unable to start Stripe Checkout."
+        );
+      }
+
+      window.location.href =
+        data.checkoutUrl;
+
+    }catch(error){
+
+      console.error(
+        "LiveBridge Starter Checkout failed:",
+        error
+      );
+
+      alert(
+        error.message ||
+        "Unable to start Stripe Checkout."
+      );
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        originalText;
+    }
+  }
+
+
+  pricingBox.addEventListener(
+    "click",
+    function(event){
+
+      const button =
+        event.target.closest(
+          '[data-livebridge-checkout="starter"]'
+        );
+
+      if(!button){
+        return;
+      }
+
+      startStarterCheckout(
+        button
+      );
+    }
+  );
 
 
   async function loadPublicPlans(){
