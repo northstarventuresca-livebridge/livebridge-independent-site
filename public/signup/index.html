@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.21 editable broadcast room + live D1 availability -->
+<!-- LiveBridge v1.0.22 paid-checkout-gated signup + room availability -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -409,6 +409,55 @@
     color: #ffb2b2;
   }
 
+
+  .lbs-checkout-gate {
+    display: block;
+    text-align: center;
+    padding: 34px 18px;
+  }
+
+  .lbs-checkout-gate-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
+
+  .lbs-checkout-gate-copy {
+    color: #9eb2c8;
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+
+  .lbs-checkout-gate-error {
+    display: none;
+    margin: 16px 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(239,68,68,.08);
+    border: 1px solid rgba(239,68,68,.24);
+    color: #ffb2b2;
+    font-weight: 800;
+    line-height: 1.5;
+  }
+
+  .lbs-checkout-gate-error.show {
+    display: block;
+  }
+
+  .lbs-checkout-gate-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 900;
+    color: #ffffff;
+    background: linear-gradient(135deg,#1788ff,#25b7ff);
+  }
+
   .lbs-room-preview {
     margin-top: 8px;
     color: #7890aa;
@@ -661,7 +710,31 @@
       <div class="lbs-card lbs-form-card">
 
 
-        <div id="lbs-details-stage">
+        <div id="lbs-checkout-gate" class="lbs-checkout-gate">
+
+          <div class="lbs-checkout-gate-title">
+            Verifying Your LiveBridge Purchase
+          </div>
+
+          <div class="lbs-checkout-gate-copy" id="lbsCheckoutGateCopy">
+            Please wait while we confirm your Stripe checkout.
+          </div>
+
+          <div class="lbs-checkout-gate-error" id="lbsCheckoutGateError"></div>
+
+          <a
+            class="lbs-checkout-gate-link"
+            id="lbsCheckoutGateLink"
+            href="/#pricing"
+            style="display:none;"
+          >
+            Return to Plans & Pricing
+          </a>
+
+        </div>
+
+
+        <div id="lbs-details-stage" style="display:none;">
 
           <div class="lbs-form-title">
             Create Your Organization
@@ -774,55 +847,9 @@
             </div>
 
 
-            <div class="lbs-field-full" id="lbsPlanSelectionSection">
+            <div class="lbs-field-full" id="lbsPlanSelectionSection" style="display:none;">
 
-              <label class="lbs-label">
-                Choose Your Plan
-              </label>
-
-              <div class="lbs-plan-options">
-
-                <div class="lbs-plan-option" data-plan-code="starter" tabindex="0" role="button">
-                  <div class="lbs-plan-option-name">Starter</div>
-                  <div class="lbs-plan-option-price">$39 <span>CAD / month</span></div>
-                  <div class="lbs-plan-option-copy">
-                    5 broadcast hours per month<br>
-                    Up to 25 simultaneous listeners
-                  </div>
-                </div>
-
-                <div class="lbs-plan-option selected" data-plan-code="growth" tabindex="0" role="button">
-                  <div class="lbs-popular">Most Popular</div>
-                  <div class="lbs-plan-option-name">Growth</div>
-                  <div class="lbs-plan-option-price">$79 <span>CAD / month</span></div>
-                  <div class="lbs-plan-option-copy">
-                    10 broadcast hours per month<br>
-                    Up to 50 simultaneous listeners
-                  </div>
-                </div>
-
-                <div class="lbs-plan-option" data-plan-code="pro" tabindex="0" role="button">
-                  <div class="lbs-plan-option-name">Pro</div>
-                  <div class="lbs-plan-option-price">$149 <span>CAD / month</span></div>
-                  <div class="lbs-plan-option-copy">
-                    20 broadcast hours per month<br>
-                    Up to 100 simultaneous listeners
-                  </div>
-                </div>
-
-              </div>
-
-              <select id="lbsPlan" class="lbs-select" style="display:none;">
-                <option value="starter">Starter</option>
-                <option value="growth" selected>Growth</option>
-                <option value="pro">Pro</option>
-              </select>
-
-              <div class="lbs-beta-note">
-                <strong>Beta Access:</strong>
-                No payment will be collected today.
-                Your selected plan will be activated immediately.
-              </div>
+              <select id="lbsPlan" class="lbs-select" style="display:none;"></select>
 
             </div>
 
@@ -1123,6 +1150,16 @@
       "none";
 
     document.getElementById(
+      "lbs-checkout-gate"
+    ).style.display =
+      "none";
+
+    document.getElementById(
+      "lbs-details-stage"
+    ).style.display =
+      "block";
+
+    document.getElementById(
       "lbsPaidPlan"
     ).classList.add(
       "show"
@@ -1244,8 +1281,39 @@
     if (
       checkoutState !==
         "success" ||
-      !sessionId
+      !sessionId ||
+      !sessionId.startsWith(
+        "cs_"
+      )
     ) {
+
+      const gateCopy =
+        document.getElementById(
+          "lbsCheckoutGateCopy"
+        );
+
+      const gateError =
+        document.getElementById(
+          "lbsCheckoutGateError"
+        );
+
+      const gateLink =
+        document.getElementById(
+          "lbsCheckoutGateLink"
+        );
+
+      gateCopy.textContent =
+        "LiveBridge registration opens only after a completed plan checkout.";
+
+      gateError.textContent =
+        "No verified Stripe checkout was found for this registration link.";
+
+      gateError.classList.add(
+        "show"
+      );
+
+      gateLink.style.display =
+        "inline-flex";
 
       return false;
     }
@@ -1339,6 +1407,35 @@
       errorBox.classList.add(
         "show"
       );
+
+      const gateCopy =
+        document.getElementById(
+          "lbsCheckoutGateCopy"
+        );
+
+      const gateError =
+        document.getElementById(
+          "lbsCheckoutGateError"
+        );
+
+      const gateLink =
+        document.getElementById(
+          "lbsCheckoutGateLink"
+        );
+
+      gateCopy.textContent =
+        "Your registration could not be opened because the Stripe checkout could not be verified.";
+
+      gateError.textContent =
+        error.message ||
+        "Please return to plans and complete checkout again.";
+
+      gateError.classList.add(
+        "show"
+      );
+
+      gateLink.style.display =
+        "inline-flex";
 
       return false;
 
@@ -2321,7 +2418,13 @@
 
       await ensureActiveClerkSession();
 
-      await verifyStripeCheckoutReturn();
+      const checkoutVerified =
+        await verifyStripeCheckoutReturn();
+
+
+      if (!checkoutVerified) {
+        return;
+      }
 
 
       const finished =
