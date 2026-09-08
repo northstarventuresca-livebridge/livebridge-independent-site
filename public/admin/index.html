@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- LiveBridge v1.0.18 Admin Plan Manager additive UI -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -556,6 +557,184 @@ body{
     flex-direction:column;
   }
 }
+
+.lb-plan-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+
+.lb-plan-card{
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.05);
+  padding:16px;
+}
+
+.lb-plan-card.inactive{
+  opacity:.65;
+}
+
+.lb-plan-name{
+  font-size:18px;
+  font-weight:900;
+  margin-bottom:4px;
+}
+
+.lb-plan-code{
+  color:#6f88a2;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  margin-bottom:12px;
+}
+
+.lb-plan-meta{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin:12px 0;
+}
+
+.lb-plan-meta-box{
+  padding:10px;
+  border-radius:10px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.06);
+}
+
+.lb-plan-meta-label{
+  color:#6f88a2;
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin-bottom:3px;
+}
+
+.lb-plan-meta-value{
+  font-weight:900;
+  font-size:13px;
+}
+
+.lb-plan-flags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:10px 0 14px;
+}
+
+.lb-plan-flag{
+  display:inline-block;
+  padding:5px 8px;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:900;
+  background:rgba(45,151,255,.12);
+  color:#8fc5ff;
+}
+
+.lb-plan-flag.green{
+  background:rgba(34,197,94,.12);
+  color:#5df09a;
+}
+
+.lb-plan-flag.yellow{
+  background:rgba(234,179,8,.12);
+  color:#facc15;
+}
+
+.lb-plan-flag.red{
+  background:rgba(239,68,68,.12);
+  color:#f87171;
+}
+
+.lb-plan-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.lb-plan-form{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:13px;
+}
+
+.lb-plan-form .full{
+  grid-column:1 / -1;
+}
+
+.lb-plan-checkbox{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:11px 12px;
+  border:1px solid rgba(255,255,255,.10);
+  background:#0e1c2d;
+  border-radius:9px;
+}
+
+.lb-plan-checkbox input{
+  width:auto;
+}
+
+.lb-plan-modal{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  background:rgba(2,8,18,.84);
+  backdrop-filter:blur(5px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.lb-plan-modal.show{
+  display:flex;
+}
+
+.lb-plan-modal-card{
+  width:100%;
+  max-width:760px;
+  max-height:92vh;
+  overflow:auto;
+  background:#101d2d;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:20px;
+  padding:24px;
+  box-shadow:0 25px 70px rgba(0,0,0,.45);
+}
+
+.lb-plan-features{
+  min-height:120px;
+  resize:vertical;
+}
+
+.lb-plan-price-note{
+  margin-top:7px;
+  color:#72889f;
+  font-size:10px;
+  line-height:1.5;
+}
+
+@media(max-width:1050px){
+  .lb-plan-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:760px){
+  .lb-plan-grid,
+  .lb-plan-form{
+    grid-template-columns:1fr;
+  }
+
+  .lb-plan-form .full{
+    grid-column:auto;
+  }
+}
+
 </style>
 
 
@@ -623,6 +802,13 @@ body{
         id="showAdminsButton"
       >
         🛡 Administrators
+      </button>
+
+      <button
+        class="lb-side-button"
+        id="showPlansButton"
+      >
+        💳 Plans
       </button>
 
       <div class="lb-divider"></div>
@@ -770,6 +956,253 @@ body{
 
         </div>
 
+      </div>
+
+
+
+      <div id="plansView" style="display:none;">
+
+        <div class="lb-topbar">
+          <div>
+            <div class="lb-title">
+              Plans
+            </div>
+
+            <div class="lb-subtitle">
+              Manage LiveBridge pricing, included hours, viewer limits and public visibility.
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <button
+              class="lb-button green"
+              id="createPlanButton"
+              type="button"
+            >
+              + Add Plan
+            </button>
+
+            <div id="plansUserButton"></div>
+          </div>
+        </div>
+
+        <div class="lb-card" style="margin-bottom:16px;">
+          <div class="lb-card-title">
+            Central Plan Catalog
+          </div>
+
+          <div class="lb-muted" style="margin-top:7px;line-height:1.6;">
+            These plans are stored in LiveBridge D1. The landing page and Stripe Checkout will be connected to this catalog after the plan manager is verified.
+          </div>
+        </div>
+
+        <div id="plansGrid" class="lb-plan-grid">
+          <div class="lb-empty">
+            Loading plans...
+          </div>
+        </div>
+
+      </div>
+
+
+      <div
+        id="planEditorModal"
+        class="lb-plan-modal"
+      >
+        <div class="lb-plan-modal-card">
+
+          <div class="lb-topbar" style="margin-bottom:18px;">
+            <div>
+              <div class="lb-card-title" id="planEditorTitle">
+                Add Plan
+              </div>
+
+              <div class="lb-muted" style="margin-top:5px;">
+                Changes save to the centralized D1 plan catalog.
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="lb-button secondary"
+              id="closePlanEditor"
+            >
+              Close
+            </button>
+          </div>
+
+          <input type="hidden" id="planEditId">
+
+          <div class="lb-plan-form">
+
+            <div class="lb-field">
+              <label>Plan Name</label>
+              <input
+                type="text"
+                id="planEditName"
+                placeholder="Example: Growth"
+              >
+            </div>
+
+            <div class="lb-field">
+              <label>Plan Code</label>
+              <input
+                type="text"
+                id="planEditCode"
+                placeholder="growth"
+              >
+            </div>
+
+            <div class="lb-field">
+              <label>Price (CAD)</label>
+              <input
+                type="number"
+                id="planEditPrice"
+                min="0"
+                step="0.01"
+                placeholder="49.00"
+              >
+              <div class="lb-plan-price-note">
+                Stripe is not connected yet. Saving a price here currently updates D1 only.
+              </div>
+            </div>
+
+            <div class="lb-field">
+              <label>Billing Interval</label>
+              <select id="planEditBillingInterval">
+                <option value="month">Monthly</option>
+                <option value="year">Yearly</option>
+              </select>
+            </div>
+
+            <div class="lb-field">
+              <label>Included Minutes</label>
+              <input
+                type="number"
+                id="planEditMinutes"
+                min="0"
+                step="1"
+              >
+            </div>
+
+            <div class="lb-field">
+              <label>Viewer Limit</label>
+              <input
+                type="number"
+                id="planEditViewers"
+                min="1"
+                step="1"
+              >
+            </div>
+
+            <div class="lb-field">
+              <label>Display Order</label>
+              <input
+                type="number"
+                id="planEditOrder"
+                step="1"
+              >
+            </div>
+
+            <div class="lb-field">
+              <label>Currency</label>
+              <select id="planEditCurrency">
+                <option value="CAD">CAD</option>
+                <option value="USD">USD</option>
+              </select>
+            </div>
+
+            <div class="lb-field full">
+              <label>Description</label>
+              <textarea
+                id="planEditDescription"
+                placeholder="Short public description for this plan."
+              ></textarea>
+            </div>
+
+            <div class="lb-field full">
+              <label>Features — one per line</label>
+              <textarea
+                id="planEditFeatures"
+                class="lb-plan-features"
+                placeholder="Live translation&#10;AI Notes&#10;Broadcast history"
+              ></textarea>
+            </div>
+
+            <div class="lb-plan-checkbox">
+              <input
+                type="checkbox"
+                id="planEditPublic"
+              >
+              <label for="planEditPublic" style="margin:0;">
+                Publicly visible
+              </label>
+            </div>
+
+            <div class="lb-plan-checkbox">
+              <input
+                type="checkbox"
+                id="planEditActive"
+              >
+              <label for="planEditActive" style="margin:0;">
+                Active
+              </label>
+            </div>
+
+            <div class="lb-plan-checkbox">
+              <input
+                type="checkbox"
+                id="planEditCustom"
+              >
+              <label for="planEditCustom" style="margin:0;">
+                Custom / private plan
+              </label>
+            </div>
+
+            <div class="lb-field">
+              <label>Stripe Product ID</label>
+              <input
+                type="text"
+                id="planEditStripeProduct"
+                placeholder="prod_..."
+              >
+            </div>
+
+            <div class="lb-field">
+              <label>Stripe Price ID</label>
+              <input
+                type="text"
+                id="planEditStripePrice"
+                placeholder="price_..."
+              >
+            </div>
+
+          </div>
+
+          <div class="lb-save-bar">
+            <button
+              type="button"
+              class="lb-button secondary"
+              id="cancelPlanEditor"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              class="lb-button green"
+              id="savePlanButton"
+            >
+              Save Plan
+            </button>
+          </div>
+
+          <div
+            id="planSaveMessage"
+            class="lb-message"
+          ></div>
+
+        </div>
       </div>
 
 
@@ -1189,6 +1622,8 @@ const ADMIN_WORKER =
 
 let adminOrganizations = [];
 let selectedOrganization = null;
+let adminPlans = [];
+let selectedPlan = null;
 
 
 async function getAdminToken(){
@@ -1386,6 +1821,12 @@ async function verifyAdmin(){
     )
   );
 
+  Clerk.mountUserButton(
+    document.getElementById(
+      "plansUserButton"
+    )
+  );
+
   return data.admin;
 }
 
@@ -1567,6 +2008,11 @@ function showAdminAccess(){
     "none";
 
   document.getElementById(
+    "plansView"
+  ).style.display =
+    "none";
+
+  document.getElementById(
     "adminAccessView"
   ).style.display =
     "block";
@@ -1600,6 +2046,670 @@ function showAdminAccess(){
       ).innerHTML =
         '<div class="lb-empty">Unable to load administrators.</div>';
     });
+}
+
+
+
+async function loadPlans(){
+
+  const grid =
+    document.getElementById(
+      "plansGrid"
+    );
+
+  grid.innerHTML =
+    '<div class="lb-empty">Loading plans...</div>';
+
+  const response =
+    await adminFetch(
+      "/admin/plans"
+    );
+
+  const data =
+    await response.json();
+
+  if(!response.ok){
+    throw new Error(
+      data.error ||
+      "Unable to load plans."
+    );
+  }
+
+  adminPlans =
+    data.plans || [];
+
+  renderPlans(
+    adminPlans
+  );
+
+  refreshOrganizationPlanDropdown();
+}
+
+
+function formatPlanPrice(
+  plan
+){
+
+  const amount =
+    Number(
+      plan.priceCents || 0
+    ) / 100;
+
+  const currency =
+    String(
+      plan.currency || "CAD"
+    );
+
+  return new Intl.NumberFormat(
+    "en-CA",
+    {
+      style:"currency",
+      currency
+    }
+  ).format(amount);
+}
+
+
+function renderPlans(
+  list
+){
+
+  const grid =
+    document.getElementById(
+      "plansGrid"
+    );
+
+  if(!list.length){
+    grid.innerHTML =
+      '<div class="lb-empty">No plans found.</div>';
+    return;
+  }
+
+  grid.innerHTML =
+    list.map(plan => {
+
+      const activeClass =
+        plan.active
+          ? ""
+          : " inactive";
+
+      return `
+        <div class="lb-plan-card${activeClass}">
+
+          <div class="lb-plan-name">
+            ${escapeHtml(plan.planName)}
+          </div>
+
+          <div class="lb-plan-code">
+            ${escapeHtml(plan.planCode)}
+          </div>
+
+          <div style="font-size:23px;font-weight:900;">
+            ${escapeHtml(formatPlanPrice(plan))}
+            <span style="font-size:11px;color:#7890aa;font-weight:700;">
+              / ${escapeHtml(plan.billingInterval || "month")}
+            </span>
+          </div>
+
+          <div class="lb-plan-meta">
+            <div class="lb-plan-meta-box">
+              <div class="lb-plan-meta-label">Included Time</div>
+              <div class="lb-plan-meta-value">
+                ${hoursFromMinutes(plan.includedMinutes)}
+              </div>
+            </div>
+
+            <div class="lb-plan-meta-box">
+              <div class="lb-plan-meta-label">Viewer Limit</div>
+              <div class="lb-plan-meta-value">
+                ${Number(plan.viewerLimit || 0)}
+              </div>
+            </div>
+          </div>
+
+          <div class="lb-plan-flags">
+            <span class="lb-plan-flag ${plan.active ? "green" : "red"}">
+              ${plan.active ? "Active" : "Inactive"}
+            </span>
+
+            <span class="lb-plan-flag ${plan.publicVisible ? "green" : "yellow"}">
+              ${plan.publicVisible ? "Public" : "Private"}
+            </span>
+
+            ${
+              plan.customPlan
+                ? '<span class="lb-plan-flag yellow">Custom</span>'
+                : ""
+            }
+
+            <span class="lb-plan-flag">
+              Order ${Number(plan.displayOrder || 0)}
+            </span>
+          </div>
+
+          <div class="lb-muted" style="min-height:34px;line-height:1.5;margin-bottom:12px;">
+            ${escapeHtml(plan.description || "No description yet.")}
+          </div>
+
+          <div class="lb-plan-actions">
+            <button
+              class="lb-button primary"
+              type="button"
+              onclick="editPlanById(${Number(plan.id)})"
+            >
+              Edit
+            </button>
+
+            ${
+              plan.active
+                ? `
+                  <button
+                    class="lb-button danger"
+                    type="button"
+                    onclick="archivePlanById(${Number(plan.id)})"
+                  >
+                    Archive
+                  </button>
+                `
+                : ""
+            }
+          </div>
+
+        </div>
+      `;
+    })
+    .join("");
+}
+
+
+function refreshOrganizationPlanDropdown(){
+
+  const select =
+    document.getElementById(
+      "editPlan"
+    );
+
+  if(
+    !select ||
+    !Array.isArray(adminPlans) ||
+    !adminPlans.length
+  ){
+    return;
+  }
+
+  const currentValue =
+    select.value;
+
+  select.innerHTML =
+    adminPlans
+      .filter(plan =>
+        plan.active ||
+        plan.planCode ===
+          selectedOrganization?.planCode
+      )
+      .map(plan => `
+        <option value="${escapeHtml(plan.planCode)}">
+          ${escapeHtml(plan.planName)} — ${hoursFromMinutes(plan.includedMinutes)} / ${Number(plan.viewerLimit || 0)} viewers
+        </option>
+      `)
+      .join("");
+
+  if(
+    currentValue &&
+    [...select.options].some(
+      option =>
+        option.value === currentValue
+    )
+  ){
+    select.value =
+      currentValue;
+  }else if(
+    selectedOrganization?.planCode
+  ){
+    select.value =
+      selectedOrganization.planCode;
+  }
+}
+
+
+function showPlans(){
+
+  document.getElementById(
+    "clientListView"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "clientDetailView"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "adminAccessView"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "plansView"
+  ).style.display =
+    "block";
+
+  document
+    .querySelectorAll(
+      ".lb-side-button"
+    )
+    .forEach(button =>
+      button.classList.remove(
+        "active"
+      )
+    );
+
+  document.getElementById(
+    "showPlansButton"
+  ).classList.add(
+    "active"
+  );
+
+  loadPlans()
+    .catch(error => {
+
+      console.error(
+        "Plan list failed:",
+        error
+      );
+
+      document.getElementById(
+        "plansGrid"
+      ).innerHTML =
+        '<div class="lb-empty">Unable to load plans.</div>';
+    });
+}
+
+
+function openPlanEditor(
+  plan = null
+){
+
+  selectedPlan =
+    plan || null;
+
+  document.getElementById(
+    "planEditorTitle"
+  ).textContent =
+    plan
+      ? "Edit " + plan.planName
+      : "Add Plan";
+
+  document.getElementById(
+    "planEditId"
+  ).value =
+    plan?.id || "";
+
+  document.getElementById(
+    "planEditName"
+  ).value =
+    plan?.planName || "";
+
+  document.getElementById(
+    "planEditCode"
+  ).value =
+    plan?.planCode || "";
+
+  document.getElementById(
+    "planEditPrice"
+  ).value =
+    plan
+      ? (
+          Number(
+            plan.priceCents || 0
+          ) / 100
+        ).toFixed(2)
+      : "";
+
+  document.getElementById(
+    "planEditBillingInterval"
+  ).value =
+    plan?.billingInterval ||
+    "month";
+
+  document.getElementById(
+    "planEditMinutes"
+  ).value =
+    plan?.includedMinutes ?? 0;
+
+  document.getElementById(
+    "planEditViewers"
+  ).value =
+    plan?.viewerLimit ?? 1;
+
+  document.getElementById(
+    "planEditOrder"
+  ).value =
+    plan?.displayOrder ?? 0;
+
+  document.getElementById(
+    "planEditCurrency"
+  ).value =
+    plan?.currency || "CAD";
+
+  document.getElementById(
+    "planEditDescription"
+  ).value =
+    plan?.description || "";
+
+  document.getElementById(
+    "planEditFeatures"
+  ).value =
+    Array.isArray(plan?.features)
+      ? plan.features.join("\n")
+      : "";
+
+  document.getElementById(
+    "planEditPublic"
+  ).checked =
+    plan
+      ? !!plan.publicVisible
+      : true;
+
+  document.getElementById(
+    "planEditActive"
+  ).checked =
+    plan
+      ? !!plan.active
+      : true;
+
+  document.getElementById(
+    "planEditCustom"
+  ).checked =
+    !!plan?.customPlan;
+
+  document.getElementById(
+    "planEditStripeProduct"
+  ).value =
+    plan?.stripeProductId || "";
+
+  document.getElementById(
+    "planEditStripePrice"
+  ).value =
+    plan?.stripePriceId || "";
+
+  const message =
+    document.getElementById(
+      "planSaveMessage"
+    );
+
+  message.className =
+    "lb-message";
+
+  message.textContent =
+    "";
+
+  document.getElementById(
+    "planEditorModal"
+  ).classList.add(
+    "show"
+  );
+}
+
+
+function closePlanEditor(){
+
+  document.getElementById(
+    "planEditorModal"
+  ).classList.remove(
+    "show"
+  );
+
+  selectedPlan =
+    null;
+}
+
+
+function editPlanById(id){
+
+  const plan =
+    adminPlans.find(
+      item =>
+        Number(item.id) ===
+        Number(id)
+    );
+
+  if(!plan){
+    return;
+  }
+
+  openPlanEditor(
+    plan
+  );
+}
+
+
+async function savePlan(){
+
+  const button =
+    document.getElementById(
+      "savePlanButton"
+    );
+
+  const message =
+    document.getElementById(
+      "planSaveMessage"
+    );
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    "Saving...";
+
+  message.className =
+    "lb-message";
+
+  try{
+
+    const features =
+      document.getElementById(
+        "planEditFeatures"
+      ).value
+      .split(/\n+/)
+      .map(value =>
+        value.trim()
+      )
+      .filter(Boolean);
+
+    const response =
+      await adminFetch(
+        "/admin/plan-save",
+        {
+          method:"POST",
+
+          body:JSON.stringify({
+            id:
+              Number(
+                document.getElementById(
+                  "planEditId"
+                ).value || 0
+              ),
+
+            planName:
+              document.getElementById(
+                "planEditName"
+              ).value.trim(),
+
+            planCode:
+              document.getElementById(
+                "planEditCode"
+              ).value.trim(),
+
+            priceCents:
+              Math.round(
+                Number(
+                  document.getElementById(
+                    "planEditPrice"
+                  ).value || 0
+                ) * 100
+              ),
+
+            currency:
+              document.getElementById(
+                "planEditCurrency"
+              ).value,
+
+            billingInterval:
+              document.getElementById(
+                "planEditBillingInterval"
+              ).value,
+
+            includedMinutes:
+              Number(
+                document.getElementById(
+                  "planEditMinutes"
+                ).value || 0
+              ),
+
+            viewerLimit:
+              Number(
+                document.getElementById(
+                  "planEditViewers"
+                ).value || 1
+              ),
+
+            displayOrder:
+              Number(
+                document.getElementById(
+                  "planEditOrder"
+                ).value || 0
+              ),
+
+            description:
+              document.getElementById(
+                "planEditDescription"
+              ).value.trim(),
+
+            features,
+
+            publicVisible:
+              document.getElementById(
+                "planEditPublic"
+              ).checked,
+
+            active:
+              document.getElementById(
+                "planEditActive"
+              ).checked,
+
+            customPlan:
+              document.getElementById(
+                "planEditCustom"
+              ).checked,
+
+            stripeProductId:
+              document.getElementById(
+                "planEditStripeProduct"
+              ).value.trim(),
+
+            stripePriceId:
+              document.getElementById(
+                "planEditStripePrice"
+              ).value.trim()
+          })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if(!response.ok){
+      throw new Error(
+        data.error ||
+        "Unable to save plan."
+      );
+    }
+
+    message.textContent =
+      "✓ Plan saved.";
+
+    message.className =
+      "lb-message good";
+
+    await loadPlans();
+
+    setTimeout(
+      closePlanEditor,
+      500
+    );
+
+  }catch(error){
+
+    message.textContent =
+      error.message ||
+      "Unable to save plan.";
+
+    message.className =
+      "lb-message bad";
+
+  }finally{
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "Save Plan";
+  }
+}
+
+
+async function archivePlanById(
+  id
+){
+
+  const plan =
+    adminPlans.find(
+      item =>
+        Number(item.id) ===
+        Number(id)
+    );
+
+  if(!plan){
+    return;
+  }
+
+  const confirmed =
+    confirm(
+      "Archive " +
+      plan.planName +
+      "?\n\n" +
+      "It will be hidden from public use and marked inactive, but historical organization data will remain."
+    );
+
+  if(!confirmed){
+    return;
+  }
+
+  const response =
+    await adminFetch(
+      "/admin/plan-archive",
+      {
+        method:"POST",
+
+        body:JSON.stringify({
+          id:Number(id)
+        })
+      }
+    );
+
+  const data =
+    await response.json();
+
+  if(!response.ok){
+    alert(
+      data.error ||
+      "Unable to archive plan."
+    );
+    return;
+  }
+
+  await loadPlans();
 }
 
 
@@ -1789,6 +2899,16 @@ async function openOrganization(id){
 
   document.getElementById(
     "clientListView"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "adminAccessView"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "plansView"
   ).style.display =
     "none";
 
@@ -2651,6 +3771,8 @@ async function deleteOrganization(){
 
     await loadOrganizations();
 
+    await loadPlans();
+
     showClientList();
 
 
@@ -2704,9 +3826,35 @@ function showClientList(){
     "none";
 
   document.getElementById(
+    "adminAccessView"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "plansView"
+  ).style.display =
+    "none";
+
+  document.getElementById(
     "clientListView"
   ).style.display =
     "block";
+
+  document
+    .querySelectorAll(
+      ".lb-side-button"
+    )
+    .forEach(button =>
+      button.classList.remove(
+        "active"
+      )
+    );
+
+  document.getElementById(
+    "showClientsButton"
+  ).classList.add(
+    "active"
+  );
 
   selectedOrganization =
     null;
@@ -2873,6 +4021,62 @@ document.getElementById(
 
 
 document.getElementById(
+  "showPlansButton"
+).addEventListener(
+  "click",
+  showPlans
+);
+
+
+document.getElementById(
+  "createPlanButton"
+).addEventListener(
+  "click",
+  () => openPlanEditor()
+);
+
+
+document.getElementById(
+  "closePlanEditor"
+).addEventListener(
+  "click",
+  closePlanEditor
+);
+
+
+document.getElementById(
+  "cancelPlanEditor"
+).addEventListener(
+  "click",
+  closePlanEditor
+);
+
+
+document.getElementById(
+  "savePlanButton"
+).addEventListener(
+  "click",
+  savePlan
+);
+
+
+document.getElementById(
+  "planEditorModal"
+).addEventListener(
+  "click",
+  function(event){
+
+    if(
+      event.target ===
+      this
+    ){
+      closePlanEditor();
+    }
+  }
+);
+
+
+document.getElementById(
   "refreshAdminButton"
 ).addEventListener(
   "click",
@@ -2933,6 +4137,8 @@ window.addEventListener(
       await verifyAdmin();
 
       await loadOrganizations();
+
+      await loadPlans();
 
 
       document.getElementById(
