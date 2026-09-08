@@ -706,6 +706,7 @@ body{
         "
       >
         <summary
+          id="lbBroadcastSchedulerSummary"
           style="
             cursor:pointer;
             list-style:none;
@@ -719,7 +720,7 @@ body{
           <span style="float:right;color:#7890aa;font-size:11px;">▾</span>
         </summary>
 
-        <div style="padding:0 14px 14px;">
+        <div id="lbBroadcastSchedulerBody" style="padding:0 14px 14px;">
 
         <label style="display:block;font-size:11px;color:#9fb2c6;margin-bottom:5px;">
           Start
@@ -1853,6 +1854,98 @@ async function applyBroadcasterSubroom(){
 }
 
 
+
+let liveBridgeBroadcasterEntitlements = {};
+
+
+function broadcasterCanSchedule(){
+
+  return (
+    liveBridgeBroadcasterEntitlements
+      .scheduledBroadcasts === true
+  );
+}
+
+
+function renderBroadcasterPlanFeatures(){
+
+  const scheduler =
+    document.getElementById(
+      "lbBroadcastScheduler"
+    );
+
+  const summary =
+    document.getElementById(
+      "lbBroadcastSchedulerSummary"
+    );
+
+  const body =
+    document.getElementById(
+      "lbBroadcastSchedulerBody"
+    );
+
+  if(
+    !scheduler ||
+    !summary ||
+    !body
+  ){
+    return;
+  }
+
+
+  if(
+    broadcasterCanSchedule()
+  ){
+
+    summary.innerHTML =
+      '⏰ Schedule Broadcast ' +
+      '<span style="float:right;color:#7890aa;font-size:11px;">▾</span>';
+
+    return;
+  }
+
+
+  scheduler.open = false;
+
+  summary.innerHTML =
+    '🔒 Schedule Broadcast ' +
+    '<span style="float:right;color:#ffd978;font-size:10px;">GROWTH</span>';
+
+
+  body.innerHTML = `
+    <div style="
+      padding:3px 0 4px;
+      color:#9fb2c6;
+      font-size:11px;
+      line-height:1.55;
+    ">
+      Scheduled broadcasts are available on
+      <strong style="color:white;">LiveBridge Growth and Pro</strong>.
+      Starter customers can still start and stop broadcasts manually.
+    </div>
+
+    <a
+      href="/plans/"
+      style="
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        margin-top:10px;
+        min-height:38px;
+        border-radius:9px;
+        text-decoration:none;
+        color:white;
+        font-size:11px;
+        font-weight:900;
+        background:linear-gradient(135deg,#1788ff,#2fc7ff);
+      "
+    >
+      Compare Plans & Upgrade
+    </a>
+  `;
+}
+
+
 async function initializeLiveBridgeBroadcaster() {
 
   try {
@@ -1894,6 +1987,14 @@ async function initializeLiveBridgeBroadcaster() {
         accountError
       );
     }
+
+    liveBridgeBroadcasterEntitlements =
+      serverAccount?.entitlements ||
+      {};
+
+
+    renderBroadcasterPlanFeatures();
+
 
     noAudioTimeoutMinutes =
       Number(
@@ -2058,6 +2159,14 @@ async function lbArmScheduledBroadcastAlert(
   startAt,
   endAt
 ) {
+
+  if(
+    !broadcasterCanSchedule()
+  ){
+    throw new Error(
+      "Scheduled broadcasts are available on LiveBridge Growth and Pro."
+    );
+  }
 
   const token =
     await getBroadcasterSessionToken();
@@ -2309,6 +2418,15 @@ async function lbCheckBroadcastSchedule() {
 lbEnableSchedule.addEventListener(
   "click",
   async () => {
+
+    if(
+      !broadcasterCanSchedule()
+    ){
+      window.location.href =
+        "/plans/";
+      return;
+    }
+
     const authorityConfirmation =
       document.getElementById(
         "lbBroadcastAuthorityConfirm"
