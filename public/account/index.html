@@ -549,7 +549,7 @@ body{
 
 .lb-plan-summary{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:10px;
   margin-top:14px;
 }
@@ -565,6 +565,38 @@ body{
   display:block;
   font-size:17px;
   margin-bottom:3px;
+}
+
+
+.lb-retention-banner{
+  margin:0 0 16px;
+  padding:14px 16px;
+  border-radius:13px;
+  border:1px solid rgba(52,211,153,.20);
+  background:rgba(52,211,153,.055);
+  color:#a9bdd0;
+  font-size:12px;
+  line-height:1.55;
+}
+
+.lb-retention-banner strong{
+  color:#dff9ea;
+}
+
+.lb-retention-banner.locked{
+  border-color:rgba(255,193,7,.20);
+  background:rgba(255,193,7,.055);
+}
+
+.lb-retention-banner.locked strong{
+  color:#ffd978;
+}
+
+.lb-retention-date{
+  margin-top:5px;
+  color:#8ea5bb;
+  font-size:10px;
+  line-height:1.4;
 }
 
 @media(max-width:720px){
@@ -1201,6 +1233,13 @@ body{
       Broadcast History
     </div>
 
+    <div
+      id="lbTranscriptRetentionBanner"
+      class="lb-retention-banner"
+    >
+      Loading transcript retention details...
+    </div>
+
     <div class="lb-history-row lb-history-head">
       <div>Date</div>
       <div>Duration</div>
@@ -1253,6 +1292,11 @@ body{
       <div>
         <strong id="lbCurrentPlanViewers">—</strong>
         <span class="lb-muted">Simultaneous listeners</span>
+      </div>
+
+      <div>
+        <strong id="lbTranscriptRetentionSummary">—</strong>
+        <span class="lb-muted">Transcript access</span>
       </div>
 
     </div>
@@ -1991,6 +2035,138 @@ function canAccessTranscripts(){
 
 
 
+function getTranscriptRetentionDays(){
+
+  return Number(
+    getAccountEntitlements()
+      .transcriptRetentionDays ||
+    0
+  );
+}
+
+
+function renderTranscriptRetentionUI(){
+
+  const retention =
+    getTranscriptRetentionDays();
+
+  const canAccess =
+    canAccessTranscripts();
+
+  const summary =
+    document.getElementById(
+      "lbTranscriptRetentionSummary"
+    );
+
+  const banner =
+    document.getElementById(
+      "lbTranscriptRetentionBanner"
+    );
+
+
+  if(summary){
+
+    summary.textContent =
+      canAccess && retention
+        ? retention + " days"
+        : "Locked";
+  }
+
+
+  if(!banner){
+    return;
+  }
+
+
+  if(
+    !canAccess ||
+    !retention
+  ){
+
+    banner.classList.add(
+      "locked"
+    );
+
+    banner.innerHTML = `
+      <strong>🔒 Post-broadcast transcripts are a Growth feature.</strong>
+      Starter still records broadcast history, but transcript viewing and
+      downloading are unavailable on this plan.
+      <a
+        href="/plans/index.html"
+        style="
+          color:#ffd978;
+          font-weight:900;
+          text-decoration:none;
+          margin-left:4px;
+        "
+      >
+        Compare plans
+      </a>
+    `;
+
+    return;
+  }
+
+
+  banner.classList.remove(
+    "locked"
+  );
+
+  banner.innerHTML =
+    retention >= 90
+      ? '<strong>Pro transcript access: 90 days.</strong> Completed broadcast transcripts remain available to view or download for up to 90 days after each broadcast.'
+      : '<strong>Growth transcript access: 30 days.</strong> Completed broadcast transcripts remain available to view or download for up to 30 days after each broadcast. Pro extends this to 90 days.';
+}
+
+
+function getTranscriptAccessUntil(
+  item
+){
+
+  const retention =
+    getTranscriptRetentionDays();
+
+  if(
+    !retention ||
+    !item?.startedAt
+  ){
+    return null;
+  }
+
+
+  const planExpiry =
+    Number(
+      item.startedAt
+    ) +
+    retention *
+    24 *
+    60 *
+    60 *
+    1000;
+
+
+  const storedExpiry =
+    Number(
+      item.transcriptExpiresAt ||
+      0
+    );
+
+
+  if(
+    storedExpiry > 0
+  ){
+    return Math.min(
+      planExpiry,
+      storedExpiry
+    );
+  }
+
+
+  return planExpiry;
+}
+
+
+
 function canAccessDetailedAnalytics(){
 
   return (
@@ -2361,7 +2537,12 @@ function renderPlanSummary(){
               " days"
             : ""
         ) +
-        ", plus the LiveBridge features included with your current plan.";
+        (
+          retention === 30
+            ? ". Pro extends transcript access to 90 days."
+            : ""
+        ) +
+        " Your other LiveBridge features continue according to your current plan.";
 
     }else{
 
@@ -2473,8 +2654,15 @@ function renderBroadcastHistory(broadcasts){
                             Download
                           </button>
 
-                          <div class="lb-muted" style="font-size:10px;margin-top:5px;">
-                            Available under your current plan
+                          <div class="lb-retention-date">
+                            ${
+                              getTranscriptAccessUntil(item)
+                                ? "Available until " +
+                                  new Date(
+                                    getTranscriptAccessUntil(item)
+                                  ).toLocaleDateString()
+                                : "Available under your current plan"
+                            }
                           </div>
                         `
                         : `
@@ -3101,6 +3289,8 @@ async function renderDashboard(user){
   updateSharing(account);
 
   renderPlanSummary();
+
+  renderTranscriptRetentionUI();
 
   renderProReportingExport();
 
