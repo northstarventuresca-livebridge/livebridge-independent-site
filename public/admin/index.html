@@ -1405,10 +1405,58 @@ body{
                     </strong>
                     <br>
                     <span style="color:#839ab3;">
-                      Shows detected Bible verses in Live Notes for this organization.
+                      Turns Scripture Detection on for this organization. Growth and Pro include this feature at the plan level.
                     </span>
                   </span>
                 </label>
+
+                <label style="
+                  display:flex;
+                  align-items:flex-start;
+                  gap:10px;
+                  padding:12px;
+                  margin-top:9px;
+                  border-radius:10px;
+                  border:1px solid rgba(255,193,7,.20);
+                  background:rgba(255,193,7,.055);
+                  cursor:pointer;
+                  text-transform:none;
+                  letter-spacing:0;
+                  font-size:12px;
+                  line-height:1.45;
+                  color:#dbe8f5;
+                ">
+                  <input
+                    type="checkbox"
+                    id="editScripturePlanOverride"
+                    style="
+                      width:auto;
+                      margin:2px 0 0;
+                      accent-color:#f6c344;
+                    "
+                  >
+                  <span>
+                    <strong style="color:#ffd978;">
+                      Override Plan Restriction
+                    </strong>
+                    <br>
+                    <span style="color:#9aaec2;">
+                      Allows Scripture Detection even when this organization's plan does not normally include it.
+                    </span>
+                  </span>
+                </label>
+
+                <div
+                  id="editScriptureEffectiveStatus"
+                  style="
+                    margin-top:8px;
+                    color:#839ab3;
+                    font-size:11px;
+                    line-height:1.45;
+                  "
+                >
+                  Effective access will appear here.
+                </div>
               </div>
 
             </div>
@@ -3089,6 +3137,15 @@ async function openOrganization(id){
     !!account.scriptureEnabled;
 
   document.getElementById(
+    "editScripturePlanOverride"
+  ).checked =
+    !!account.scripturePlanOverride;
+
+  renderScriptureAdminStatus(
+    account
+  );
+
+  document.getElementById(
     "editAdminNotes"
   ).value =
     account.adminNotes || "";
@@ -3097,6 +3154,64 @@ async function openOrganization(id){
   renderDetailHistory(
     data.broadcasts || []
   );
+}
+
+
+
+function renderScriptureAdminStatus(
+  account
+){
+
+  const status =
+    document.getElementById(
+      "editScriptureEffectiveStatus"
+    );
+
+  if(!status){
+    return;
+  }
+
+  const planAllows =
+    account?.entitlements
+      ?.scriptureDetection === true;
+
+  const enabled =
+    account?.scriptureEnabled === true;
+
+  const override =
+    account?.scripturePlanOverride === true;
+
+  const effective =
+    account?.scriptureEffectiveEnabled === true;
+
+  if(effective){
+
+    status.innerHTML =
+      planAllows
+        ? '✓ Effective: <strong style="color:#63e7a1;">Enabled by plan</strong> and organization setting.'
+        : '✓ Effective: <strong style="color:#ffd978;">Enabled by admin override</strong> for this organization.';
+
+    return;
+  }
+
+  if(!enabled){
+
+    status.innerHTML =
+      'Effective: <strong style="color:#9aaec2;">Off</strong> because the organization Scripture toggle is disabled.';
+
+    return;
+  }
+
+  if(!planAllows && !override){
+
+    status.innerHTML =
+      'Effective: <strong style="color:#ff9f9f;">Locked by plan</strong>. Turn on Override Plan Restriction to grant access manually.';
+
+    return;
+  }
+
+  status.textContent =
+    "Effective: Off.";
 }
 
 
@@ -3381,6 +3496,11 @@ async function saveOrganization(){
             scriptureEnabled:
               document.getElementById(
                 "editScriptureEnabled"
+              ).checked,
+
+            scripturePlanOverride:
+              document.getElementById(
+                "editScripturePlanOverride"
               ).checked,
 
             accountStatus:
