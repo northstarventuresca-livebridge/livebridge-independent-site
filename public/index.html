@@ -667,7 +667,7 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
   <div class="lb-nav-actions">
     <a class="lb-btn lb-btn-secondary" href="/t/">Join a Room</a>
     <a class="lb-btn lb-btn-secondary" href="/account/">Sign In</a>
-    <a class="lb-btn lb-btn-primary" href="/signup/">Create Account</a>
+    <a class="lb-btn lb-btn-primary" href="/plans/">View Plans & Pricing</a>
   </div>
 </nav>
 
@@ -697,8 +697,8 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
     </div>
 
     <div class="lb-actions">
-      <a class="lb-btn lb-btn-primary" href="/signup/">
-        Create LiveBridge Account
+      <a class="lb-btn lb-btn-primary" href="/plans/">
+        View Plans & Pricing
       </a>
 
       <a class="lb-btn lb-btn-secondary" href="/account/">
@@ -711,7 +711,7 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
     </div>
 
     <div class="lb-beta-strip">
-      ✨ Beta Access — no payment collected today
+      🌍 Built for businesses, training, education, events, churches, nonprofits and community organizations
     </div>
 
   </div>
@@ -1255,32 +1255,44 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
 <section class="lb-section" id="pricing">
 
   <h2 class="lb-section-title">
-    Simple plans that grow with you
+    Find the plan that fits how you use LiveBridge
   </h2>
 
   <div class="lb-section-sub">
-    Choose a plan based on monthly broadcast time and simultaneous listeners.
-    During beta, you can select your plan and activate your account without
-    entering payment information.
+    Starter gives you the complete live multilingual experience.
+    Growth adds the post-broadcast, scheduling and analytics tools that regular users need.
+    Pro is built for larger audiences, higher usage and deeper reporting.
   </div>
 
+  <div class="lb-grid">
 
-  <div class="lb-pricing" id="lbPublicPricing">
+    <div class="lb-card">
+      <div class="lb-card-icon">🚀</div>
+      <h3>Starter</h3>
+      <p>Core live captions, spoken translation, multiple languages, room sharing and basic broadcast history.</p>
+    </div>
 
-    <div class="lb-pricing-loading">
-      Loading current LiveBridge plans...
+    <div class="lb-card" style="border-color:rgba(44,168,255,.38);">
+      <div class="lb-card-icon">📈</div>
+      <h3>Growth — Most Popular</h3>
+      <p>Unlock transcripts, AI post-broadcast follow-up, scheduled broadcasts and detailed audience analytics.</p>
+    </div>
+
+    <div class="lb-card">
+      <div class="lb-card-icon">🏢</div>
+      <h3>Pro</h3>
+      <p>Higher usage, larger audiences, longer transcript access, reporting exports and priority support.</p>
     </div>
 
   </div>
 
-  <div class="lb-beta-strip" style="
-    display:flex;
-    width:max-content;
-    max-width:100%;
-    margin:24px auto 0;
-  ">
-    ✨ Beta Access — your selected plan activates immediately and no payment is collected today
+  <div class="lb-actions" style="justify-content:center;margin-top:24px;">
+    <a class="lb-btn lb-btn-primary" href="/plans/">
+      Compare All Plans & Features
+    </a>
   </div>
+
+  <div id="lbPublicPricing" style="display:none;"></div>
 
 </section>
 
@@ -1310,7 +1322,7 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
 
     <div class="lb-faq">
       <strong>Can we use our own room name?</strong>
-      <span>Your organization receives a default room, and LiveBridge administrators can assign a custom room when needed.</span>
+      <span>Yes. During registration LiveBridge suggests a room name from your organization name, and you can customize it if the name is available.</span>
     </div>
 
     <div class="lb-faq">
@@ -1319,8 +1331,8 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
     </div>
 
     <div class="lb-faq">
-      <strong>Is payment required during beta?</strong>
-      <span>No. You can select a plan during signup without entering payment information today.</span>
+      <strong>How do I create a LiveBridge account?</strong>
+      <span>Choose a plan first, complete secure Stripe checkout, then create your organization and broadcast room from the verified registration page.</span>
     </div>
 
   </div>
@@ -1333,14 +1345,14 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
     </h2>
 
     <p>
-      Create your LiveBridge account, choose your plan and start building
-      a multilingual experience for your audience.
+      Choose the plan that fits your organization, complete secure checkout
+      and create your multilingual LiveBridge room.
     </p>
 
     <div class="lb-actions" style="justify-content:center;">
 
-      <a class="lb-btn lb-btn-primary" href="/signup/">
-        Create Account
+      <a class="lb-btn lb-btn-primary" href="/plans/">
+        View Plans & Pricing
       </a>
 
       <a class="lb-btn lb-btn-secondary" href="/account/">
@@ -1952,7 +1964,7 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
 
     en: [
       "Welcome to the LiveBridge demonstration.",
-      "Imagine you are sitting in a church service, conference, classroom or business meeting.",
+      "Imagine you are sitting in a conference, training session, classroom, community event, church service or business meeting.",
       "The speaker continues talking naturally in their own language.",
       "LiveBridge converts that speech into readable captions as the message is being delivered.",
       "Now choose another language from the menu above.",
