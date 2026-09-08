@@ -503,6 +503,50 @@ body{
   font-weight:900;
 }
 
+
+.lb-pro-export{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:16px;
+  margin-top:16px;
+  border-radius:14px;
+  border:1px solid rgba(168,85,247,.22);
+  background:rgba(168,85,247,.055);
+}
+
+.lb-pro-export-copy{
+  color:#9fb2c6;
+  font-size:12px;
+  line-height:1.55;
+}
+
+.lb-pro-export-title{
+  color:#e6d6ff;
+  font-weight:900;
+  margin-bottom:4px;
+}
+
+.lb-pro-export-btn{
+  border:0;
+  min-height:38px;
+  padding:0 13px;
+  border-radius:10px;
+  cursor:pointer;
+  background:linear-gradient(135deg,#7c3aed,#a855f7);
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.lb-pro-export-btn.locked{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.11);
+  color:#d2c6e8;
+}
+
 .lb-plan-summary{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -1123,6 +1167,29 @@ body{
 
   </div>
 
+
+  <div class="lb-pro-export">
+
+    <div>
+      <div class="lb-pro-export-title">
+        Pro Reporting Export
+      </div>
+
+      <div class="lb-pro-export-copy" id="lbProExportCopy">
+        Download your broadcast analytics as a CSV file for reports, records or internal review.
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="lb-pro-export-btn"
+      id="lbExportAnalyticsButton"
+    >
+      Export CSV
+    </button>
+
+  </div>
+
 </section>
 
 
@@ -1648,6 +1715,11 @@ async function loadBroadcastHistory(account){
         ? data.broadcasts
         : [];
 
+
+    window.liveBridgeBroadcastHistory =
+      broadcasts;
+
+
     renderAccountStats(broadcasts);
 
     renderBroadcastHistory(broadcasts);
@@ -1924,6 +1996,262 @@ function canAccessDetailedAnalytics(){
   return (
     getAccountEntitlements()
       .detailedAnalytics === true
+  );
+}
+
+
+
+function canExportReports(){
+
+  return (
+    getAccountEntitlements()
+      .reportExport === true
+  );
+}
+
+
+
+function renderProReportingExport(){
+
+  const button =
+    document.getElementById(
+      "lbExportAnalyticsButton"
+    );
+
+  const copy =
+    document.getElementById(
+      "lbProExportCopy"
+    );
+
+  if(
+    !button ||
+    !copy
+  ){
+    return;
+  }
+
+
+  if(
+    canExportReports()
+  ){
+
+    button.classList.remove(
+      "locked"
+    );
+
+    button.textContent =
+      "Export CSV";
+
+    copy.textContent =
+      "Download your detailed broadcast analytics as a CSV file for reporting, records or internal review.";
+
+    return;
+  }
+
+
+  button.classList.add(
+    "locked"
+  );
+
+  button.textContent =
+    "🔒 Pro Feature";
+
+  copy.innerHTML =
+    'Analytics/report export is available on <strong>LiveBridge Pro</strong>. ' +
+    '<a href="/plans/index.html" style="color:#bda4ff;font-weight:900;text-decoration:none;">View Pro</a>';
+}
+
+
+function csvEscape(value){
+
+  const text =
+    String(
+      value ?? ""
+    );
+
+  if(
+    /[",\n]/.test(
+      text
+    )
+  ){
+    return (
+      '"' +
+      text.replace(
+        /"/g,
+        '""'
+      ) +
+      '"'
+    );
+  }
+
+  return text;
+}
+
+
+function exportLiveBridgeAnalyticsCsv(){
+
+  if(
+    !canExportReports()
+  ){
+    window.location.href =
+      "/plans/index.html";
+    return;
+  }
+
+
+  const broadcasts =
+    Array.isArray(
+      window.liveBridgeBroadcastHistory
+    )
+      ? window.liveBridgeBroadcastHistory
+      : [];
+
+
+  if(
+    !broadcasts.length
+  ){
+    alert(
+      "There is no broadcast history to export yet."
+    );
+    return;
+  }
+
+
+  const rows = [
+    [
+      "Date",
+      "Room",
+      "Duration Minutes",
+      "Total Listener Sessions",
+      "Peak Listeners",
+      "Total Listening Minutes",
+      "Average Listener Minutes",
+      "Languages"
+    ]
+  ];
+
+
+  broadcasts.forEach(
+    item => {
+
+      const languages =
+        (item.languages || [])
+          .map(
+            lang =>
+              String(
+                lang.language || ""
+              ).toUpperCase() +
+              ": " +
+              Number(
+                lang.listeners || 0
+              )
+          )
+          .join(
+            " | "
+          );
+
+      rows.push([
+        new Date(
+          Number(
+            item.startedAt || 0
+          )
+        ).toLocaleString(),
+
+        item.room || "",
+
+        (
+          Number(
+            item.durationMs || 0
+          ) /
+          60000
+        ).toFixed(2),
+
+        Number(
+          item.totalListeners || 0
+        ),
+
+        Number(
+          item.peakListeners || 0
+        ),
+
+        (
+          Number(
+            item.totalListeningMs || 0
+          ) /
+          60000
+        ).toFixed(2),
+
+        (
+          Number(
+            item.averageListeningMs || 0
+          ) /
+          60000
+        ).toFixed(2),
+
+        languages
+      ]);
+    }
+  );
+
+
+  const csv =
+    rows
+      .map(
+        row =>
+          row
+            .map(
+              csvEscape
+            )
+            .join(",")
+      )
+      .join("\n");
+
+
+  const blob =
+    new Blob(
+      [csv],
+      {
+        type:
+          "text/csv;charset=utf-8"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+  link.href =
+    url;
+
+  link.download =
+    "LiveBridge-Analytics-" +
+    new Date()
+      .toISOString()
+      .slice(
+        0,
+        10
+      ) +
+    ".csv";
+
+
+  document.body.appendChild(
+    link
+  );
+
+  link.click();
+
+  link.remove();
+
+  URL.revokeObjectURL(
+    url
   );
 }
 
@@ -2773,6 +3101,8 @@ async function renderDashboard(user){
   updateSharing(account);
 
   renderPlanSummary();
+
+  renderProReportingExport();
 
   loadBroadcastHistory(account);
 }
@@ -4842,5 +5172,51 @@ REPLACE the current diagnostic THIRD Embed with this one.
 
 })();
 </script>
+
+<script>
+(function(){
+
+  function wireLiveBridgeProExport(){
+
+    const button =
+      document.getElementById(
+        "lbExportAnalyticsButton"
+      );
+
+    if(
+      !button ||
+      button.dataset
+        .liveBridgeWired ===
+        "1"
+    ){
+      return;
+    }
+
+    button.dataset
+      .liveBridgeWired =
+      "1";
+
+    button.addEventListener(
+      "click",
+      exportLiveBridgeAnalyticsCsv
+    );
+  }
+
+
+  if(
+    document.readyState ===
+    "loading"
+  ){
+    document.addEventListener(
+      "DOMContentLoaded",
+      wireLiveBridgeProExport
+    );
+  }else{
+    wireLiveBridgeProExport();
+  }
+
+})();
+</script>
+
 </body>
 </html>
