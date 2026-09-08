@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- LiveBridge v1.0.20 verified Stripe return + locked paid plan summary -->
+<!-- LiveBridge v1.0.21 editable broadcast room + live D1 availability -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -365,6 +365,50 @@
     box-shadow: 0 0 0 3px rgba(40,151,255,.10);
   }
 
+
+  .lbs-room-help {
+    margin-top: 8px;
+    color: #7890aa;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .lbs-room-help a {
+    color: #56b4ff;
+    text-decoration: none;
+    font-weight: 800;
+  }
+
+  .lbs-room-status {
+    display: none;
+    margin-top: 8px;
+    padding: 9px 11px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .lbs-room-status.checking {
+    display: block;
+    background: rgba(40,151,255,.08);
+    border: 1px solid rgba(40,151,255,.22);
+    color: #b9dcff;
+  }
+
+  .lbs-room-status.available {
+    display: block;
+    background: rgba(34,197,94,.09);
+    border: 1px solid rgba(34,197,94,.24);
+    color: #6ef0a8;
+  }
+
+  .lbs-room-status.taken {
+    display: block;
+    background: rgba(239,68,68,.08);
+    border: 1px solid rgba(239,68,68,.24);
+    color: #ffb2b2;
+  }
+
   .lbs-room-preview {
     margin-top: 8px;
     color: #7890aa;
@@ -644,10 +688,37 @@
                 autocomplete="organization"
               >
 
-              <div class="lbs-room-preview">
-                Default Room:
-                <strong id="lbsRoomPreview">—</strong>
+            </div>
+
+
+            <div class="lbs-field-full">
+
+              <label class="lbs-label">
+                Broadcast Room Name
+              </label>
+
+              <input
+                id="lbsRoomName"
+                class="lbs-input"
+                type="text"
+                placeholder="Example: GREAT-CHURCH"
+                autocomplete="off"
+                maxlength="50"
+              >
+
+              <div class="lbs-room-help">
+                We recommend using your organization name so listeners can
+                recognize your room easily. You may shorten or customize it here.
+                If you want the room name changed later, please
+                <a
+                  href="mailto:globalconnectionschurch@gmail.com?subject=LiveBridge%20Room%20Name%20Change"
+                >contact our admin team</a>.
               </div>
+
+              <div
+                id="lbsRoomStatus"
+                class="lbs-room-status"
+              ></div>
 
             </div>
 
@@ -1305,10 +1376,210 @@
       "lbsOrganization"
     );
 
-  const roomPreview =
+  const roomInput =
     document.getElementById(
-      "lbsRoomPreview"
+      "lbsRoomName"
     );
+
+  const roomStatus =
+    document.getElementById(
+      "lbsRoomStatus"
+    );
+
+  let roomAvailabilityTimer =
+    null;
+
+  let roomAvailabilityState = {
+    checkedRoom: "",
+    available: false,
+    checking: false
+  };
+
+
+
+  function setRoomStatus(
+    type,
+    message
+  ) {
+
+    roomStatus.className =
+      "lbs-room-status" +
+      (
+        type
+          ? " " + type
+          : ""
+      );
+
+    roomStatus.textContent =
+      message || "";
+  }
+
+
+  async function checkRoomAvailability() {
+
+    const normalized =
+      makeLiveBridgeRoomName(
+        roomInput.value
+      );
+
+    if (
+      roomInput.value !== normalized
+    ) {
+      roomInput.value =
+        normalized;
+    }
+
+    roomAvailabilityState = {
+      checkedRoom: normalized,
+      available: false,
+      checking: false
+    };
+
+    if (!normalized) {
+      setRoomStatus(
+        "",
+        ""
+      );
+      return;
+    }
+
+    roomAvailabilityState.checking =
+      true;
+
+    setRoomStatus(
+      "checking",
+      "Checking room availability..."
+    );
+
+    try {
+
+      const response =
+        await fetch(
+          LB_WORKER +
+          "/room-availability?room=" +
+          encodeURIComponent(
+            normalized
+          ),
+          {
+            method: "GET",
+            headers: {
+              "Accept":
+                "application/json"
+            },
+            cache: "no-store"
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+        throw new Error(
+          data.error ||
+          "Unable to check room availability."
+        );
+      }
+
+      const returnedRoom =
+        String(
+          data.normalizedRoom ||
+          normalized
+        );
+
+      if (
+        returnedRoom !==
+        makeLiveBridgeRoomName(
+          roomInput.value
+        )
+      ) {
+        return;
+      }
+
+      roomAvailabilityState = {
+        checkedRoom: returnedRoom,
+        available:
+          !!data.available,
+        checking: false
+      };
+
+      if (data.available) {
+        setRoomStatus(
+          "available",
+          "✓ " +
+          returnedRoom +
+          " is available"
+        );
+      } else {
+        setRoomStatus(
+          "taken",
+          "✕ " +
+          (
+            data.error ||
+            returnedRoom +
+            " is already in use"
+          )
+        );
+      }
+
+    } catch (error) {
+
+      roomAvailabilityState = {
+        checkedRoom: normalized,
+        available: false,
+        checking: false
+      };
+
+      setRoomStatus(
+        "taken",
+        "Could not verify this room name. Please try again."
+      );
+    }
+  }
+
+
+  function scheduleRoomAvailabilityCheck() {
+
+    if (roomAvailabilityTimer) {
+      clearTimeout(
+        roomAvailabilityTimer
+      );
+    }
+
+    roomAvailabilityState = {
+      checkedRoom: "",
+      available: false,
+      checking: true
+    };
+
+    const normalized =
+      makeLiveBridgeRoomName(
+        roomInput.value
+      );
+
+    if (!normalized) {
+      setRoomStatus(
+        "",
+        ""
+      );
+      roomAvailabilityState.checking =
+        false;
+      return;
+    }
+
+    setRoomStatus(
+      "checking",
+      "Checking room availability..."
+    );
+
+    roomAvailabilityTimer =
+      setTimeout(
+        checkRoomAvailability,
+        450
+      );
+  }
 
 
   const planSelect =
@@ -1357,14 +1628,48 @@
   });
 
 
+  let roomManuallyEdited =
+    false;
+
+
   organizationInput.addEventListener(
     "input",
     function () {
 
-      roomPreview.textContent =
+      if (!roomManuallyEdited) {
+
+        roomInput.value =
+          makeLiveBridgeRoomName(
+            organizationInput.value
+          );
+
+        scheduleRoomAvailabilityCheck();
+      }
+
+    }
+  );
+
+
+  roomInput.addEventListener(
+    "input",
+    function () {
+
+      roomManuallyEdited =
+        true;
+
+      const normalized =
         makeLiveBridgeRoomName(
-          organizationInput.value
-        ) || "—";
+          roomInput.value
+        );
+
+      if (
+        roomInput.value !== normalized
+      ) {
+        roomInput.value =
+          normalized;
+      }
+
+      scheduleRoomAvailabilityCheck();
 
     }
   );
@@ -1421,6 +1726,45 @@
       alert(
         "Please enter your organization name."
       );
+      return;
+    }
+
+
+    const roomName =
+      makeLiveBridgeRoomName(
+        roomInput.value
+      );
+
+
+    if (!roomName) {
+      alert(
+        "Please enter a broadcast room name."
+      );
+      roomInput.focus();
+      return;
+    }
+
+
+    if (
+      roomAvailabilityState.checking
+    ) {
+      alert(
+        "Please wait while LiveBridge checks your room name."
+      );
+      return;
+    }
+
+
+    if (
+      roomAvailabilityState.checkedRoom !==
+        roomName ||
+      !roomAvailabilityState.available
+    ) {
+      alert(
+        "Please choose an available broadcast room name before continuing."
+      );
+      roomInput.focus();
+      scheduleRoomAvailabilityCheck();
       return;
     }
 
@@ -1509,9 +1853,7 @@
         !!lbVerifiedCheckout,
 
       defaultRoom:
-        makeLiveBridgeRoomName(
-          organizationName
-        ),
+        roomName,
 
       termsAccepted:
         true,
