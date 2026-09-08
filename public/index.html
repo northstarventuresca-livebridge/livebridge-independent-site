@@ -1732,26 +1732,13 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
               }
             </p>
 
-            ${
-              String(plan.planCode || "").toLowerCase() === "starter"
-                ? `
-                  <button
-                    class="lb-btn ${featured ? "lb-btn-primary" : "lb-btn-secondary"}"
-                    type="button"
-                    data-livebridge-checkout="starter"
-                  >
-                    Choose ${escapePlanHtml(plan.planName)}
-                  </button>
-                `
-                : `
-                  <a
-                    class="lb-btn ${featured ? "lb-btn-primary" : "lb-btn-secondary"}"
-                    href="/signup/?plan=${encodeURIComponent(plan.planCode)}"
-                  >
-                    Choose ${escapePlanHtml(plan.planName)}
-                  </a>
-                `
-            }
+            <button
+              class="lb-btn ${featured ? "lb-btn-primary" : "lb-btn-secondary"}"
+              type="button"
+              data-livebridge-checkout="${escapePlanHtml(plan.planCode)}"
+            >
+              Choose ${escapePlanHtml(plan.planName)}
+            </button>
 
           </div>
         `;
@@ -1802,7 +1789,7 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
 
 
 
-  async function startStarterCheckout(button){
+  async function startPlanCheckout(button, planCode){
 
     if(!button){
       return;
@@ -1829,7 +1816,7 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
               "Accept":"application/json"
             },
             body:JSON.stringify({
-              planCode:"starter"
+              planCode:String(planCode || "")
             })
           }
         );
@@ -1878,15 +1865,25 @@ body{margin:0;background:#07111f;color:#fff;font-family:Arial,Helvetica,sans-ser
 
       const button =
         event.target.closest(
-          '[data-livebridge-checkout="starter"]'
+          "[data-livebridge-checkout]"
         );
 
       if(!button){
         return;
       }
 
-      startStarterCheckout(
-        button
+      const planCode =
+        button.getAttribute(
+          "data-livebridge-checkout"
+        );
+
+      if(!planCode){
+        return;
+      }
+
+      startPlanCheckout(
+        button,
+        planCode
       );
     }
   );
