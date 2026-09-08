@@ -474,6 +474,61 @@ body{
   color:#8399b0;
 }
 
+
+.lb-plan-lock{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 9px;
+  border-radius:9px;
+  background:rgba(255,193,7,.08);
+  border:1px solid rgba(255,193,7,.18);
+  color:#ffd978;
+  font-size:11px;
+  font-weight:850;
+}
+
+.lb-upgrade-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:34px;
+  padding:0 10px;
+  border-radius:9px;
+  margin-top:7px;
+  background:linear-gradient(135deg,#1788ff,#2fc7ff);
+  color:#fff;
+  text-decoration:none;
+  font-size:11px;
+  font-weight:900;
+}
+
+.lb-plan-summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:14px;
+}
+
+.lb-plan-summary > div{
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.035);
+  border-radius:12px;
+  padding:12px;
+}
+
+.lb-plan-summary strong{
+  display:block;
+  font-size:17px;
+  margin-bottom:3px;
+}
+
+@media(max-width:720px){
+  .lb-plan-summary{
+    grid-template-columns:1fr;
+  }
+}
+
 #lb-loading{
   min-height:100vh;
   display:flex;
@@ -1104,18 +1159,44 @@ body{
 
   <div class="lb-card lb-plan-card">
 
-    <div class="lb-plan-badge">
-      Beta Billing
+    <div class="lb-plan-badge" id="lbCurrentPlanBadge">
+      LiveBridge Plan
     </div>
 
     <div class="lb-card-title">
       Broadcast Time & Plan
     </div>
 
-    <div class="lb-muted">
-      During beta, top-ups and plan upgrades are requested through the LiveBridge team.
-      No payment is collected automatically yet.
+    <div class="lb-muted" id="lbCurrentPlanDescription">
+      Loading your current plan and feature access...
     </div>
+
+    <div class="lb-plan-summary">
+
+      <div>
+        <strong id="lbCurrentPlanName">—</strong>
+        <span class="lb-muted">Current plan</span>
+      </div>
+
+      <div>
+        <strong id="lbCurrentPlanMinutes">—</strong>
+        <span class="lb-muted">Included each month</span>
+      </div>
+
+      <div>
+        <strong id="lbCurrentPlanViewers">—</strong>
+        <span class="lb-muted">Simultaneous listeners</span>
+      </div>
+
+    </div>
+
+    <a
+      class="lb-button primary"
+      href="/plans/"
+      style="margin-top:14px;display:inline-flex;text-decoration:none;"
+    >
+      Compare Plans & Features
+    </a>
 
   </div>
 
@@ -1728,6 +1809,143 @@ function renderAccountStats(broadcasts){
 }
 
 
+
+function getAccountEntitlements(){
+
+  return (
+    window.liveBridgeServerAccount
+      ?.entitlements ||
+    {}
+  );
+}
+
+
+function canAccessTranscripts(){
+
+  return (
+    getAccountEntitlements()
+      .transcriptAccess === true
+  );
+}
+
+
+function renderPlanSummary(){
+
+  const account =
+    window.liveBridgeServerAccount ||
+    {};
+
+  const entitlements =
+    account.entitlements ||
+    {};
+
+  const planName =
+    String(
+      account.planName ||
+      account.planCode ||
+      "LiveBridge"
+    );
+
+  const includedMinutes =
+    Number(
+      account.includedMinutes ||
+      0
+    );
+
+  const viewerLimit =
+    Number(
+      account.viewerLimit ||
+      0
+    );
+
+  const hours =
+    includedMinutes / 60;
+
+  const hoursText =
+    Number.isInteger(hours)
+      ? hours + " hrs"
+      : hours.toFixed(1) + " hrs";
+
+  const nameEl =
+    document.getElementById(
+      "lbCurrentPlanName"
+    );
+
+  const minutesEl =
+    document.getElementById(
+      "lbCurrentPlanMinutes"
+    );
+
+  const viewersEl =
+    document.getElementById(
+      "lbCurrentPlanViewers"
+    );
+
+  const descEl =
+    document.getElementById(
+      "lbCurrentPlanDescription"
+    );
+
+  const badgeEl =
+    document.getElementById(
+      "lbCurrentPlanBadge"
+    );
+
+  if(nameEl){
+    nameEl.textContent =
+      planName;
+  }
+
+  if(minutesEl){
+    minutesEl.textContent =
+      hoursText;
+  }
+
+  if(viewersEl){
+    viewersEl.textContent =
+      viewerLimit.toLocaleString();
+  }
+
+  if(badgeEl){
+    badgeEl.textContent =
+      planName + " Plan";
+  }
+
+  if(descEl){
+
+    if(
+      entitlements
+        .transcriptAccess === true
+    ){
+
+      const retention =
+        Number(
+          entitlements
+            .transcriptRetentionDays ||
+          0
+        );
+
+      descEl.textContent =
+        "Your plan includes post-broadcast transcript access" +
+        (
+          retention
+            ? " for up to " +
+              retention +
+              " days"
+            : ""
+        ) +
+        ", plus the LiveBridge features included with your current plan.";
+
+    }else{
+
+      descEl.innerHTML =
+        'Your plan includes the core LiveBridge live translation experience. ' +
+        '<strong>Growth and Pro unlock post-broadcast transcript access and additional workflow tools.</strong>';
+    }
+  }
+}
+
+
 function renderBroadcastHistory(broadcasts){
 
   const box =
@@ -1795,27 +2013,44 @@ function renderBroadcastHistory(broadcasts){
             <div>
               ${
                 item.hasTranscript
-                  ? `
-                    <button
-                      class="lb-button secondary"
-                      style="padding:8px 10px;font-size:12px;"
-                      onclick="viewBroadcastTranscript('${item.broadcastId}')"
-                    >
-                      View
-                    </button>
+                  ? (
+                      canAccessTranscripts()
+                        ? `
+                          <button
+                            class="lb-button secondary"
+                            style="padding:8px 10px;font-size:12px;"
+                            onclick="viewBroadcastTranscript('${item.broadcastId}')"
+                          >
+                            View
+                          </button>
 
-                    <button
-                      class="lb-button secondary"
-                      style="padding:8px 10px;font-size:12px;margin-left:5px;"
-                      onclick="downloadBroadcastTranscript('${item.broadcastId}')"
-                    >
-                      Download
-                    </button>
+                          <button
+                            class="lb-button secondary"
+                            style="padding:8px 10px;font-size:12px;margin-left:5px;"
+                            onclick="downloadBroadcastTranscript('${item.broadcastId}')"
+                          >
+                            Download
+                          </button>
 
-                    <div class="lb-muted" style="font-size:10px;margin-top:5px;">
-                      Expires ${new Date(Number(item.transcriptExpiresAt)).toLocaleDateString()}
-                    </div>
-                  `
+                          <div class="lb-muted" style="font-size:10px;margin-top:5px;">
+                            Available under your current plan
+                          </div>
+                        `
+                        : `
+                          <div class="lb-plan-lock">
+                            🔒 Growth feature
+                          </div>
+
+                          <div>
+                            <a
+                              class="lb-upgrade-link"
+                              href="/plans/"
+                            >
+                              Upgrade to unlock
+                            </a>
+                          </div>
+                        `
+                    )
                   : `
                     <span class="lb-muted">
                       Expired / unavailable
@@ -1834,6 +2069,14 @@ function renderBroadcastHistory(broadcasts){
 async function getBroadcastTranscript(
   broadcastId
 ){
+
+  if(
+    !canAccessTranscripts()
+  ){
+    throw new Error(
+      "Broadcast transcript access is available on LiveBridge Growth and Pro. Visit Plans & Pricing to upgrade."
+    );
+  }
 
   const token =
     await getLiveBridgeSessionToken();
@@ -2414,6 +2657,8 @@ async function renderDashboard(user){
 
 
   updateSharing(account);
+
+  renderPlanSummary();
 
   loadBroadcastHistory(account);
 }
