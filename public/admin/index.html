@@ -1063,7 +1063,7 @@ body{
                 placeholder="49.00"
               >
               <div class="lb-plan-price-note">
-                Stripe is not connected yet. Saving a price here currently updates D1 only.
+                Custom/private plans automatically create and maintain their Stripe Product and recurring Price.
               </div>
             </div>
 
@@ -1164,7 +1164,8 @@ body{
               <input
                 type="text"
                 id="planEditStripeProduct"
-                placeholder="prod_..."
+                placeholder="Created automatically for custom plans"
+                readonly
               >
             </div>
 
@@ -1173,7 +1174,8 @@ body{
               <input
                 type="text"
                 id="planEditStripePrice"
-                placeholder="price_..."
+                placeholder="Created automatically for custom plans"
+                readonly
               >
             </div>
 
@@ -1202,6 +1204,81 @@ body{
             class="lb-message"
           ></div>
 
+        </div>
+      </div>
+
+
+
+      <div id="offerCreatorModal" class="lb-plan-modal">
+        <div class="lb-plan-modal-card" style="max-width:760px;">
+
+          <div class="lb-topbar" style="margin-bottom:18px;">
+            <div>
+              <div class="lb-card-title">Create Private Offer</div>
+              <div class="lb-muted" id="offerPlanSummary" style="margin-top:5px;"></div>
+            </div>
+            <button type="button" class="lb-button secondary" id="closeOfferCreator">Close</button>
+          </div>
+
+          <input type="hidden" id="offerPlanId">
+
+          <div id="offerFormArea">
+            <div class="lb-plan-form">
+              <div class="lb-field">
+                <label>Recipient / Organization</label>
+                <input type="text" id="offerRecipientName" placeholder="Example Organization">
+              </div>
+
+              <div class="lb-field">
+                <label>Restrict to Email (optional)</label>
+                <input type="email" id="offerRecipientEmail" placeholder="name@example.com">
+              </div>
+
+              <div class="lb-field">
+                <label>Expiration (optional)</label>
+                <input type="datetime-local" id="offerExpiration">
+              </div>
+
+              <div class="lb-field">
+                <label>Maximum Redemptions</label>
+                <input type="number" id="offerMaxRedemptions" min="1" max="1000" step="1" value="1">
+              </div>
+
+              <div class="lb-plan-checkbox">
+                <input type="checkbox" id="offerSingleUse" checked>
+                <label for="offerSingleUse" style="margin:0;">Single-use offer</label>
+              </div>
+
+              <div class="lb-field full">
+                <label>Optional Note</label>
+                <textarea id="offerNote" placeholder="A short personal note for this offer."></textarea>
+              </div>
+            </div>
+
+            <div class="lb-save-bar">
+              <button type="button" class="lb-button green" id="createOfferButton">Create Offer</button>
+            </div>
+          </div>
+
+          <div id="offerResultArea" style="display:none;">
+            <div style="border:1px solid #dbe5ef;border-radius:18px;padding:20px;background:#f8fbff;">
+              <div style="font-weight:900;font-size:20px;margin-bottom:8px;">Private Offer Ready</div>
+              <div id="offerResultRecipient" class="lb-muted" style="margin-bottom:14px;"></div>
+              <input id="offerResultLink" type="text" readonly style="width:100%;box-sizing:border-box;padding:13px;border:1px solid #cbd8e6;border-radius:10px;background:white;">
+
+              <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;">
+                <img id="offerQrImage" alt="Offer QR Code" width="150" height="150" style="border-radius:12px;border:1px solid #dbe5ef;background:white;padding:8px;">
+                <div style="display:flex;gap:9px;flex-wrap:wrap;align-content:flex-start;">
+                  <button type="button" class="lb-button primary" id="copyOfferLinkButton">Copy Offer Link</button>
+                  <button type="button" class="lb-button secondary" id="shareOfferButton">Send / Share</button>
+                  <button type="button" class="lb-button secondary" id="downloadOfferGraphicButton">Download Graphic</button>
+                  <button type="button" class="lb-button secondary" id="createAnotherOfferButton">Create Another</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="offerCreateMessage" class="lb-message"></div>
         </div>
       </div>
 
@@ -1672,6 +1749,7 @@ let adminOrganizations = [];
 let selectedOrganization = null;
 let adminPlans = [];
 let selectedPlan = null;
+let lastCreatedOffer = null;
 
 
 async function getAdminToken(){
@@ -2249,6 +2327,20 @@ function renderPlans(
             </button>
 
             ${
+              plan.active && (plan.customPlan || !plan.publicVisible)
+                ? `
+                  <button
+                    class="lb-button green"
+                    type="button"
+                    onclick="openOfferCreatorByPlanId(${Number(plan.id)})"
+                  >
+                    Share Offer
+                  </button>
+                `
+                : ""
+            }
+
+            ${
               plan.active
                 ? `
                   <button
@@ -2758,6 +2850,183 @@ async function archivePlanById(
   }
 
   await loadPlans();
+}
+
+
+function openOfferCreatorByPlanId(id){
+  const plan = adminPlans.find(item => Number(item.id) === Number(id));
+  if(!plan){ return; }
+
+  document.getElementById("offerPlanId").value = plan.id;
+  document.getElementById("offerPlanSummary").textContent =
+    plan.planName + " · " + formatPlanPrice(plan) + " / " + (plan.billingInterval || "month") +
+    " · " + hoursFromMinutes(plan.includedMinutes) + " · " + Number(plan.viewerLimit || 0) + " viewers";
+
+  document.getElementById("offerRecipientName").value = "";
+  document.getElementById("offerRecipientEmail").value = "";
+  document.getElementById("offerExpiration").value = "";
+  document.getElementById("offerMaxRedemptions").value = "1";
+  document.getElementById("offerSingleUse").checked = true;
+  document.getElementById("offerMaxRedemptions").disabled = true;
+  document.getElementById("offerNote").value = "";
+  document.getElementById("offerFormArea").style.display = "block";
+  document.getElementById("offerResultArea").style.display = "none";
+  document.getElementById("offerCreateMessage").className = "lb-message";
+  document.getElementById("offerCreateMessage").textContent = "";
+  lastCreatedOffer = null;
+  document.getElementById("offerCreatorModal").classList.add("show");
+}
+
+function closeOfferCreator(){
+  document.getElementById("offerCreatorModal").classList.remove("show");
+}
+
+function resetOfferCreator(){
+  const id = Number(document.getElementById("offerPlanId").value || 0);
+  openOfferCreatorByPlanId(id);
+}
+
+async function createPrivateOffer(){
+  const button = document.getElementById("createOfferButton");
+  const message = document.getElementById("offerCreateMessage");
+  button.disabled = true;
+  button.textContent = "Creating...";
+  message.className = "lb-message";
+  message.textContent = "";
+
+  try{
+    const singleUse = document.getElementById("offerSingleUse").checked;
+    const expirationRaw = document.getElementById("offerExpiration").value;
+    const expirationTimestamp = expirationRaw ? new Date(expirationRaw).getTime() : 0;
+
+    const response = await adminFetch("/admin/offer-create", {
+      method:"POST",
+      body:JSON.stringify({
+        planId:Number(document.getElementById("offerPlanId").value || 0),
+        recipientName:document.getElementById("offerRecipientName").value.trim(),
+        recipientEmail:document.getElementById("offerRecipientEmail").value.trim(),
+        expirationTimestamp,
+        singleUse,
+        maxRedemptions:singleUse ? 1 : Number(document.getElementById("offerMaxRedemptions").value || 1),
+        note:document.getElementById("offerNote").value.trim()
+      })
+    });
+
+    const data = await response.json();
+    if(!response.ok){ throw new Error(data.error || "Unable to create offer."); }
+
+    lastCreatedOffer = data;
+    document.getElementById("offerFormArea").style.display = "none";
+    document.getElementById("offerResultArea").style.display = "block";
+    document.getElementById("offerResultLink").value = data.offerUrl;
+    document.getElementById("offerResultRecipient").textContent =
+      (data.offer?.recipientName ? "Prepared for " + data.offer.recipientName + " · " : "") +
+      (data.offer?.plan?.planName || "Private Plan");
+    document.getElementById("offerQrImage").src =
+      "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=8&data=" + encodeURIComponent(data.offerUrl);
+    message.textContent = "✓ Secure private offer created.";
+    message.className = "lb-message good";
+  }catch(error){
+    message.textContent = error.message || "Unable to create offer.";
+    message.className = "lb-message bad";
+  }finally{
+    button.disabled = false;
+    button.textContent = "Create Offer";
+  }
+}
+
+async function copyOfferLink(){
+  const link = String(lastCreatedOffer?.offerUrl || "");
+  if(!link){ return; }
+  await navigator.clipboard.writeText(link);
+  const message = document.getElementById("offerCreateMessage");
+  message.textContent = "✓ Offer link copied.";
+  message.className = "lb-message good";
+}
+
+async function sharePrivateOffer(){
+  const link = String(lastCreatedOffer?.offerUrl || "");
+  if(!link){ return; }
+  const offer = lastCreatedOffer?.offer || {};
+  const text = "LiveBridge Private Offer" + (offer.recipientName ? " for " + offer.recipientName : "") + ": " + link;
+
+  if(navigator.share){
+    await navigator.share({ title:"LiveBridge Private Offer", text, url:link });
+  }else{
+    await navigator.clipboard.writeText(text);
+    const message = document.getElementById("offerCreateMessage");
+    message.textContent = "✓ Share text copied.";
+    message.className = "lb-message good";
+  }
+}
+
+function downloadOfferGraphic(){
+  const data = lastCreatedOffer;
+  if(!data?.offerUrl || !data?.offer){ return; }
+
+  const offer = data.offer;
+  const plan = offer.plan || {};
+  const canvas = document.createElement("canvas");
+  canvas.width = 1200;
+  canvas.height = 1200;
+  const ctx = canvas.getContext("2d");
+
+  const grad = ctx.createLinearGradient(0,0,1200,1200);
+  grad.addColorStop(0,"#071b32");
+  grad.addColorStop(1,"#123c68");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,1200,1200);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "900 68px Arial";
+  ctx.fillText("LiveBridge", 90, 120);
+  ctx.font = "700 30px Arial";
+  ctx.fillStyle = "#8fd9ff";
+  ctx.fillText("PRIVATE OFFER", 92, 176);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "900 54px Arial";
+  ctx.fillText(plan.planName || "Custom Plan", 90, 300);
+
+  ctx.font = "700 35px Arial";
+  ctx.fillStyle = "#d9ecff";
+  if(offer.recipientName){ ctx.fillText("Prepared for " + offer.recipientName, 90, 360); }
+
+  const amount = new Intl.NumberFormat("en-CA", {style:"currency",currency:plan.currency || "CAD"})
+    .format(Number(plan.priceCents || 0)/100);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "900 72px Arial";
+  ctx.fillText(amount + " / " + (plan.billingInterval || "month"), 90, 490);
+
+  ctx.font = "700 31px Arial";
+  ctx.fillStyle = "#d9ecff";
+  ctx.fillText(hoursFromMinutes(plan.includedMinutes) + " included", 90, 565);
+  ctx.fillText(Number(plan.viewerLimit || 0) + " simultaneous listeners", 90, 615);
+
+  const features = Array.isArray(plan.features) ? plan.features.slice(0,5) : [];
+  ctx.font = "600 28px Arial";
+  let y = 710;
+  features.forEach(feature => {
+    ctx.fillText("✓ " + String(feature).substring(0,58), 90, y);
+    y += 52;
+  });
+
+  ctx.fillStyle = "#4ee0a2";
+  ctx.fillRect(90, 1015, 430, 78);
+  ctx.fillStyle = "#06243a";
+  ctx.font = "900 30px Arial";
+  ctx.fillText("CLAIM THIS OFFER", 132, 1065);
+
+  ctx.fillStyle = "#cfe5f7";
+  ctx.font = "600 21px Arial";
+  ctx.fillText("Secure offer link:", 90, 1140);
+  ctx.font = "500 17px Arial";
+  ctx.fillText(String(data.offerUrl).substring(0,100), 90, 1175);
+
+  const a = document.createElement("a");
+  a.download = "LiveBridge-Private-Offer.png";
+  a.href = canvas.toDataURL("image/png");
+  a.click();
 }
 
 
@@ -4194,6 +4463,22 @@ document.getElementById(
     }
   }
 );
+
+
+
+document.getElementById("closeOfferCreator").addEventListener("click", closeOfferCreator);
+document.getElementById("createOfferButton").addEventListener("click", createPrivateOffer);
+document.getElementById("copyOfferLinkButton").addEventListener("click", copyOfferLink);
+document.getElementById("shareOfferButton").addEventListener("click", sharePrivateOffer);
+document.getElementById("downloadOfferGraphicButton").addEventListener("click", downloadOfferGraphic);
+document.getElementById("createAnotherOfferButton").addEventListener("click", resetOfferCreator);
+document.getElementById("offerSingleUse").addEventListener("change", function(){
+  document.getElementById("offerMaxRedemptions").disabled = this.checked;
+  if(this.checked){ document.getElementById("offerMaxRedemptions").value = "1"; }
+});
+document.getElementById("offerCreatorModal").addEventListener("click", function(event){
+  if(event.target === this){ closeOfferCreator(); }
+});
 
 
 document.getElementById(
