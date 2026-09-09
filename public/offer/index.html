@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LiveBridge Private Offer</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(145deg,#06192c,#0b3156 55%,#0f4a72);color:#fff;min-height:100vh}.wrap{max-width:1050px;margin:auto;padding:46px 22px 70px}.brand{font-size:30px;font-weight:900;letter-spacing:-1px}.tag{color:#72dbff;font-size:12px;font-weight:900;letter-spacing:2.2px;margin-top:6px}.card{margin-top:34px;background:#fff;color:#10243a;border-radius:28px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.28)}.hero{padding:44px 46px;background:linear-gradient(135deg,#f8fcff,#e9f6ff)}.eyebrow{font-size:13px;font-weight:900;color:#1479af;letter-spacing:1.8px}.recipient{font-size:18px;color:#567087;margin-top:9px}.plan{font-size:48px;font-weight:950;letter-spacing:-1.8px;margin:22px 0 8px}.desc{font-size:18px;line-height:1.6;color:#48627b;max-width:760px}.price{font-size:54px;font-weight:950;margin-top:30px;color:#071b32}.price small{font-size:18px;color:#6a8298}.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:24px}.metric{padding:18px;border-radius:16px;background:#fff;border:1px solid #dbe8f3}.metric strong{display:block;font-size:25px}.metric span{color:#688098;font-size:13px}.body{padding:36px 46px 44px}.features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.feature{padding:14px 16px;border-radius:13px;background:#f4f9fd;color:#27455f;font-weight:650}.feature:before{content:'✓';color:#13a66a;font-weight:950;margin-right:9px}.note{margin-top:24px;padding:18px;border-left:4px solid #1b9bd2;background:#f6fbff;color:#48627b;line-height:1.55}.expiry{margin-top:20px;color:#667d91;font-size:14px}.cta{width:100%;border:0;border-radius:15px;padding:18px 22px;margin-top:27px;background:#18c985;color:#06283a;font-size:19px;font-weight:950;cursor:pointer}.cta:disabled{opacity:.55;cursor:not-allowed}.status{text-align:center;padding:60px 28px}.error{color:#b42318;background:#fff2f0;padding:15px;border-radius:12px;margin-top:20px}.secure{text-align:center;color:#b7d1e5;font-size:12px;margin-top:20px}@media(max-width:700px){.hero,.body{padding:30px 24px}.plan{font-size:36px}.price{font-size:42px}.metrics,.features{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">LiveBridge</div>
+    <div class="tag">REAL-TIME MULTILINGUAL COMMUNICATION</div>
+
+    <div class="card" id="offerCard">
+      <div class="status">Loading your private offer…</div>
+    </div>
+    <div class="secure">Secure private offer · Powered by LiveBridge</div>
+  </div>
+
+<script>
+const WORKER="https://livebridge.northstarventures-ca.workers.dev";
+let currentOffer=null;
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
+function tokenFromUrl(){const parts=location.pathname.split("/").filter(Boolean);if(parts[0]==="offer"&&parts[1]&&parts[1]!=="index.html")return parts[1];return new URLSearchParams(location.search).get("token")||"";}
+function money(plan){return new Intl.NumberFormat("en-CA",{style:"currency",currency:plan.currency||"CAD"}).format(Number(plan.priceCents||0)/100);}
+function hours(minutes){const n=Number(minutes||0);return n%60===0?(n/60)+" hours":(n/60).toFixed(1)+" hours";}
+function expiryText(ts){if(!ts)return "No fixed expiration date";return "Offer expires " + new Date(ts).toLocaleString([], {dateStyle:"long",timeStyle:"short"});}
+function renderUnavailable(message){document.getElementById("offerCard").innerHTML=`<div class="status"><h1>Private Offer Unavailable</h1><div class="error">${esc(message)}</div></div>`;}
+function renderOffer(offer){currentOffer=offer;const p=offer.plan||{};const features=Array.isArray(p.features)?p.features:[];document.getElementById("offerCard").innerHTML=`
+<div class="hero"><div class="eyebrow">PRIVATE OFFER</div>${offer.recipientName?`<div class="recipient">Prepared for <strong>${esc(offer.recipientName)}</strong></div>`:""}<div class="plan">${esc(p.planName||"LiveBridge Plan")}</div><div class="desc">${esc(p.description||"A private LiveBridge plan prepared for your organization.")}</div><div class="price">${esc(money(p))} <small>/ ${esc(p.billingInterval||"month")}</small></div><div class="metrics"><div class="metric"><strong>${esc(hours(p.includedMinutes))}</strong><span>Included each billing period</span></div><div class="metric"><strong>${Number(p.viewerLimit||0)}</strong><span>Simultaneous listeners</span></div></div></div>
+<div class="body">${features.length?`<div class="features">${features.map(f=>`<div class="feature">${esc(f)}</div>`).join("")}</div>`:""}${offer.note?`<div class="note">${esc(offer.note)}</div>`:""}<div class="expiry">${esc(expiryText(offer.expirationTimestamp))}${offer.recipientEmailRestricted?" · Email-restricted offer":""}</div><button id="claimButton" class="cta">Claim This Offer</button><div id="claimError"></div></div>`;document.getElementById("claimButton").addEventListener("click",claimOffer);}
+async function loadOffer(){const token=tokenFromUrl();if(!token){renderUnavailable("This offer link is incomplete.");return;}try{const r=await fetch(WORKER+"/offer?token="+encodeURIComponent(token));const d=await r.json();if(!r.ok||!d.offer){throw new Error(d.error||"Offer could not be loaded.");}if(!d.offer.active){renderUnavailable(d.offer.expired?"This offer has expired.":d.offer.exhausted?"This offer has already been redeemed.":"This offer is no longer active.");return;}renderOffer(d.offer);}catch(e){renderUnavailable(e.message||"Unable to load this private offer.");}}
+async function claimOffer(){const button=document.getElementById("claimButton");const box=document.getElementById("claimError");button.disabled=true;button.textContent="Opening secure checkout…";box.innerHTML="";try{const r=await fetch(WORKER+"/stripe/create-offer-checkout-session",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:currentOffer.token})});const d=await r.json();if(!r.ok||!d.checkoutUrl){throw new Error(d.error||"Unable to open checkout.");}location.href=d.checkoutUrl;}catch(e){box.innerHTML=`<div class="error">${esc(e.message||"Unable to open checkout.")}</div>`;button.disabled=false;button.textContent="Claim This Offer";}}
+loadOffer();
+</script>
+</body>
+</html>
