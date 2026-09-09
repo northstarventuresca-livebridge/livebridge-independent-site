@@ -2972,17 +2972,17 @@ async function sharePrivateOffer(){
 }
 
 async function downloadOfferGraphic(){
-  const data = lastCreatedOffer;
-  if(!data?.offerUrl || !data?.offer){ return; }
+  const data=lastCreatedOffer;
+  if(!data?.offerUrl||!data?.offer){return;}
 
-  const offer = data.offer;
-  const plan = offer.plan || {};
-  const canvas = document.createElement("canvas");
-  canvas.width = 1200;
-  canvas.height = 1500;
-  const ctx = canvas.getContext("2d");
+  const offer=data.offer;
+  const plan=offer.plan||{};
+  const canvas=document.createElement("canvas");
+  canvas.width=1600;
+  canvas.height=1000;
+  const ctx=canvas.getContext("2d");
 
-  function roundRect(x,y,w,h,r,fill){
+  function rr(x,y,w,h,r,fill,stroke){
     const radius=Math.min(r,w/2,h/2);
     ctx.beginPath();
     ctx.moveTo(x+radius,y);
@@ -2992,143 +2992,139 @@ async function downloadOfferGraphic(){
     ctx.arcTo(x,y,x+w,y,radius);
     ctx.closePath();
     if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.stroke();}
   }
 
-  function drawWrappedText(text,x,y,maxWidth,lineHeight,maxLines=3){
+  function wrap(text,x,y,maxWidth,lineHeight,maxLines=2){
     const words=String(text||"").split(/\s+/).filter(Boolean);
-    let line="",lineCount=0,cursorY=y;
-    for(let i=0;i<words.length;i++){
-      const test=line?line+" "+words[i]:words[i];
+    let line="",cy=y,count=0;
+    for(const word of words){
+      const test=line?line+" "+word:word;
       if(ctx.measureText(test).width>maxWidth&&line){
-        ctx.fillText(line,x,cursorY);
-        lineCount+=1;
-        if(lineCount>=maxLines)return cursorY;
-        line=words[i];
-        cursorY+=lineHeight;
-      }else{line=test;}
+        ctx.fillText(line,x,cy);
+        count++;
+        if(count>=maxLines)return cy;
+        line=word;
+        cy+=lineHeight;
+      }else line=test;
     }
-    if(line&&lineCount<maxLines)ctx.fillText(line,x,cursorY);
-    return cursorY;
+    if(line&&count<maxLines)ctx.fillText(line,x,cy);
+    return cy;
   }
 
-  const background=ctx.createLinearGradient(0,0,1200,1500);
-  background.addColorStop(0,"#071827");
-  background.addColorStop(.58,"#0a3153");
-  background.addColorStop(1,"#0a223a");
-  ctx.fillStyle=background;
-  ctx.fillRect(0,0,1200,1500);
+  ctx.fillStyle="#f4f6f8";
+  ctx.fillRect(0,0,1600,1000);
 
-  const glow=ctx.createRadialGradient(990,160,20,990,160,430);
-  glow.addColorStop(0,"rgba(77,181,255,.28)");
-  glow.addColorStop(1,"rgba(77,181,255,0)");
-  ctx.fillStyle=glow;
-  ctx.fillRect(570,0,630,580);
-
-  roundRect(72,72,1056,1356,34,"rgba(255,255,255,.055)");
-  ctx.strokeStyle="rgba(255,255,255,.10)";
+  rr(70,62,1460,876,28,"#ffffff","#d9e1e7");
   ctx.lineWidth=2;
-  roundRect(72,72,1056,1356,34);
+
+  const accent=ctx.createLinearGradient(70,0,1530,0);
+  accent.addColorStop(0,"#168fca");
+  accent.addColorStop(1,"#49c6d5");
+  ctx.fillStyle=accent;
+  ctx.fillRect(70,62,1460,7);
+
+  ctx.fillStyle="#10283b";
+  ctx.font="900 48px Arial";
+  ctx.fillText("LiveBridge",120,145);
+
+  ctx.fillStyle="#7c8d99";
+  ctx.font="600 19px Arial";
+  ctx.fillText("Private pricing proposal",121,184);
+
+  ctx.fillStyle="#8b9aa6";
+  ctx.font="900 14px Arial";
+  ctx.fillText("PREPARED EXCLUSIVELY FOR",120,263);
+
+  ctx.fillStyle="#18364d";
+  ctx.font="900 31px Arial";
+  ctx.fillText(String(offer.recipientName||"Your Organization").substring(0,52),120,305);
+
+  ctx.fillStyle="#0d2234";
+  ctx.font="900 54px Arial";
+  const titleBottom=wrap(plan.planName||"LiveBridge Plan",120,390,830,62,2);
+
+  ctx.fillStyle="#607587";
+  ctx.font="500 21px Arial";
+  wrap(
+    plan.description||"A tailored LiveBridge subscription for real-time multilingual communication.",
+    120,titleBottom+50,760,32,2
+  );
+
+  const price=new Intl.NumberFormat("en-CA",{
+    style:"currency",
+    currency:plan.currency||"CAD"
+  }).format(Number(plan.priceCents||0)/100);
+
+  ctx.fillStyle="#0e2a40";
+  ctx.font="900 66px Arial";
+  ctx.fillText(price,120,600);
+
+  ctx.fillStyle="#718493";
+  ctx.font="700 22px Arial";
+  ctx.fillText("per "+(plan.billingInterval||"month"),120,638);
+
+  rr(120,700,330,112,15,"#f7f9fb","#e0e7ed");
+  rr(470,700,330,112,15,"#f7f9fb","#e0e7ed");
+
+  ctx.fillStyle="#8898a4";
+  ctx.font="900 13px Arial";
+  ctx.fillText("INCLUDED TRANSLATION TIME",145,737);
+  ctx.fillText("SIMULTANEOUS LISTENERS",495,737);
+
+  ctx.fillStyle="#153149";
+  ctx.font="900 29px Arial";
+  ctx.fillText(hoursFromMinutes(plan.includedMinutes),145,786);
+  ctx.fillText(String(Number(plan.viewerLimit||0)),495,786);
+
+  ctx.strokeStyle="#e2e8ed";
+  ctx.beginPath();
+  ctx.moveTo(930,220);
+  ctx.lineTo(930,800);
   ctx.stroke();
 
-  ctx.fillStyle="#ffffff";
-  ctx.font="900 64px Arial";
-  ctx.fillText("LiveBridge",120,160);
+  ctx.fillStyle="#6c7f8e";
+  ctx.font="900 13px Arial";
+  ctx.fillText("REVIEW YOUR PRIVATE PROPOSAL",1000,288);
 
-  ctx.fillStyle="#70dcff";
-  ctx.font="900 22px Arial";
-  ctx.fillText("REAL-TIME MULTILINGUAL COMMUNICATION",122,205);
+  rr(1000,330,330,330,22,"#ffffff","#dbe2e8");
 
-  roundRect(120,262,230,46,23,"rgba(86,211,255,.12)");
-  ctx.fillStyle="#7ee5ff";
-  ctx.font="900 18px Arial";
-  ctx.fillText("PRIVATE OFFER",153,292);
-
-  ctx.fillStyle="#ffffff";
-  ctx.font="900 54px Arial";
-  const planBottom=drawWrappedText(plan.planName||"Custom LiveBridge Plan",120,390,850,64,2);
-
-  if(offer.recipientName){
-    ctx.fillStyle="#b9d5e8";
-    ctx.font="700 28px Arial";
-    ctx.fillText("Prepared exclusively for "+String(offer.recipientName).substring(0,44),120,planBottom+58);
-  }
-
-  const amount=new Intl.NumberFormat("en-CA",{style:"currency",currency:plan.currency||"CAD"}).format(Number(plan.priceCents||0)/100);
-  ctx.fillStyle="#ffffff";
-  ctx.font="900 72px Arial";
-  ctx.fillText(amount,120,610);
-
-  ctx.fillStyle="#9dc1d9";
-  ctx.font="800 28px Arial";
-  ctx.fillText("per "+(plan.billingInterval||"month"),120,656);
-
-  roundRect(120,720,420,120,20,"rgba(255,255,255,.07)");
-  roundRect(565,720,420,120,20,"rgba(255,255,255,.07)");
-
-  ctx.fillStyle="#7ca2bd";
-  ctx.font="900 16px Arial";
-  ctx.fillText("INCLUDED LIVE TRANSLATION",150,758);
-  ctx.fillText("SIMULTANEOUS LISTENERS",595,758);
-
-  ctx.fillStyle="#ffffff";
-  ctx.font="900 34px Arial";
-  ctx.fillText(hoursFromMinutes(plan.includedMinutes),150,808);
-  ctx.fillText(String(Number(plan.viewerLimit||0)),595,808);
-
-  const features=Array.isArray(plan.features)?plan.features.slice(0,4):[];
-  if(features.length){
-    ctx.fillStyle="#88a9bf";
-    ctx.font="900 16px Arial";
-    ctx.fillText("INCLUDED WITH YOUR OFFER",120,910);
-    ctx.font="700 25px Arial";
-    let featureY=960;
-    features.forEach(feature=>{
-      ctx.fillStyle="#35dda1";
-      ctx.beginPath();
-      ctx.arc(135,featureY-8,10,0,Math.PI*2);
-      ctx.fill();
-      ctx.fillStyle="#dcecf7";
-      drawWrappedText(String(feature),163,featureY,560,34,1);
-      featureY+=52;
-    });
-  }
-
-  const qrBoxX=790,qrBoxY=885;
-  roundRect(qrBoxX,qrBoxY,250,250,24,"#ffffff");
-
-  const qrUrl="https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=8&data="+encodeURIComponent(data.offerUrl);
+  const qrUrl="https://api.qrserver.com/v1/create-qr-code/?size=700x700&margin=12&data="+encodeURIComponent(data.offerUrl);
   try{
-    const qrImage=new Image();
-    qrImage.crossOrigin="anonymous";
+    const img=new Image();
+    img.crossOrigin="anonymous";
     await new Promise((resolve,reject)=>{
-      qrImage.onload=resolve;
-      qrImage.onerror=reject;
-      qrImage.src=qrUrl;
+      img.onload=resolve;
+      img.onerror=reject;
+      img.src=qrUrl;
     });
-    ctx.drawImage(qrImage,qrBoxX+20,qrBoxY+20,210,210);
+    ctx.drawImage(img,1020,350,290,290);
   }catch(error){
-    ctx.fillStyle="#0b2138";
-    ctx.font="900 18px Arial";
-    ctx.textAlign="center";
-    ctx.fillText("SCAN OFFER LINK",qrBoxX+125,qrBoxY+125);
-    ctx.textAlign="left";
+    ctx.fillStyle="#18364d";
+    ctx.font="800 20px Arial";
+    ctx.fillText("QR unavailable",1078,500);
   }
 
-  ctx.fillStyle="#8ca9bc";
-  ctx.font="800 16px Arial";
-  ctx.fillText("SCAN TO VIEW SECURE OFFER",787,1178);
+  ctx.fillStyle="#526a7c";
+  ctx.font="700 18px Arial";
+  ctx.fillText("Scan to review pricing and",1000,710);
+  ctx.fillText("continue to secure checkout.",1000,740);
 
-  roundRect(120,1240,490,88,18,"#35dda1");
-  ctx.fillStyle="#06283b";
-  ctx.font="900 28px Arial";
-  ctx.fillText("VIEW YOUR PRIVATE OFFER",163,1296);
+  ctx.fillStyle="#8a9aa6";
+  ctx.font="500 15px Arial";
+  ctx.fillText("Secure proposal · Checkout powered by Stripe",1000,792);
 
-  ctx.fillStyle="#a9c2d4";
-  ctx.font="600 18px Arial";
-  ctx.fillText("Secure offer prepared through LiveBridge",120,1385);
+  ctx.fillStyle="#9aa7b1";
+  ctx.font="600 14px Arial";
+  ctx.fillText("livebridge.ca",120,886);
+
+  ctx.fillStyle="#9aa7b1";
+  ctx.textAlign="right";
+  ctx.fillText("Real-time multilingual communication",1480,886);
+  ctx.textAlign="left";
 
   const a=document.createElement("a");
-  a.download="LiveBridge-Private-Offer.png";
+  a.download="LiveBridge-Private-Proposal.png";
   a.href=canvas.toDataURL("image/png");
   a.click();
 }
