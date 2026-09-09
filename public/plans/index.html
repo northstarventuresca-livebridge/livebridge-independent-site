@@ -156,6 +156,35 @@ tbody tr:last-child td{border-bottom:0}
   .lb-custom .lb-btn{width:100%}
   .lb-core{grid-template-columns:1fr}
 }
+
+  .lb-plan.free-demo{
+    grid-column:1/-1;
+    border-color:rgba(52,211,153,.30);
+    background:
+      radial-gradient(circle at top right,rgba(52,211,153,.10),transparent 34%),
+      linear-gradient(180deg,#122234,#0e1b2b);
+  }
+
+  .lb-demo-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:6px 10px;
+    margin-bottom:12px;
+    border-radius:999px;
+    background:rgba(52,211,153,.12);
+    border:1px solid rgba(52,211,153,.24);
+    color:#8af0bb;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+
+  .lb-plan.free-demo .lb-core{
+    max-width:620px;
+  }
+
 </style>
 </head>
 <body>
@@ -343,6 +372,21 @@ tbody tr:last-child td{border-bottom:0}
         "Priority support",
         "Custom onboarding/configuration support"
       ]
+    },
+    "free-demo":{
+      best:"Temporary beta access — try LiveBridge before choosing a paid plan",
+      className:"free-demo",
+      bullets:[
+        "20 broadcast hours per month during beta",
+        "Up to 100 simultaneous listeners",
+        "Real-time translated captions",
+        "Spoken translated audio",
+        "AI Live Notes",
+        "Post-broadcast transcripts & AI summary",
+        "Scheduled broadcasts",
+        "Detailed listener & language analytics",
+        "Access to current beta features"
+      ]
     }
   };
 
@@ -371,7 +415,10 @@ tbody tr:last-child td{border-bottom:0}
   async function checkout(button,planCode){
     const old = button.textContent;
     button.disabled = true;
-    button.textContent = "Opening secure checkout…";
+    button.textContent =
+      String(planCode||"").toLowerCase() === "free-demo"
+        ? "Opening free demo signup…"
+        : "Opening secure checkout…";
     try{
       const r = await fetch(WORKER + "/stripe/create-checkout-session",{
         method:"POST",
@@ -401,7 +448,7 @@ tbody tr:last-child td{border-bottom:0}
 
   function render(plans){
     const box = document.getElementById("lbPlans");
-    const visible = (plans||[]).filter(p=>["starter","growth","pro"].includes(String(p.planCode||"").toLowerCase()));
+    const visible = (plans||[]).filter(p=>["starter","growth","pro","free-demo"].includes(String(p.planCode||"").toLowerCase()));
     visible.sort((a,b)=>Number(a.displayOrder||0)-Number(b.displayOrder||0));
 
     if(!visible.length){
@@ -416,6 +463,7 @@ tbody tr:last-child td{border-bottom:0}
       return `
         <article class="lb-plan ${meta.className}">
           ${code==="growth" ? '<div class="lb-popular">MOST POPULAR</div>' : ''}
+          ${code==="free-demo" ? '<div class="lb-demo-badge">BETA · FREE FOR A LIMITED TIME</div>' : ''}
           <div class="lb-plan-name">${esc(plan.planName)}</div>
           <div class="lb-plan-best">${esc(meta.best)}</div>
           <div class="lb-price">${esc(money(plan.priceCents,plan.currency))} <small>${esc(plan.currency)} / ${esc(plan.billingInterval)}</small></div>
@@ -426,10 +474,14 @@ tbody tr:last-child td{border-bottom:0}
           <ul class="lb-feature-list">
             ${meta.bullets.map(x=>`<li><span class="lb-check">✓</span><span>${esc(x)}</span></li>`).join("")}
           </ul>
-          <button class="lb-btn ${code==="growth" ? "lb-btn-primary" : "lb-btn-secondary"}" data-checkout="${esc(code)}">
-            Choose ${esc(plan.planName)}
+          <button class="lb-btn ${code==="growth" || code==="free-demo" ? "lb-btn-primary" : "lb-btn-secondary"}" data-checkout="${esc(code)}">
+            ${code==="free-demo" ? "Start Free Beta Demo" : "Choose " + esc(plan.planName)}
           </button>
-          <div class="lb-note">Secure subscription checkout powered by Stripe</div>
+          <div class="lb-note">
+            ${code==="free-demo"
+              ? "No charge during the beta period. Beta access is temporary and may change as LiveBridge moves to paid plans."
+              : "Secure subscription checkout powered by Stripe"}
+          </div>
         </article>
       `;
     }).join("");
