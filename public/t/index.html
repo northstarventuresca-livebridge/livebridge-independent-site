@@ -1,5 +1,4 @@
 <!doctype html>
-<!-- LiveBridge v1.0.18 localized listener links + livebridge.ca short URLs -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -332,184 +331,69 @@
     margin-top:7px;
   }
 
-  .lb-live-notes-panel{
-    border-top:1px solid rgba(255,255,255,.07);
+
+  .lb-language-gate{
+    min-height:100vh;
     background:
-      linear-gradient(
-        180deg,
-        rgba(37,136,255,.055),
-        rgba(0,0,0,.08)
-      );
-    padding:20px;
-  }
-
-  .lb-live-notes-head{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:12px;
-    flex-wrap:wrap;
-    margin-bottom:12px;
-  }
-
-  .lb-live-notes-title{
-    font-size:18px;
-    font-weight:900;
-    color:white;
-  }
-
-  .lb-live-notes-subtitle{
-    margin-top:4px;
-    color:#88a0ba;
-    font-size:11px;
-    line-height:1.45;
-  }
-
-  .lb-live-notes-status{
-    border:1px solid rgba(52,211,153,.22);
-    background:rgba(52,211,153,.07);
-    color:#62e7b4;
-    padding:6px 9px;
-    border-radius:999px;
-    font-size:10px;
-    font-weight:900;
-  }
-
-  .lb-live-notes-summary{
-    white-space:normal;
-    line-height:1.6;
-    color:#d7e3ef;
-    font-size:14px;
-    max-height:260px;
-    overflow-y:scroll;
-    scrollbar-gutter:stable;
-    padding-right:8px;
-    scrollbar-width:thin;
-  }
-
-  .lb-live-note-entry{
-    white-space:pre-wrap;
-    padding:0 0 14px;
-    margin:0 0 14px;
-    border-bottom:1px solid rgba(255,255,255,.07);
-  }
-
-  .lb-live-note-entry:last-child{
-    margin-bottom:0;
-    border-bottom:0;
-  }
-
-  .lb-scripture-waiting{
-    color:#7890aa;
-    font-size:12px;
-    line-height:1.5;
-    padding:12px 0 2px;
-  }
-
-  .lb-scripture-ref-button{
-    appearance:none;
-    border:0;
-    padding:0;
-    margin:0;
-    background:transparent;
-    color:#ffe899;
-    font:inherit;
-    font-weight:900;
-    cursor:pointer;
-    text-decoration:underline;
-    text-underline-offset:2px;
-  }
-
-  .lb-scripture-loading{
-    color:#8fa6be;
-    font-size:11px;
-    margin-top:8px;
-  }
-
-  .lb-scripture-error{
-    color:#ff9c9c;
-    font-size:11px;
-    margin-top:8px;
-  }
-
-  .lb-live-notes-empty{
-    color:#7f96ae;
-    font-size:13px;
-    line-height:1.55;
-  }
-
-  .lb-scripture-area{
+      radial-gradient(circle at top left,#12345f 0%,transparent 34%),
+      radial-gradient(circle at bottom right,#23154b 0%,transparent 34%),
+      #07111f;
+    padding:28px 18px 50px;
     display:none;
-    margin-top:16px;
-    padding-top:16px;
-    border-top:1px solid rgba(255,255,255,.07);
   }
-
-  .lb-scripture-heading{
-    color:#f7d879;
+  .lb-language-gate.show{display:block}
+  .lb-language-gate-inner{width:100%;max-width:1050px;margin:0 auto}
+  .lb-language-gate-brand{text-align:center;font-size:44px;font-weight:900;margin:16px 0 8px}
+  .lb-language-gate-brand span{
+    background:linear-gradient(90deg,#34d4bd,#2897ff,#a14cff);
+    -webkit-background-clip:text;
+    color:transparent;
+  }
+  .lb-language-gate-title{text-align:center;font-size:28px;font-weight:900;margin:28px 0 8px}
+  .lb-language-gate-subtitle{text-align:center;color:#9fb1c7;font-size:15px;line-height:1.6;margin-bottom:28px}
+  .lb-language-gate-room{
+    display:inline-block;
+    padding:7px 11px;
+    border-radius:999px;
+    margin-top:8px;
+    background:rgba(52,212,189,.09);
+    border:1px solid rgba(52,212,189,.18);
+    color:#8ee8dc;
+    font-weight:800;
     font-size:12px;
-    font-weight:900;
-    text-transform:uppercase;
-    letter-spacing:.06em;
-    margin-bottom:10px;
   }
-
-  .lb-scripture-card{
-    border:1px solid rgba(247,216,121,.20);
-    background:rgba(247,216,121,.055);
-    border-radius:12px;
-    padding:13px 14px;
-    margin-top:9px;
-    transition:.2s ease;
+  .lb-language-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:12px;
   }
-
-  .lb-scripture-card.highlight{
-    border-color:#f7d879;
-    box-shadow:0 0 0 2px rgba(247,216,121,.12);
-  }
-
-  .lb-scripture-reference{
-    color:#ffe899;
-    font-weight:900;
-    font-size:13px;
-    margin-bottom:6px;
-  }
-
-  .lb-scripture-text{
-    color:#dbe5ef;
-    font-size:13px;
-    line-height:1.55;
-  }
-
-  .lb-scripture-version{
-    color:#758da7;
-    font-size:10px;
-    margin-top:7px;
-  }
-
-  .lb-scripture-link{
-    display:inline;
-    border:0;
-    padding:0;
-    margin:0;
-    background:transparent;
-    color:#ffe899;
-    text-decoration:underline;
-    text-underline-offset:2px;
-    font:inherit;
-    font-weight:900;
+  .lb-language-choice{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    text-align:left;
+    border:1px solid rgba(255,255,255,.11);
+    background:rgba(255,255,255,.055);
+    color:white;
+    border-radius:15px;
+    padding:15px 16px;
     cursor:pointer;
+    transition:.16s ease;
   }
-
-  .lb-listener-share-language-row{display:flex;align-items:center;gap:10px;margin:14px 0 12px;flex-wrap:wrap;}
-  .lb-listener-share-language-label{color:#9fb4ca;font-size:12px;font-weight:800;}
-  .lb-listener-share-language-select{min-width:210px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#102338;color:#fff;font-weight:800;}
-  .lb-listener-share-language-note{color:#7890aa;font-size:11px;}
-  .lb-listener-share-preview{display:none;margin-top:16px;border:1px solid rgba(52,211,153,.28);border-radius:14px;overflow:hidden;background:#061321;}
-  .lb-listener-share-preview.show{display:block;}
-  .lb-listener-share-preview img{width:100%;display:block;}
-  .lb-listener-share-preview-actions{display:flex;gap:8px;flex-wrap:wrap;padding:10px;background:#0a1928;}
-  .lb-listener-share-preview-actions button{padding:10px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:#13263c;color:white;cursor:pointer;font-weight:800;font-size:12px;}
+  .lb-language-choice:hover{
+    transform:translateY(-1px);
+    border-color:rgba(52,212,189,.42);
+    background:rgba(52,212,189,.075);
+  }
+  .lb-language-flag{
+    width:46px;height:46px;flex:0 0 46px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    background:#101d2d;font-size:27px;
+  }
+  .lb-language-native{font-weight:900;font-size:16px;line-height:1.3}
+  .lb-language-english{display:block;color:#8198ae;font-size:11px;margin-top:3px}
+  .lb-language-gate-note{text-align:center;color:#6f849a;font-size:11px;margin-top:24px;line-height:1.55}
 
 </style>
 
@@ -530,6 +414,25 @@
 }
 </style>
 
+
+
+<div id="lbLanguageGate" class="lb-language-gate">
+  <div class="lb-language-gate-inner">
+    <div class="lb-language-gate-brand">Live<span>Bridge</span></div>
+    <div class="lb-language-gate-title">Choose your language</div>
+
+    <div class="lb-language-gate-subtitle">
+      Select the language you understand best.<br>
+      <span id="lbLanguageGateRoom" class="lb-language-gate-room"></span>
+    </div>
+
+    <div id="lbLanguageGrid" class="lb-language-grid"></div>
+
+    <div class="lb-language-gate-note">
+      No app download is required. Select your language to continue to the live translation room.
+    </div>
+  </div>
+</div>
 
 <div class="lb-live-page">
   <div class="lb-live-wrap">
@@ -576,7 +479,7 @@
           <option value="ig|ig-NG">Igbo — Igbo</option>
           <option value="ha|ha-NG">Hausa — Hausa</option>
           <option value="zh|zh-CN">Mandarin Chinese — 中文（普通话）</option>
-          <option value="yue|zh-HK">Cantonese — 廣東話</option>
+          <option value="yue|yue-CN">Cantonese — 廣東話</option>
         </select>
 
         <button class="lb-live-button" id="joinRoomButton">
@@ -653,45 +556,6 @@
         Join a room to begin receiving the live message.
       </div>
 
-      <div class="lb-live-notes-panel" id="liveNotesPanel">
-
-        <div
-          class="lb-scripture-area"
-          id="liveScriptureArea"
-        >
-          <div class="lb-scripture-heading">
-            📖 Scripture Mentioned
-          </div>
-
-          <div id="liveScriptureCards"></div>
-        </div>
-
-        <div class="lb-live-notes-head">
-          <div>
-            <div class="lb-live-notes-title">
-              ✨ Live Notes
-            </div>
-            <div class="lb-live-notes-subtitle">
-              AI-generated notes build as the message continues. Scroll to review earlier notes.
-            </div>
-          </div>
-
-          <div class="lb-live-notes-status" id="liveNotesStatus">
-            Waiting
-          </div>
-        </div>
-
-        <div
-          class="lb-live-notes-empty"
-          id="liveNotesSummary"
-        >
-          Join the live room and notes will appear here as the message develops.
-        </div>
-
-        
-
-      </div>
-
       <div style="
   padding:16px 20px;
   border-top:1px solid rgba(255,255,255,.07);
@@ -734,15 +598,7 @@
       <div>
         <div class="lb-listener-share-title">Share This Room</div>
         <div class="lb-listener-share-copy">
-          Send this link or QR code to someone else so they can join the same LiveBridge room.
-        </div>
-
-        <div class="lb-listener-share-language-row">
-          <div class="lb-listener-share-language-label">Share invite language</div>
-          <select class="lb-listener-share-language-select" id="lbListenerShareLanguage">
-            <option value="en">English</option><option value="fr">Français — French</option><option value="es">Español — Spanish</option><option value="de">Deutsch — German</option><option value="pt">Português — Portuguese</option><option value="it">Italiano — Italian</option><option value="nl">Nederlands — Dutch</option><option value="pl">Polski — Polish</option><option value="uk">Українська — Ukrainian</option><option value="ru">Русский — Russian</option><option value="ar">العربية — Arabic</option><option value="zh">中文 — Chinese</option><option value="yue">廣東話 — Cantonese</option><option value="ja">日本語 — Japanese</option><option value="ko">한국어 — Korean</option><option value="hi">हिन्दी — Hindi</option>
-          </select>
-          <div class="lb-listener-share-language-note">Invite text and graphic use this language.</div>
+          Send this listener link to someone else so they can join the same LiveBridge room.
         </div>
 
         <div class="lb-listener-share-row">
@@ -751,18 +607,12 @@
           <button type="button" class="lb-listener-share-button green" id="lbListenerShare">Send / Share</button>
           <button type="button" class="lb-listener-share-button" id="lbListenerOpen">Open</button>
         </div>
-
-        <div class="lb-listener-share-preview" id="lbListenerSharePreview">
-          <img id="lbListenerSharePreviewImage" alt="LiveBridge invite preview">
-          <div class="lb-listener-share-preview-actions">
-            <button id="lbListenerDownloadGraphic" type="button">Download Graphic</button>
-            <button id="lbListenerCopyInviteText" type="button">Copy Invite Text</button>
-          </div>
-        </div>
       </div>
 
       <div class="lb-listener-qr-wrap">
-        <div class="lb-listener-qr-box"><img id="lbListenerQR" alt="LiveBridge room QR code"></div>
+        <div class="lb-listener-qr-box">
+          <img id="lbListenerQR" alt="LiveBridge room QR code">
+        </div>
         <div class="lb-listener-qr-caption">Scan to join this room</div>
       </div>
     </div>
@@ -773,8 +623,6 @@
 <script>
   const WORKER_URL =
   "https://livebridge.northstarventures-ca.workers.dev";
-
-  const LIVEBRIDGE_PUBLIC_BASE = "https://livebridge.ca";
 
   let ROOM_ID = "";
   let listenerSocket = null;
@@ -800,21 +648,6 @@
   let listenerAudioMuted = false;
   let listenerDisplayQueue = [];
 let listenerQueueRunning = false;
-let liveNotesTimer = null;
-let liveNotesBusy = false;
-let liveNotesLastLanguage = "";
-
-/*
-  v1.0.9:
-  Exact translation language bound to the currently joined listener socket.
-*/
-let liveNotesActiveLanguage = "en";
-
-/*
-  v1.0.10:
-  Lock Live Notes to the broadcast session accepted after this listener joins.
-*/
-let liveNotesAcceptedBroadcastId = "";
 
 /*
   v1.0.1 queue pipeline:
@@ -1249,8 +1082,7 @@ listenerAudioButton.addEventListener("click", () => {
 
 
   function clearListenerReconnectTimer() {
-
-    if (listenerReconnectTimer) {
+if (listenerReconnectTimer) {
       clearTimeout(listenerReconnectTimer);
       listenerReconnectTimer = null;
     }
@@ -1482,20 +1314,6 @@ listenerAudioButton.addEventListener("click", () => {
       ttsLang
     ] = languageSelect.value.split("|");
 
-    /*
-      v1.0.9:
-      Live Notes follow the same language as the translated listener feed.
-    */
-    liveNotesActiveLanguage =
-      String(
-        translateLang || "en"
-      )
-        .trim()
-        .toLowerCase();
-
-    liveNotesAcceptedBroadcastId =
-      "";
-
     const languageName =
       languageSelect.options[
         languageSelect.selectedIndex
@@ -1555,7 +1373,6 @@ listenerAudioButton.addEventListener("click", () => {
       output.innerHTML = "";
       fullTranslatedTranscript = "";
       listenerDisplayQueue = [];
-      resetLiveNotesUI();
     }
 
     if (!preserveSession) {
@@ -1621,8 +1438,6 @@ listenerAudioButton.addEventListener("click", () => {
         if (!preserveSession) {
           await startListenerTracking();
         }
-
-        startLiveNotesPolling();
       };
 
     thisSocket.onmessage =
@@ -2122,727 +1937,6 @@ listenerAudioButton.addEventListener("click", () => {
   });
 }
 
-  function resetLiveNotesUI() {
-
-    const summary =
-      document.getElementById(
-        "liveNotesSummary"
-      );
-
-    const status =
-      document.getElementById(
-        "liveNotesStatus"
-      );
-
-    const scriptureArea =
-      document.getElementById(
-        "liveScriptureArea"
-      );
-
-    const scriptureCards =
-      document.getElementById(
-        "liveScriptureCards"
-      );
-
-    if (summary) {
-      summary.className =
-        "lb-live-notes-empty";
-
-      summary.textContent =
-        "Listening now — live notes will appear here as the message develops.";
-    }
-
-    if (status) {
-      status.textContent =
-        "Waiting";
-    }
-
-    if (scriptureArea) {
-      scriptureArea.style.display =
-        "none";
-    }
-
-    if (scriptureCards) {
-      scriptureCards.innerHTML =
-        "";
-    }
-  }
-
-
-  function escapeLiveNotesHtml(
-    value
-  ) {
-
-    return String(
-      value || ""
-    )
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-  }
-
-
-  function escapeLiveNotesRegExp(
-    value
-  ) {
-
-    return String(
-      value || ""
-    ).replace(
-      /[.*+?^${}()|[\]\\]/g,
-      "\\$&"
-    );
-  }
-
-
-  function renderLiveNotes(
-    data
-  ) {
-
-    const summaryBox =
-      document.getElementById(
-        "liveNotesSummary"
-      );
-
-    const statusBox =
-      document.getElementById(
-        "liveNotesStatus"
-      );
-
-    const scriptureArea =
-      document.getElementById(
-        "liveScriptureArea"
-      );
-
-    const scriptureCards =
-      document.getElementById(
-        "liveScriptureCards"
-      );
-
-    if (
-      !summaryBox ||
-      !statusBox ||
-      !scriptureArea ||
-      !scriptureCards
-    ) {
-      return;
-    }
-
-    const summary =
-      String(
-        data?.summary || ""
-      ).trim();
-
-    const noteEntries =
-      Array.isArray(
-        data?.noteEntries
-      )
-        ? data.noteEntries
-            .map(value =>
-              String(value || "").trim()
-            )
-            .filter(Boolean)
-        : [];
-
-    const scriptures =
-      Array.isArray(
-        data?.scriptures
-      )
-        ? data.scriptures
-        : [];
-
-    statusBox.textContent =
-      data?.live
-        ? (
-            summary
-              ? "Live • Updated"
-              : "Live • Listening"
-          )
-        : "Waiting";
-
-    if (
-      noteEntries.length ||
-      summary
-    ) {
-
-      const entriesToRender =
-        noteEntries.length
-          ? noteEntries
-          : [summary];
-
-      summaryBox.className =
-        "lb-live-notes-summary";
-
-      summaryBox.innerHTML =
-        entriesToRender
-          .map(
-            entry => {
-
-              let safeEntry =
-                escapeLiveNotesHtml(
-                  entry
-                );
-
-              for (
-                const scripture of
-                  scriptures
-              ) {
-
-                const reference =
-                  String(
-                    scripture?.reference ||
-                    ""
-                  ).trim();
-
-                if (!reference) {
-                  continue;
-                }
-
-                const pattern =
-                  new RegExp(
-                    escapeLiveNotesRegExp(
-                      reference
-                    ),
-                    "gi"
-                  );
-
-                safeEntry =
-                  safeEntry.replace(
-                    pattern,
-                    matched =>
-                      `<button type="button" class="lb-scripture-link" data-scripture-ref="${escapeLiveNotesHtml(reference)}">${matched}</button>`
-                  );
-              }
-
-              safeEntry =
-                safeEntry.replace(
-                  /\n/g,
-                  "<br>"
-                );
-
-              return `
-                <div class="lb-live-note-entry">
-                  ${safeEntry}
-                </div>
-              `;
-            }
-          )
-          .join("");
-
-      summaryBox.scrollTop =
-        summaryBox.scrollHeight;
-
-    } else {
-
-      summaryBox.className =
-        "lb-live-notes-empty";
-
-      summaryBox.textContent =
-        data?.message ||
-        "Listening now — live notes will appear shortly.";
-    }
-
-    if (
-      data?.scriptureEnabled
-    ) {
-
-      scriptureArea.style.display =
-        "block";
-
-      if (scriptures.length) {
-
-        scriptureCards.innerHTML =
-          scriptures
-            .map(
-              scripture => {
-
-                const reference =
-                  escapeLiveNotesHtml(
-                    scripture?.reference ||
-                    ""
-                  );
-
-                if (!reference) {
-                  return "";
-                }
-
-                return `
-                  <div
-                    class="lb-scripture-card"
-                    data-scripture-card="${reference}"
-                  >
-                    <button
-                      type="button"
-                      class="lb-scripture-ref-button"
-                      data-scripture-ref="${reference}"
-                      aria-expanded="false"
-                    >
-                      ${reference}
-                    </button>
-
-                    <div
-                      class="lb-scripture-text"
-                      data-scripture-text
-                      style="display:none;"
-                    ></div>
-
-                    <div
-                      class="lb-scripture-version"
-                      data-scripture-version
-                      style="display:none;"
-                    ></div>
-
-                    <div
-                      class="lb-scripture-loading"
-                      data-scripture-loading
-                      style="display:none;"
-                    >
-                      Loading verse…
-                    </div>
-
-                    <div
-                      class="lb-scripture-error"
-                      data-scripture-error
-                      style="display:none;"
-                    ></div>
-                  </div>
-                `;
-              }
-            )
-            .join("");
-
-      } else {
-
-        scriptureCards.innerHTML =
-          '<div class="lb-scripture-waiting">Scripture detection is on. When a Bible verse reference is mentioned, it will appear here.</div>';
-      }
-
-    } else {
-
-      scriptureArea.style.display =
-        "none";
-
-      scriptureCards.innerHTML =
-        "";
-    }
-
-    const openScriptureReference =
-      async reference => {
-
-        const cards =
-          scriptureCards
-            .querySelectorAll(
-              ".lb-scripture-card"
-            );
-
-        const target =
-          [...cards]
-            .find(
-              card =>
-                card.getAttribute(
-                  "data-scripture-card"
-                ) ===
-                reference
-            );
-
-        if (!target) {
-          return;
-        }
-
-        target.scrollIntoView({
-          behavior:
-            "smooth",
-          block:
-            "nearest"
-        });
-
-        const textBox =
-          target.querySelector(
-            "[data-scripture-text]"
-          );
-
-        const versionBox =
-          target.querySelector(
-            "[data-scripture-version]"
-          );
-
-        const loadingBox =
-          target.querySelector(
-            "[data-scripture-loading]"
-          );
-
-        const errorBox =
-          target.querySelector(
-            "[data-scripture-error]"
-          );
-
-        const referenceButton =
-          target.querySelector(
-            ".lb-scripture-ref-button"
-          );
-
-        if (
-          textBox?.dataset.loaded ===
-          "true"
-        ) {
-
-          const opening =
-            textBox.style.display ===
-            "none";
-
-          textBox.style.display =
-            opening
-              ? "block"
-              : "none";
-
-          if (versionBox) {
-            versionBox.style.display =
-              opening
-                ? "block"
-                : "none";
-          }
-
-          referenceButton?.setAttribute(
-            "aria-expanded",
-            opening
-              ? "true"
-              : "false"
-          );
-
-          return;
-        }
-
-        if (loadingBox) {
-          loadingBox.style.display =
-            "block";
-        }
-
-        if (errorBox) {
-          errorBox.style.display =
-            "none";
-
-          errorBox.textContent =
-            "";
-        }
-
-        try {
-
-          const response =
-            await fetch(
-              WORKER_URL +
-              "/scripture-verse?room=" +
-              encodeURIComponent(
-                ROOM_ID
-              ) +
-              "&lang=" +
-              encodeURIComponent(
-                liveNotesActiveLanguage ||
-                "en"
-              ) +
-              "&reference=" +
-              encodeURIComponent(
-                reference
-              )
-            );
-
-          const data =
-            await response.json();
-
-          if (
-            !response.ok ||
-            data?.success === false ||
-            !data?.verse
-          ) {
-            throw new Error(
-              data?.error ||
-              "Unable to load verse."
-            );
-          }
-
-          if (textBox) {
-            textBox.textContent =
-              String(
-                data.verse?.text || ""
-              ).trim();
-
-            textBox.dataset.loaded =
-              "true";
-
-            textBox.style.display =
-              "block";
-          }
-
-          if (versionBox) {
-            versionBox.textContent =
-              String(
-                data.verse?.version || ""
-              ).trim();
-
-            versionBox.style.display =
-              versionBox.textContent
-                ? "block"
-                : "none";
-          }
-
-          referenceButton?.setAttribute(
-            "aria-expanded",
-            "true"
-          );
-
-        } catch (error) {
-
-          if (errorBox) {
-            errorBox.textContent =
-              error.message ||
-              "Unable to load verse.";
-
-            errorBox.style.display =
-              "block";
-          }
-
-        } finally {
-
-          if (loadingBox) {
-            loadingBox.style.display =
-              "none";
-          }
-        }
-      };
-
-
-    scriptureCards
-      .querySelectorAll(
-        ".lb-scripture-ref-button"
-      )
-      .forEach(
-        button => {
-
-          button.addEventListener(
-            "click",
-            () => {
-
-              const reference =
-                button.getAttribute(
-                  "data-scripture-ref"
-                ) || "";
-
-              openScriptureReference(
-                reference
-              );
-            }
-          );
-        }
-      );
-
-
-    summaryBox
-      .querySelectorAll(
-        ".lb-scripture-link"
-      )
-      .forEach(
-        button => {
-
-          button.addEventListener(
-            "click",
-            () => {
-
-              const reference =
-                button.getAttribute(
-                  "data-scripture-ref"
-                ) || "";
-
-              openScriptureReference(
-                reference
-              );
-            }
-          );
-        }
-      );
-  }
-
-
-  async function pollLiveNotes() {
-
-    if (
-      liveNotesBusy ||
-      !ROOM_ID ||
-      !listenerConnectionWanted
-    ) {
-      return;
-    }
-
-    /*
-      v1.0.9:
-      Use the language of the active listener connection, not a fresh read
-      of the dropdown during each poll.
-    */
-    const translateLang =
-      String(
-        liveNotesActiveLanguage ||
-        "en"
-      )
-        .trim()
-        .toLowerCase();
-
-    liveNotesBusy =
-      true;
-
-    try {
-
-      const response =
-        await fetch(
-          WORKER_URL +
-          "/live-notes?room=" +
-          encodeURIComponent(
-            ROOM_ID
-          ) +
-          "&lang=" +
-          encodeURIComponent(
-            translateLang
-          ),
-          {
-            cache:
-              "no-store"
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (
-        response.ok &&
-        data.success !== false
-      ) {
-
-        const responseLanguage =
-          String(
-            data?.language ||
-            translateLang
-          )
-            .trim()
-            .toLowerCase();
-
-        if (
-          responseLanguage !==
-          translateLang
-        ) {
-          console.warn(
-            "LiveBridge ignored mismatched Live Notes language:",
-            responseLanguage,
-            "expected:",
-            translateLang
-          );
-          return;
-        }
-
-        const responseBroadcastId =
-          String(
-            data?.broadcastId || ""
-          ).trim();
-
-        if (data?.live) {
-
-          if (
-            !liveNotesAcceptedBroadcastId &&
-            responseBroadcastId
-          ) {
-            liveNotesAcceptedBroadcastId =
-              responseBroadcastId;
-          }
-
-          if (
-            liveNotesAcceptedBroadcastId &&
-            responseBroadcastId &&
-            responseBroadcastId !==
-              liveNotesAcceptedBroadcastId
-          ) {
-            console.warn(
-              "LiveBridge ignored cross-broadcast Live Notes:",
-              responseBroadcastId,
-              "expected:",
-              liveNotesAcceptedBroadcastId
-            );
-            return;
-          }
-        }
-
-        liveNotesLastLanguage =
-          translateLang;
-
-        /*
-          Preserve the final notes after the broadcast ends instead of
-          replacing them with stale/empty state from another session.
-        */
-        if (
-          data?.live === false &&
-          liveNotesAcceptedBroadcastId
-        ) {
-          const statusBox =
-            document.getElementById(
-              "liveNotesStatus"
-            );
-
-          if (statusBox) {
-            statusBox.textContent =
-              "Broadcast Ended";
-          }
-
-          return;
-        }
-
-        renderLiveNotes(
-          data
-        );
-      }
-
-    } catch (error) {
-
-      console.error(
-        "LiveBridge live notes failed:",
-        error
-      );
-
-    } finally {
-
-      liveNotesBusy =
-        false;
-    }
-  }
-
-
-  function startLiveNotesPolling() {
-
-    if (liveNotesTimer) {
-      clearInterval(
-        liveNotesTimer
-      );
-    }
-
-    pollLiveNotes();
-
-    liveNotesTimer =
-      setInterval(
-        pollLiveNotes,
-        30000
-      );
-  }
-
-
-  function stopLiveNotesPolling() {
-
-    if (liveNotesTimer) {
-
-      clearInterval(
-        liveNotesTimer
-      );
-
-      liveNotesTimer =
-        null;
-    }
-  }
-
-
   function markListenerLive() {
 
     const dot =
@@ -2988,7 +2082,7 @@ function askForEmail() {
         if (!email) return;
 
         overlay.remove();
-        resolve(email);
+resolve(email);
       };
 
     input.addEventListener("keydown", (e) => {
@@ -3265,75 +2359,10 @@ function askForEmail() {
     function () {
       listenerConnectionWanted = false;
       clearListenerReconnectTimer();
-      stopLiveNotesPolling();
       closeListenerSocketIntentionally();
       sendListenerStop();
     }
   );
-
-
-
-  const LB_UI = {
-    en:{subtitle:"Join a room. Choose your language. Understand live.",room:"Room Name",listen:"Listening Language",join:"Join Live Room",share:"Share This Room",copy:"Copy Link",send:"Send / Share",open:"Open",scan:"Scan to join this room"},
-    fr:{subtitle:"Rejoignez une salle. Choisissez votre langue. Comprenez en direct.",room:"Nom de la salle",listen:"Langue d’écoute",join:"Rejoindre la salle en direct",share:"Partager cette salle",copy:"Copier le lien",send:"Envoyer / Partager",open:"Ouvrir",scan:"Scanner pour rejoindre cette salle"},
-    es:{subtitle:"Únase a una sala. Elija su idioma. Entienda en vivo.",room:"Nombre de la sala",listen:"Idioma de escucha",join:"Unirse a la sala en vivo",share:"Compartir esta sala",copy:"Copiar enlace",send:"Enviar / Compartir",open:"Abrir",scan:"Escanear para unirse a esta sala"},
-    de:{subtitle:"Raum beitreten. Sprache wählen. Live verstehen.",room:"Raumname",listen:"Hörsprache",join:"Live-Raum beitreten",share:"Diesen Raum teilen",copy:"Link kopieren",send:"Senden / Teilen",open:"Öffnen",scan:"Scannen, um diesem Raum beizutreten"},
-    pt:{subtitle:"Entre em uma sala. Escolha seu idioma. Entenda ao vivo.",room:"Nome da sala",listen:"Idioma de escuta",join:"Entrar na sala ao vivo",share:"Compartilhar esta sala",copy:"Copiar link",send:"Enviar / Compartilhar",open:"Abrir",scan:"Escaneie para entrar nesta sala"},
-    it:{subtitle:"Entra in una stanza. Scegli la tua lingua. Comprendi in diretta.",room:"Nome stanza",listen:"Lingua di ascolto",join:"Entra nella stanza live",share:"Condividi questa stanza",copy:"Copia link",send:"Invia / Condividi",open:"Apri",scan:"Scansiona per entrare"},
-    nl:{subtitle:"Word lid van een ruimte. Kies uw taal. Begrijp live.",room:"Ruimtenaam",listen:"Luistertaal",join:"Deelnemen aan live ruimte",share:"Deze ruimte delen",copy:"Link kopiëren",send:"Verzenden / Delen",open:"Openen",scan:"Scan om deel te nemen"},
-    pl:{subtitle:"Dołącz do pokoju. Wybierz język. Rozumiej na żywo.",room:"Nazwa pokoju",listen:"Język odsłuchu",join:"Dołącz do pokoju na żywo",share:"Udostępnij ten pokój",copy:"Kopiuj link",send:"Wyślij / Udostępnij",open:"Otwórz",scan:"Zeskanuj, aby dołączyć"},
-    uk:{subtitle:"Приєднайтеся до кімнати. Оберіть мову. Розумійте наживо.",room:"Назва кімнати",listen:"Мова прослуховування",join:"Приєднатися до прямої трансляції",share:"Поділитися кімнатою",copy:"Копіювати посилання",send:"Надіслати / Поділитися",open:"Відкрити",scan:"Скануйте, щоб приєднатися"},
-    ru:{subtitle:"Присоединитесь к комнате. Выберите язык. Понимайте в прямом эфире.",room:"Название комнаты",listen:"Язык прослушивания",join:"Присоединиться к эфиру",share:"Поделиться комнатой",copy:"Копировать ссылку",send:"Отправить / Поделиться",open:"Открыть",scan:"Сканируйте, чтобы присоединиться"},
-    ar:{subtitle:"انضم إلى غرفة. اختر لغتك. افهم البث المباشر.",room:"اسم الغرفة",listen:"لغة الاستماع",join:"الانضمام إلى الغرفة المباشرة",share:"مشاركة هذه الغرفة",copy:"نسخ الرابط",send:"إرسال / مشاركة",open:"فتح",scan:"امسح للانضمام إلى هذه الغرفة"},
-    zh:{subtitle:"加入房间。选择您的语言。实时理解。",room:"房间名称",listen:"收听语言",join:"加入直播房间",share:"分享此房间",copy:"复制链接",send:"发送 / 分享",open:"打开",scan:"扫码加入此房间"},
-    yue:{subtitle:"加入房間。揀選你嘅語言。即時理解。",room:"房間名稱",listen:"收聽語言",join:"加入直播房間",share:"分享呢個房間",copy:"複製連結",send:"傳送 / 分享",open:"開啟",scan:"掃描加入呢個房間"},
-    ja:{subtitle:"ルームに参加。言語を選択。ライブで理解。",room:"ルーム名",listen:"視聴言語",join:"ライブ配信に参加",share:"このルームを共有",copy:"リンクをコピー",send:"送信 / 共有",open:"開く",scan:"スキャンして参加"},
-    ko:{subtitle:"방에 참여하세요. 언어를 선택하세요. 실시간으로 이해하세요.",room:"방 이름",listen:"청취 언어",join:"라이브 방 참여",share:"이 방 공유",copy:"링크 복사",send:"보내기 / 공유",open:"열기",scan:"스캔하여 참여"},
-    hi:{subtitle:"कक्ष से जुड़ें। अपनी भाषा चुनें। लाइव समझें।",room:"कक्ष का नाम",listen:"सुनने की भाषा",join:"लाइव कक्ष से जुड़ें",share:"यह कक्ष साझा करें",copy:"लिंक कॉपी करें",send:"भेजें / साझा करें",open:"खोलें",scan:"जुड़ने के लिए स्कैन करें"}
-  };
-
-  function applyListenerUrlLanguage(){
-    const lang=String(new URLSearchParams(window.location.search).get("lang")||"en").trim().toLowerCase();
-    const t=LB_UI[lang]||LB_UI.en;
-    document.documentElement.lang=lang;
-    document.documentElement.dir=lang==="ar"?"rtl":"ltr";
-
-    const subtitle=document.querySelector(".lb-live-subtitle");
-    if(subtitle) subtitle.textContent=t.subtitle;
-
-    const labels=document.querySelectorAll(".lb-live-controls .lb-live-label");
-    if(labels[0]) labels[0].textContent=t.room;
-    if(labels[1]) labels[1].textContent=t.listen;
-
-    const join=document.getElementById("joinRoomButton");
-    if(join) join.textContent=t.join;
-
-    const shareTitle=document.querySelector(".lb-listener-share-title");
-    if(shareTitle) shareTitle.textContent=t.share;
-
-    const copy=document.getElementById("lbListenerCopy");
-    if(copy) copy.textContent=t.copy;
-
-    const send=document.getElementById("lbListenerShare");
-    if(send) send.textContent=t.send;
-
-    const open=document.getElementById("lbListenerOpen");
-    if(open) open.textContent=t.open;
-
-    const scan=document.querySelector(".lb-listener-qr-caption");
-    if(scan) scan.textContent=t.scan;
-
-    const listenerLanguage=document.getElementById("listenerLanguage");
-    if(listenerLanguage){
-      const option=Array.from(listenerLanguage.options).find(item=>String(item.value).split("|")[0].toLowerCase()===lang);
-      if(option) listenerLanguage.value=option.value;
-    }
-
-    const shareLanguage=document.getElementById("lbListenerShareLanguage");
-    if(shareLanguage&&Array.from(shareLanguage.options).some(item=>item.value===lang)){
-      shareLanguage.value=lang;
-    }
-  }
 
 
   function loadRoomFromURL() {
@@ -3359,7 +2388,6 @@ function askForEmail() {
 
 
   loadRoomFromURL();
-  applyListenerUrlLanguage();
   applyListenerFontSize();
 </script>
 
@@ -4053,8 +3081,7 @@ Keep the existing listener embeds unchanged.
           response.status
         );
       }
-
-      const cacheStatus =
+const cacheStatus =
         response.headers.get(
           "X-LiveBridge-TTS-Cache"
         );
@@ -5026,87 +4053,335 @@ Keep the existing listener embeds unchanged.
 })();
 
   function getListenerShareURL(){
-    const room=String(document.getElementById("listenerRoom")?.value||new URLSearchParams(window.location.search).get("room")||"").trim().toUpperCase();
-    const lang=String(document.getElementById("lbListenerShareLanguage")?.value||document.getElementById("listenerLanguage")?.value?.split("|")[0]||"en").trim().toLowerCase();
-    const url=new URL("/t/",LIVEBRIDGE_PUBLIC_BASE);
-    if(room) url.searchParams.set("room",room);
-    if(lang) url.searchParams.set("lang",lang);
-    return url.toString();
+
+    const room =
+      String(
+        document.getElementById(
+          "listenerRoom"
+        )?.value ||
+        new URLSearchParams(
+          window.location.search
+        ).get("room") ||
+        ""
+      )
+      .trim()
+      .toUpperCase();
+
+
+    const url =
+      new URL(
+        "/t/",
+        window.location.origin
+      );
+
+
+    if(room){
+      url.searchParams.set(
+        "room",
+        room
+      );
+    }
+return url.toString();
   }
+
 
   function refreshListenerShare(){
-    const url=getListenerShareURL();
-    const text=document.getElementById("lbListenerShareURL");
-    const qr=document.getElementById("lbListenerQR");
-    if(text) text.textContent=url;
-    if(qr) qr.src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=5&data="+encodeURIComponent(url);
+
+    const url =
+      getListenerShareURL();
+
+
+    const text =
+      document.getElementById(
+        "lbListenerShareURL"
+      );
+
+
+    const qr =
+      document.getElementById(
+        "lbListenerQR"
+      );
+
+
+    if(text){
+      text.textContent =
+        url;
+    }
+
+
+    if(qr){
+
+      qr.src =
+        "https://api.qrserver.com/v1/create-qr-code/" +
+        "?size=300x300&margin=5&data=" +
+        encodeURIComponent(
+          url
+        );
+    }
   }
 
-  const lbListenerShareTranslations={
-    en:{title:"Join Our Live Broadcast Now",subtitle:"Listen in your own language",message:"We’re live now. Join our LiveBridge broadcast and listen in your own language.",room:"ROOM"},
-    fr:{title:"Rejoignez notre diffusion en direct",subtitle:"Écoutez dans votre propre langue",message:"Nous sommes en direct. Rejoignez notre diffusion LiveBridge et écoutez dans votre propre langue.",room:"SALLE"},
-    es:{title:"Únase a nuestra transmisión en vivo",subtitle:"Escuche en su propio idioma",message:"Estamos en vivo. Únase a nuestra transmisión de LiveBridge y escuche en su propio idioma.",room:"SALA"},
-    de:{title:"Jetzt unserer Live-Übertragung beitreten",subtitle:"Hören Sie in Ihrer eigenen Sprache",message:"Wir sind jetzt live. Treten Sie unserer LiveBridge-Übertragung bei und hören Sie in Ihrer eigenen Sprache.",room:"RAUM"},
-    pt:{title:"Entre na nossa transmissão ao vivo",subtitle:"Ouça no seu próprio idioma",message:"Estamos ao vivo. Entre na nossa transmissão LiveBridge e ouça no seu próprio idioma.",room:"SALA"},
-    it:{title:"Partecipa alla nostra diretta",subtitle:"Ascolta nella tua lingua",message:"Siamo in diretta. Partecipa alla nostra trasmissione LiveBridge e ascolta nella tua lingua.",room:"STANZA"},
-    nl:{title:"Doe nu mee met onze live-uitzending",subtitle:"Luister in uw eigen taal",message:"We zijn nu live. Doe mee met onze LiveBridge-uitzending en luister in uw eigen taal.",room:"KAMER"},
-    pl:{title:"Dołącz do naszej transmisji na żywo",subtitle:"Słuchaj w swoim języku",message:"Jesteśmy na żywo. Dołącz do transmisji LiveBridge i słuchaj w swoim języku.",room:"POKÓJ"},
-    uk:{title:"Приєднуйтесь до нашої прямої трансляції",subtitle:"Слухайте своєю мовою",message:"Ми вже в ефірі. Приєднуйтесь до трансляції LiveBridge і слухайте своєю мовою.",room:"КІМНАТА"},
-    ru:{title:"Присоединяйтесь к нашей прямой трансляции",subtitle:"Слушайте на своем языке",message:"Мы уже в эфире. Присоединяйтесь к трансляции LiveBridge и слушайте на своем языке.",room:"КОМНАТА"},
-    ar:{title:"انضم إلى البث المباشر الآن",subtitle:"استمع بلغتك الخاصة",message:"نحن على الهواء الآن. انضم إلى بث LiveBridge واستمع بلغتك الخاصة.",room:"الغرفة"},
-    zh:{title:"立即加入我们的直播",subtitle:"用您自己的语言收听",message:"我们正在直播。加入 LiveBridge 直播，用您自己的语言收听。",room:"房间"},
-    ja:{title:"ライブ配信に今すぐ参加",subtitle:"あなたの言語でお聴きください",message:"現在ライブ配信中です。LiveBridgeに参加して、あなたの言語でお聴きください。",room:"ルーム"},
-    ko:{title:"지금 라이브 방송에 참여하세요",subtitle:"자신의 언어로 들으세요",message:"지금 라이브 중입니다. LiveBridge 방송에 참여해 자신의 언어로 들으세요.",room:"방"},
-    hi:{title:"अभी हमारे लाइव प्रसारण से जुड़ें",subtitle:"अपनी भाषा में सुनें",message:"हम अभी लाइव हैं। हमारे LiveBridge प्रसारण से जुड़ें और अपनी भाषा में सुनें।",room:"रूम"}
-  };
 
-  function wrapListenerInviteText(ctx,text,maxWidth){
-    const words=String(text).split(/\s+/),lines=[]; let line="";
-    for(const word of words){const test=line?line+" "+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word;}else line=test;}
-    if(line) lines.push(line); return lines;
-  }
+  document.getElementById(
+    "lbListenerCopy"
+  )?.addEventListener(
+    "click",
+    async function(){
 
-  async function makeListenerShareGraphic(){
-    const lang=document.getElementById("lbListenerShareLanguage")?.value||"en";
-    const t=lbListenerShareTranslations[lang]||lbListenerShareTranslations.en;
-    const room=String(document.getElementById("listenerRoom")?.value||"").trim().toUpperCase();
-    const url=getListenerShareURL();
-    const qr=new Image(); qr.crossOrigin="anonymous"; qr.src="https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=8&data="+encodeURIComponent(url);
-    await new Promise((resolve,reject)=>{qr.onload=resolve;qr.onerror=reject;});
-    const canvas=document.createElement("canvas"); canvas.width=1600; canvas.height=1000; const ctx=canvas.getContext("2d");
-    const g=ctx.createLinearGradient(0,0,1600,1000); g.addColorStop(0,"#061325"); g.addColorStop(.65,"#0a2747"); g.addColorStop(1,"#04111e"); ctx.fillStyle=g; ctx.fillRect(0,0,1600,1000);
-    ctx.font="900 70px Arial"; ctx.fillStyle="#fff"; ctx.fillText("Live",70,105); ctx.fillStyle="#42f5a1"; ctx.fillText("Bridge",205,105);
-    ctx.font="700 20px Arial"; ctx.fillStyle="#90a9c4"; ctx.fillText("Live multilingual translation",72,145);
-    ctx.font="900 78px Arial"; ctx.fillStyle="#fff"; let y=275; for(const line of wrapListenerInviteText(ctx,t.title,930)){ctx.fillText(line,70,y);y+=88;}
-    ctx.font="700 46px Arial"; ctx.fillStyle="#42f5a1"; for(const line of wrapListenerInviteText(ctx,t.subtitle,900)){ctx.fillText(line,72,y);y+=56;}
-    ctx.fillStyle="#fff"; ctx.beginPath(); ctx.roundRect(1110,180,365,365,24); ctx.fill(); ctx.drawImage(qr,1132,202,321,321);
-    ctx.font="800 26px Arial"; ctx.fillStyle="#fff"; ctx.fillText("Scan QR to join live",1130,600);
-    ctx.fillStyle="rgba(3,19,34,.82)"; ctx.strokeStyle="#24d98b"; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(70,700,1460,165,24); ctx.fill(); ctx.stroke();
-    ctx.font="800 20px Arial"; ctx.fillStyle="#42f5a1"; ctx.fillText(t.room,105,742); ctx.font="900 44px Arial"; ctx.fillStyle="#fff"; ctx.fillText(room||"LIVE",105,805);
-    ctx.fillStyle="#42f5a1"; let fs=25; let lines=[]; while(fs>=17){ctx.font="700 "+fs+"px Arial";lines=wrapListenerInviteText(ctx,url,1000);if(lines.length<=2) break;fs-=2;} lines.slice(0,2).forEach((line,i)=>ctx.fillText(line,430,755+i*(fs+8)));
-    ctx.font="700 20px Arial"; ctx.fillStyle="#91a8c0"; ctx.fillText("English  •  Français  •  Español  •  Deutsch  •  Português  •  中文  •  العربية  •  + many more",74,930);
-    const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png",.96));
-    return {canvas,blob,filename:"LiveBridge-"+(room||"Room")+"-"+lang+".png",message:t.message+"\n\n"+t.room+": "+(room||"")+"\n"+url};
-  }
+      const url =
+        getListenerShareURL();
 
-  async function previewListenerShareInvite(){
-    const generated=await makeListenerShareGraphic();
-    document.getElementById("lbListenerSharePreviewImage").src=generated.canvas.toDataURL("image/png");
-    document.getElementById("lbListenerSharePreview").classList.add("show");
-    window.currentListenerShareInvite=generated; return generated;
-  }
 
-  document.getElementById("lbListenerCopy")?.addEventListener("click",async function(){const url=getListenerShareURL();await navigator.clipboard.writeText(url);const old=this.textContent;this.textContent="✓ Copied";setTimeout(()=>this.textContent=old,1400);});
-  document.getElementById("lbListenerShare")?.addEventListener("click",async function(){try{const generated=await previewListenerShareInvite();const file=new File([generated.blob],generated.filename,{type:"image/png"});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"LiveBridge Live Room",text:generated.message,files:[file]});return;}if(navigator.share){await navigator.share({title:"LiveBridge Live Room",text:generated.message,url:getListenerShareURL()});return;}await navigator.clipboard.writeText(generated.message);alert("Invite text copied. The share graphic is shown below.");}catch(error){if(error?.name!=="AbortError"){console.error("LiveBridge invite sharing failed:",error);alert("The invite preview is shown below.");}}});
-  document.getElementById("lbListenerOpen")?.addEventListener("click",()=>window.open(getListenerShareURL(),"_blank"));
-  document.getElementById("lbListenerShareLanguage")?.addEventListener("change",async()=>{refreshListenerShare();if(document.getElementById("lbListenerSharePreview")?.classList.contains("show")) await previewListenerShareInvite();});
-  document.getElementById("lbListenerDownloadGraphic")?.addEventListener("click",async function(){const generated=window.currentListenerShareInvite||await previewListenerShareInvite();const link=document.createElement("a");link.href=generated.canvas.toDataURL("image/png");link.download=generated.filename;link.click();});
-  document.getElementById("lbListenerCopyInviteText")?.addEventListener("click",async function(){const generated=window.currentListenerShareInvite||await previewListenerShareInvite();await navigator.clipboard.writeText(generated.message);const old=this.textContent;this.textContent="✓ Copied";setTimeout(()=>this.textContent=old,1500);});
-  document.getElementById("listenerRoom")?.addEventListener("input",refreshListenerShare);
-  document.getElementById("joinRoomButton")?.addEventListener("click",()=>setTimeout(refreshListenerShare,50));
+      await navigator.clipboard.writeText(
+        url
+      );
+
+
+      const old =
+        this.textContent;
+
+
+      this.textContent =
+        "✓ Copied";
+
+
+      setTimeout(
+        () =>
+          this.textContent =
+            old,
+        1400
+      );
+    }
+  );
+
+
+  document.getElementById(
+    "lbListenerShare"
+  )?.addEventListener(
+    "click",
+    async function(){
+
+      const url =
+        getListenerShareURL();
+
+
+      if(
+        navigator.share
+      ){
+
+        try{
+
+          await navigator.share({
+            title:
+              "LiveBridge Room",
+
+            text:
+              "Join this LiveBridge room.",
+
+            url
+          });
+
+        }catch{}
+
+
+      }else{
+
+        await navigator.clipboard.writeText(
+          url
+        );
+
+
+        alert(
+          "Room link copied."
+        );
+      }
+    }
+  );
+
+
+  document.getElementById(
+    "lbListenerOpen"
+  )?.addEventListener(
+    "click",
+    function(){
+
+      window.open(
+        getListenerShareURL(),
+        "_blank"
+      );
+    }
+  );
+
+
+  document.getElementById(
+    "listenerRoom"
+  )?.addEventListener(
+    "input",
+    refreshListenerShare
+  );
+
+
+  document.getElementById(
+    "joinRoomButton"
+  )?.addEventListener(
+    "click",
+    function(){
+
+      setTimeout(
+        refreshListenerShare,
+        50
+      );
+    }
+  );
+
+
   refreshListenerShare();
 
 
 </script>
+
+<script>
+(function(){
+
+  const languages = [
+    {code:"en",flag:"🇬🇧",native:"Click here to listen in English",english:"English"},
+    {code:"fr",flag:"🇫🇷",native:"Cliquez ici pour écouter en français",english:"French"},
+    {code:"es",flag:"🇪🇸",native:"Haz clic aquí para escuchar en español",english:"Spanish"},
+    {code:"de",flag:"🇩🇪",native:"Hier klicken, um auf Deutsch zuzuhören",english:"German"},
+    {code:"pt",flag:"🇵🇹",native:"Clique aqui para ouvir em português",english:"Portuguese"},
+    {code:"it",flag:"🇮🇹",native:"Clicca qui per ascoltare in italiano",english:"Italian"},
+    {code:"pl",flag:"🇵🇱",native:"Kliknij tutaj, aby słuchać po polsku",english:"Polish"},
+    {code:"ru",flag:"🇷🇺",native:"Нажмите здесь, чтобы слушать на русском",english:"Russian"},
+    {code:"uk",flag:"🇺🇦",native:"Натисніть тут, щоб слухати українською",english:"Ukrainian"},
+    {code:"nl",flag:"🇳🇱",native:"Klik hier om in het Nederlands te luisteren",english:"Dutch"},
+    {code:"cs",flag:"🇨🇿",native:"Klikněte zde a poslouchejte česky",english:"Czech"},
+    {code:"fil",flag:"🇵🇭",native:"Pindutin dito para makinig sa Filipino",english:"Filipino"},
+    {code:"he",flag:"🇮🇱",native:"לחצו כאן כדי להאזין בעברית",english:"Hebrew"},
+    {code:"yo",flag:"🇳🇬",native:"Tẹ ibi láti tẹ́tí sí ní Yorùbá",english:"Yoruba"},
+    {code:"ig",flag:"🇳🇬",native:"Pịa ebe a ka ị gee ntị n'Igbo",english:"Igbo"},
+    {code:"ha",flag:"🇳🇬",native:"Danna nan don sauraro da Hausa",english:"Hausa"},
+    {code:"zh",flag:"🇨🇳",native:"点击这里收听普通话",english:"Mandarin Chinese"},
+    {code:"yue",flag:"🇭🇰",native:"撳呢度用廣東話收聽",english:"Cantonese"}
+  ];
+
+  function params(){
+    return new URLSearchParams(window.location.search);
+  }
+
+  function applyLanguageFromURL(){
+    const requested =
+      String(params().get("lang") || "")
+        .trim()
+        .toLowerCase();
+
+    if(!requested){
+      return false;
+    }
+
+    const select =
+      document.getElementById("listenerLanguage");
+
+    if(select){
+      const option =
+        Array.from(select.options).find(item =>
+          String(item.value)
+            .split("|")[0]
+            .toLowerCase() === requested
+        );
+
+      if(option){
+        select.value = option.value;
+        select.dispatchEvent(
+          new Event("change",{bubbles:true})
+        );
+      }
+    }
+
+    return true;
+  }
+
+  function chooseLanguage(code){
+    const p = params();
+    p.set("lang",code);
+
+    window.location.href =
+      window.location.pathname +
+      "?" +
+      p.toString();
+  }
+
+  function renderGate(){
+    const gate =
+      document.getElementById("lbLanguageGate");
+
+    const page =
+      document.querySelector(".lb-live-page");
+
+    const grid =
+      document.getElementById("lbLanguageGrid");
+
+    if(!gate || !page || !grid){
+      return;
+    }
+
+    const p = params();
+    const hasLanguage =
+      String(p.get("lang") || "").trim() !== "";
+
+    if(hasLanguage){
+      gate.classList.remove("show");
+      page.style.display = "";
+      applyLanguageFromURL();
+      return;
+    }
+
+    page.style.display = "none";
+    gate.classList.add("show");
+
+    const room =
+      String(p.get("room") || "")
+        .trim()
+        .toUpperCase();
+
+    const roomBadge =
+      document.getElementById("lbLanguageGateRoom");
+
+    if(roomBadge){
+      roomBadge.textContent =
+        room
+          ? "Live room: " + room
+          : "Choose a language to continue";
+    }
+
+    grid.innerHTML =
+      languages.map(item => `
+        <button
+          type="button"
+          class="lb-language-choice"
+          data-lang="${item.code}"
+        >
+          <span class="lb-language-flag">${item.flag}</span>
+          <span>
+            <span class="lb-language-native">${item.native}</span>
+            <span class="lb-language-english">${item.english}</span>
+          </span>
+        </button>
+      `).join("");
+
+    grid.querySelectorAll("[data-lang]").forEach(button => {
+      button.addEventListener("click",function(){
+        chooseLanguage(this.dataset.lang);
+      });
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded",renderGate);
+  }else{
+    renderGate();
+  }
+
+})();
+</script>
+
 </body>
 </html>
