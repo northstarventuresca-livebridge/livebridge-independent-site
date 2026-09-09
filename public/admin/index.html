@@ -2987,11 +2987,6 @@ async function downloadOfferGraphic(){
   const canvas =
     document.createElement("canvas");
 
-  /*
-    1600 x 1000 gives a premium landscape image
-    that works well in email, text, WhatsApp,
-    presentations and social sharing.
-  */
   canvas.width = 1600;
   canvas.height = 1000;
 
@@ -3018,34 +3013,10 @@ async function downloadOfferGraphic(){
 
     ctx.beginPath();
     ctx.moveTo(x + r, y);
-    ctx.arcTo(
-      x + width,
-      y,
-      x + width,
-      y + height,
-      r
-    );
-    ctx.arcTo(
-      x + width,
-      y + height,
-      x,
-      y + height,
-      r
-    );
-    ctx.arcTo(
-      x,
-      y + height,
-      x,
-      y,
-      r
-    );
-    ctx.arcTo(
-      x,
-      y,
-      x + width,
-      y,
-      r
-    );
+    ctx.arcTo(x + width, y, x + width, y + height, r);
+    ctx.arcTo(x + width, y + height, x, y + height, r);
+    ctx.arcTo(x, y + height, x, y, r);
+    ctx.arcTo(x, y, x + width, y, r);
     ctx.closePath();
 
     if(fill){
@@ -3107,15 +3078,11 @@ async function downloadOfferGraphic(){
           return currentY;
         }
 
-        line =
-          words[i];
-
-        currentY +=
-          lineHeight;
+        line = words[i];
+        currentY += lineHeight;
 
       }else{
-        line =
-          testLine;
+        line = testLine;
       }
     }
 
@@ -3134,13 +3101,6 @@ async function downloadOfferGraphic(){
   }
 
 
-  /*
-  =====================================================
-  BACKGROUND
-  Deep premium LiveBridge blue with subtle light.
-  =====================================================
-  */
-
   const bg =
     ctx.createLinearGradient(
       0,
@@ -3149,35 +3109,14 @@ async function downloadOfferGraphic(){
       1000
     );
 
-  bg.addColorStop(
-    0,
-    "#061827"
-  );
+  bg.addColorStop(0,"#061827");
+  bg.addColorStop(.48,"#0a3154");
+  bg.addColorStop(1,"#10254a");
 
-  bg.addColorStop(
-    0.48,
-    "#0a3154"
-  );
-
-  bg.addColorStop(
-    1,
-    "#10254a"
-  );
-
-  ctx.fillStyle =
-    bg;
-
-  ctx.fillRect(
-    0,
-    0,
-    1600,
-    1000
-  );
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,1600,1000);
 
 
-  /*
-    Large soft atmospheric glows.
-  */
   const glow1 =
     ctx.createRadialGradient(
       1370,
@@ -3188,30 +3127,12 @@ async function downloadOfferGraphic(){
       560
     );
 
-  glow1.addColorStop(
-    0,
-    "rgba(75,210,237,.34)"
-  );
+  glow1.addColorStop(0,"rgba(75,210,237,.34)");
+  glow1.addColorStop(.45,"rgba(75,150,237,.12)");
+  glow1.addColorStop(1,"rgba(75,150,237,0)");
 
-  glow1.addColorStop(
-    0.45,
-    "rgba(75,150,237,.12)"
-  );
-
-  glow1.addColorStop(
-    1,
-    "rgba(75,150,237,0)"
-  );
-
-  ctx.fillStyle =
-    glow1;
-
-  ctx.fillRect(
-    800,
-    0,
-    800,
-    650
-  );
+  ctx.fillStyle = glow1;
+  ctx.fillRect(800,0,800,650);
 
 
   const glow2 =
@@ -3224,58 +3145,11 @@ async function downloadOfferGraphic(){
       500
     );
 
-  glow2.addColorStop(
-    0,
-    "rgba(57,218,173,.15)"
-  );
+  glow2.addColorStop(0,"rgba(57,218,173,.15)");
+  glow2.addColorStop(1,"rgba(57,218,173,0)");
 
-  glow2.addColorStop(
-    1,
-    "rgba(57,218,173,0)"
-  );
-
-  ctx.fillStyle =
-    glow2;
-
-  ctx.fillRect(
-    0,
-    450,
-    650,
-    550
-  );
-
-
-  /*
-  =====================================================
-  DECORATIVE BRAND DETAIL
-  =====================================================
-  */
-
-  ctx.strokeStyle =
-    "rgba(255,255,255,.055)";
-
-  ctx.lineWidth =
-    2;
-
-  ctx.beginPath();
-  ctx.arc(
-    1450,
-    180,
-    235,
-    0,
-    Math.PI * 2
-  );
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.arc(
-    1450,
-    180,
-    165,
-    0,
-    Math.PI * 2
-  );
-  ctx.stroke();
+  ctx.fillStyle = glow2;
+  ctx.fillRect(0,450,650,550);
 
 
   /*
@@ -3284,28 +3158,12 @@ async function downloadOfferGraphic(){
   =====================================================
   */
 
-  ctx.fillStyle =
-    "#ffffff";
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "900 54px Arial";
+  ctx.fillText("LiveBridge",100,118);
 
-  ctx.font =
-    "900 54px Arial";
-
-  ctx.fillText(
-    "LiveBridge",
-    100,
-    118
-  );
-
-
-  ctx.fillStyle =
-    "#66d8f5";
-
-  ctx.font =
-    "900 16px Arial";
-
-  ctx.letterSpacing =
-    "2px";
-
+  ctx.fillStyle = "#66d8f5";
+  ctx.font = "900 16px Arial";
   ctx.fillText(
     "REAL-TIME MULTILINGUAL COMMUNICATION",
     102,
@@ -3315,28 +3173,20 @@ async function downloadOfferGraphic(){
 
   /*
   =====================================================
-  WELCOME MESSAGE
+  TOP LEFT — RECIPIENT
   =====================================================
   */
 
-  ctx.fillStyle =
-    "#7ce5ff";
-
-  ctx.font =
-    "900 15px Arial";
-
+  ctx.fillStyle = "#7ce5ff";
+  ctx.font = "900 15px Arial";
   ctx.fillText(
     "A PRIVATE OFFER PREPARED FOR",
     100,
     245
   );
 
-
-  ctx.fillStyle =
-    "#ffffff";
-
-  ctx.font =
-    "900 48px Arial";
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "900 48px Arial";
 
   const recipient =
     String(
@@ -3353,17 +3203,84 @@ async function downloadOfferGraphic(){
     2
   );
 
-
-  ctx.fillStyle =
-    "#c4d9e8";
-
-  ctx.font =
-    "500 24px Arial";
-
+  ctx.fillStyle = "#c4d9e8";
+  ctx.font = "500 24px Arial";
   ctx.fillText(
     "We're excited to share a LiveBridge plan created for your organization.",
     100,
     385
+  );
+
+
+  /*
+  =====================================================
+  TOP RIGHT — VALUE / BENEFITS
+  =====================================================
+  */
+
+  roundedRect(
+    1005,
+    82,
+    485,
+    305,
+    24,
+    "rgba(5,31,55,.33)",
+    "rgba(255,255,255,.10)",
+    1
+  );
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "900 25px Arial";
+  ctx.fillText(
+    "Connect everyone in the room.",
+    1042,
+    130
+  );
+
+  ctx.fillStyle = "#a9c6d8";
+  ctx.font = "500 18px Arial";
+  wrapText(
+    "LiveBridge gives guests instant access to translated captions and natural-language audio on their own device.",
+    1042,
+    168,
+    405,
+    27,
+    3
+  );
+
+  const benefits = [
+    "No app download required",
+    "Multiple languages at the same time",
+    "Works with live services, events and training",
+    "One broadcast can serve many listeners"
+  ];
+
+  let benefitY = 268;
+
+  benefits.forEach(
+    benefit => {
+
+      ctx.fillStyle = "#49ddb1";
+      ctx.beginPath();
+      ctx.arc(
+        1051,
+        benefitY - 6,
+        7,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.fillStyle = "#e6f3f9";
+      ctx.font = "700 16px Arial";
+      ctx.fillText(
+        benefit,
+        1072,
+        benefitY
+      );
+
+      benefitY += 31;
+    }
   );
 
 
@@ -3384,25 +3301,16 @@ async function downloadOfferGraphic(){
     2
   );
 
-
-  ctx.fillStyle =
-    "#7890a2";
-
-  ctx.font =
-    "900 13px Arial";
-
+  ctx.fillStyle = "#7890a2";
+  ctx.font = "900 13px Arial";
   ctx.fillText(
     "YOUR LIVEBRIDGE OFFER",
     145,
     495
   );
 
-
-  ctx.fillStyle =
-    "#10283c";
-
-  ctx.font =
-    "900 44px Arial";
+  ctx.fillStyle = "#10283c";
+  ctx.font = "900 44px Arial";
 
   const titleBottom =
     wrapText(
@@ -3415,14 +3323,11 @@ async function downloadOfferGraphic(){
       2
     );
 
-
   const amount =
     new Intl.NumberFormat(
       "en-CA",
       {
-        style:
-          "currency",
-
+        style:"currency",
         currency:
           plan.currency ||
           "CAD"
@@ -3435,26 +3340,16 @@ async function downloadOfferGraphic(){
       ) / 100
     );
 
-
-  ctx.fillStyle =
-    "#0a2135";
-
-  ctx.font =
-    "900 60px Arial";
-
+  ctx.fillStyle = "#0a2135";
+  ctx.font = "900 60px Arial";
   ctx.fillText(
     amount,
     145,
     titleBottom + 95
   );
 
-
-  ctx.fillStyle =
-    "#687f91";
-
-  ctx.font =
-    "700 19px Arial";
-
+  ctx.fillStyle = "#687f91";
+  ctx.font = "700 19px Arial";
   ctx.fillText(
     "per " +
       (
@@ -3465,10 +3360,6 @@ async function downloadOfferGraphic(){
     titleBottom + 130
   );
 
-
-  /*
-    Offer statistics.
-  */
 
   roundedRect(
     145,
@@ -3488,32 +3379,21 @@ async function downloadOfferGraphic(){
     "#f2f6f9"
   );
 
-
-  ctx.fillStyle =
-    "#8094a3";
-
-  ctx.font =
-    "900 11px Arial";
-
+  ctx.fillStyle = "#8094a3";
+  ctx.font = "900 11px Arial";
   ctx.fillText(
     "INCLUDED TRANSLATION TIME",
     168,
     738
   );
-
   ctx.fillText(
     "SIMULTANEOUS LISTENERS",
     518,
     738
   );
 
-
-  ctx.fillStyle =
-    "#16354d";
-
-  ctx.font =
-    "900 27px Arial";
-
+  ctx.fillStyle = "#16354d";
+  ctx.font = "900 27px Arial";
   ctx.fillText(
     hoursFromMinutes(
       plan.includedMinutes
@@ -3521,7 +3401,6 @@ async function downloadOfferGraphic(){
     168,
     774
   );
-
   ctx.fillText(
     String(
       Number(
@@ -3540,25 +3419,16 @@ async function downloadOfferGraphic(){
   =====================================================
   */
 
-  ctx.fillStyle =
-    "#ffffff";
-
-  ctx.font =
-    "900 29px Arial";
-
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "900 29px Arial";
   ctx.fillText(
     "Your private invitation",
     1050,
     455
   );
 
-
-  ctx.fillStyle =
-    "#b9cfde";
-
-  ctx.font =
-    "500 19px Arial";
-
+  ctx.fillStyle = "#b9cfde";
+  ctx.font = "500 19px Arial";
   wrapText(
     "Review the details prepared for you and continue whenever you're ready.",
     1050,
@@ -3568,10 +3438,6 @@ async function downloadOfferGraphic(){
     3
   );
 
-
-  /*
-    QR presentation card.
-  */
 
   roundedRect(
     1050,
@@ -3584,13 +3450,11 @@ async function downloadOfferGraphic(){
     1
   );
 
-
   const qrUrl =
     "https://api.qrserver.com/v1/create-qr-code/?size=700x700&margin=12&data=" +
     encodeURIComponent(
       data.offerUrl
     );
-
 
   try{
 
@@ -3601,19 +3465,10 @@ async function downloadOfferGraphic(){
       "anonymous";
 
     await new Promise(
-      (
-        resolve,
-        reject
-      ) => {
-
-        qr.onload =
-          resolve;
-
-        qr.onerror =
-          reject;
-
-        qr.src =
-          qrUrl;
+      (resolve,reject) => {
+        qr.onload = resolve;
+        qr.onerror = reject;
+        qr.src = qrUrl;
       }
     );
 
@@ -3627,12 +3482,8 @@ async function downloadOfferGraphic(){
 
   }catch(error){
 
-    ctx.fillStyle =
-      "#16354d";
-
-    ctx.font =
-      "900 18px Arial";
-
+    ctx.fillStyle = "#16354d";
+    ctx.font = "900 18px Arial";
     ctx.fillText(
       "Secure offer link",
       1090,
@@ -3640,13 +3491,8 @@ async function downloadOfferGraphic(){
     );
   }
 
-
-  ctx.fillStyle =
-    "#d3e5f0";
-
-  ctx.font =
-    "700 16px Arial";
-
+  ctx.fillStyle = "#d3e5f0";
+  ctx.font = "700 16px Arial";
   ctx.fillText(
     "Scan to open your private offer",
     1050,
@@ -3656,7 +3502,7 @@ async function downloadOfferGraphic(){
 
   /*
   =====================================================
-  BOTTOM INVITATION BAR
+  BOTTOM MESSAGE BAR — FIXED TEXT WRAPPING
   =====================================================
   */
 
@@ -3664,37 +3510,29 @@ async function downloadOfferGraphic(){
     100,
     875,
     850,
-    66,
+    82,
     18,
     "rgba(76,220,183,.95)"
   );
 
-
-  ctx.fillStyle =
-    "#082d3d";
-
-  ctx.font =
-    "900 20px Arial";
+  ctx.fillStyle = "#082d3d";
+  ctx.font = "900 18px Arial";
 
   ctx.fillText(
-    "We look forward to helping your organization connect across languages.",
+    "We look forward to helping your organization",
     137,
-    917
+    910
+  );
+
+  ctx.fillText(
+    "connect across languages.",
+    137,
+    936
   );
 
 
-  /*
-  =====================================================
-  FOOTER
-  =====================================================
-  */
-
-  ctx.fillStyle =
-    "#9eb9cb";
-
-  ctx.font =
-    "600 13px Arial";
-
+  ctx.fillStyle = "#9eb9cb";
+  ctx.font = "600 13px Arial";
   ctx.fillText(
     "Private proposal prepared through LiveBridge",
     1050,
