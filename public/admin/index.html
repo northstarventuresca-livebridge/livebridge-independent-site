@@ -735,6 +735,38 @@ body{
   }
 }
 
+
+  .lb-feature-override-item{
+    display:flex;
+    gap:9px;
+    align-items:flex-start;
+    padding:11px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.09);
+    background:#0e1c2d;
+    cursor:pointer;
+    color:#dbe8f5;
+    text-transform:none;
+    letter-spacing:0;
+  }
+  .lb-feature-override-item input{
+    width:auto;
+    margin:2px 0 0;
+    accent-color:#29d783;
+  }
+  .lb-feature-override-item strong{
+    display:block;
+    color:white;
+    font-size:12px;
+    margin-bottom:3px;
+  }
+  .lb-feature-override-item small{
+    display:block;
+    color:#839ab3;
+    font-size:10px;
+    line-height:1.4;
+  }
+
 </style>
 
 
@@ -1547,6 +1579,81 @@ body{
                 </div>
               </div>
 
+            </div>
+
+
+            <div
+              style="
+                margin-top:18px;
+                padding:16px;
+                border-radius:14px;
+                border:1px solid rgba(73,169,255,.20);
+                background:rgba(24,90,150,.08);
+              "
+            >
+              <div style="font-weight:900;color:white;font-size:14px;margin-bottom:5px;">
+                Feature Overrides
+              </div>
+
+              <div style="color:#8fa8bf;font-size:11px;line-height:1.5;margin-bottom:13px;">
+                Turn on any individual feature below to grant it to this organization even when its normal plan does not include it.
+              </div>
+
+              <div
+                id="featureOverrideGrid"
+                style="
+                  display:grid;
+                  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+                  gap:9px;
+                "
+              >
+                <label class="lb-feature-override-item">
+                  <input type="checkbox" id="overrideTranscriptAccess">
+                  <span><strong>Post-broadcast Transcripts</strong><small>Includes up to 30 days of transcript access when manually granted.</small></span>
+                </label>
+
+                <label class="lb-feature-override-item">
+                  <input type="checkbox" id="overrideTranscriptEmail">
+                  <span><strong>Email Transcript + AI Summary</strong><small>Allows transcript and AI notes email after broadcast.</small></span>
+                </label>
+
+                <label class="lb-feature-override-item">
+                  <input type="checkbox" id="overrideScheduledBroadcasts">
+                  <span><strong>Scheduled Broadcasts</strong><small>Allows scheduled broadcast setup on any plan.</small></span>
+                </label>
+
+                <label class="lb-feature-override-item">
+                  <input type="checkbox" id="overrideDetailedAnalytics">
+                  <span><strong>Detailed Listener Analytics</strong><small>Unlocks detailed broadcast/listener and language analytics.</small></span>
+                </label>
+
+                <label class="lb-feature-override-item">
+                  <input type="checkbox" id="overrideReportExport">
+                  <span><strong>Analytics / Report Export</strong><small>Marks this organization as allowed to use downloadable reporting.</small></span>
+                </label>
+
+                <label class="lb-feature-override-item">
+                  <input type="checkbox" id="overridePrioritySupport">
+                  <span><strong>Priority Email Support</strong><small>Marks this organization for priority support access.</small></span>
+                </label>
+
+                <label class="lb-feature-override-item">
+                  <input type="checkbox" id="overrideCustomOnboarding">
+                  <span><strong>Custom Onboarding / Configuration</strong><small>Marks this organization for custom setup support.</small></span>
+                </label>
+              </div>
+
+              <div
+                id="featureOverrideSummary"
+                style="
+                  margin-top:11px;
+                  color:#91a9bf;
+                  font-size:11px;
+                  line-height:1.5;
+                "
+              >
+                No additional feature overrides enabled.
+              </div>
             </div>
 
 
@@ -3941,6 +4048,33 @@ async function openOrganization(id){
     account
   );
 
+
+  const featureOverrides =
+    account.featureOverrides || {};
+
+  document.getElementById("overrideTranscriptAccess").checked =
+    !!featureOverrides.transcriptAccess;
+
+  document.getElementById("overrideTranscriptEmail").checked =
+    !!featureOverrides.transcriptEmail;
+
+  document.getElementById("overrideScheduledBroadcasts").checked =
+    !!featureOverrides.scheduledBroadcasts;
+
+  document.getElementById("overrideDetailedAnalytics").checked =
+    !!featureOverrides.detailedAnalytics;
+
+  document.getElementById("overrideReportExport").checked =
+    !!featureOverrides.reportExport;
+
+  document.getElementById("overridePrioritySupport").checked =
+    !!featureOverrides.prioritySupport;
+
+  document.getElementById("overrideCustomOnboarding").checked =
+    !!featureOverrides.customOnboarding;
+
+  renderFeatureOverrideSummary();
+
   document.getElementById(
     "editAdminNotes"
   ).value =
@@ -3952,6 +4086,90 @@ async function openOrganization(id){
   );
 }
 
+
+
+
+function collectFeatureOverrides(){
+  return {
+    transcriptAccess:
+      document.getElementById("overrideTranscriptAccess")?.checked === true,
+
+    transcriptEmail:
+      document.getElementById("overrideTranscriptEmail")?.checked === true,
+
+    scheduledBroadcasts:
+      document.getElementById("overrideScheduledBroadcasts")?.checked === true,
+
+    detailedAnalytics:
+      document.getElementById("overrideDetailedAnalytics")?.checked === true,
+
+    reportExport:
+      document.getElementById("overrideReportExport")?.checked === true,
+
+    scriptureDetection:
+      document.getElementById("editScripturePlanOverride")?.checked === true,
+
+    prioritySupport:
+      document.getElementById("overridePrioritySupport")?.checked === true,
+
+    customOnboarding:
+      document.getElementById("overrideCustomOnboarding")?.checked === true
+  };
+}
+
+
+function renderFeatureOverrideSummary(){
+  const box =
+    document.getElementById(
+      "featureOverrideSummary"
+    );
+
+  if(!box){
+    return;
+  }
+
+  const overrides =
+    collectFeatureOverrides();
+
+  const labels = {
+    transcriptAccess:"Transcripts",
+    transcriptEmail:"Transcript Email + AI Summary",
+    scheduledBroadcasts:"Scheduled Broadcasts",
+    detailedAnalytics:"Detailed Analytics",
+    reportExport:"Report Export",
+    scriptureDetection:"Scripture Detection",
+    prioritySupport:"Priority Support",
+    customOnboarding:"Custom Onboarding"
+  };
+
+  const enabled =
+    Object.keys(overrides)
+      .filter(key => overrides[key])
+      .map(key => labels[key]);
+
+  box.innerHTML =
+    enabled.length
+      ? '✓ Manual access enabled: <strong style="color:#63e7a1;">' +
+        enabled.map(escapeHtml).join(", ") +
+        "</strong>"
+      : "No additional feature overrides enabled.";
+}
+
+
+document.addEventListener(
+  "change",
+  function(event){
+    if(
+      event.target?.closest?.(
+        "#featureOverrideGrid"
+      ) ||
+      event.target?.id ===
+        "editScripturePlanOverride"
+    ){
+      renderFeatureOverrideSummary();
+    }
+  }
+);
 
 
 function renderScriptureAdminStatus(
@@ -3968,8 +4186,10 @@ function renderScriptureAdminStatus(
   }
 
   const planAllows =
-    account?.entitlements
-      ?.scriptureDetection === true;
+    (
+      account?.planEntitlements ||
+      account?.entitlements
+    )?.scriptureDetection === true;
 
   const enabled =
     account?.scriptureEnabled === true;
@@ -4298,6 +4518,9 @@ async function saveOrganization(){
               document.getElementById(
                 "editScripturePlanOverride"
               ).checked,
+
+            featureOverrides:
+              collectFeatureOverrides(),
 
             accountStatus:
               document.getElementById(
