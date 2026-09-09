@@ -1376,20 +1376,41 @@ body{
   <div class="lb-card" style="margin-top:16px;">
 
     <div class="lb-card-title">
-      Need More Every Month?
+      Manage Subscription
     </div>
 
     <div class="lb-muted">
-      Upgrading your monthly plan is usually better value than regularly purchasing top-up hours.
+      Change your LiveBridge plan, update your payment method,
+      review invoices or manage your subscription securely through Stripe.
     </div>
 
+    <div
+      id="lbBillingPortalStatus"
+      class="lb-muted"
+      style="margin-top:12px;display:none;"
+    ></div>
+
     <button
-      class="lb-secondary-button"
+      class="lb-primary-button"
+      id="lbManageBillingButton"
       style="margin-top:16px;"
-      onclick="requestLiveBridgeUpgrade()"
+      onclick="openLiveBridgeBillingPortal()"
     >
-      Request Plan Upgrade
+      Manage Billing &amp; Change Plan
     </button>
+
+    <a
+      href="/plans/index.html"
+      class="lb-secondary-button"
+      style="
+        margin-top:10px;
+        margin-left:8px;
+        display:inline-flex;
+        text-decoration:none;
+      "
+    >
+      Compare Plans
+    </a>
 
   </div>
 
@@ -3511,6 +3532,108 @@ function requestLiveBridgeTopUp(
     subject +
     "&body=" +
     body;
+}
+
+
+
+async function openLiveBridgeBillingPortal(){
+
+  const button =
+    document.getElementById(
+      "lbManageBillingButton"
+    );
+
+  const status =
+    document.getElementById(
+      "lbBillingPortalStatus"
+    );
+
+  try{
+
+    if(button){
+      button.disabled = true;
+      button.textContent =
+        "Opening Secure Billing...";
+    }
+
+    if(status){
+      status.style.display =
+        "block";
+
+      status.textContent =
+        "Connecting securely to Stripe...";
+    }
+
+    const token =
+      await getLiveBridgeSessionToken();
+
+    if(!token){
+      throw new Error(
+        "Please sign in again."
+      );
+    }
+
+    const response =
+      await fetch(
+        LB_WORKER +
+        "/stripe/customer-portal",
+        {
+          method:
+            "POST",
+
+          headers:{
+            "Authorization":
+              "Bearer " +
+              token,
+
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({})
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if(
+      !response.ok ||
+      !data.success ||
+      !data.portalUrl
+    ){
+      throw new Error(
+        data.error ||
+        "Stripe billing could not be opened."
+      );
+    }
+
+    window.location.href =
+      data.portalUrl;
+
+  }catch(error){
+
+    console.error(
+      "LiveBridge billing portal failed:",
+      error
+    );
+
+    if(status){
+      status.style.display =
+        "block";
+
+      status.textContent =
+        error.message ||
+        "Billing management could not be opened.";
+    }
+
+    if(button){
+      button.disabled = false;
+      button.textContent =
+        "Manage Billing & Change Plan";
+    }
+  }
 }
 
 
