@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-</head>
-<body>
-<style>
+  <head>
+    <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      </head>
+      <body>
+        <style>
   * {
     box-sizing: border-box;
   }
@@ -396,8 +396,7 @@
   .lb-language-gate-note{text-align:center;color:#6f849a;font-size:11px;margin-top:24px;line-height:1.55}
 
 </style>
-
-<style>
+        <style>
 @media(max-width:700px){
   .lb-listener-share-card{
     grid-template-columns:1fr;
@@ -413,214 +412,187 @@
   }
 }
 </style>
-
-
-
-<div id="lbLanguageGate" class="lb-language-gate">
-  <div class="lb-language-gate-inner">
-    <div class="lb-language-gate-brand">Live<span>Bridge</span></div>
-    <div class="lb-language-gate-title">Choose your language</div>
-
-    <div class="lb-language-gate-subtitle">
-      Select the language you understand best.<br>
-      <span id="lbLanguageGateRoom" class="lb-language-gate-room"></span>
-    </div>
-
-    <div id="lbLanguageGrid" class="lb-language-grid"></div>
-
-    <div class="lb-language-gate-note">
-      No app download is required. Select your language to continue to the live translation room.
-    </div>
-  </div>
-</div>
-
-<div class="lb-live-page">
-  <div class="lb-live-wrap">
-
-    <div class="lb-listener-home-row">
-      <a class="lb-listener-home" href="/">← Back to LiveBridge</a>
-    </div>
-
-    <div class="lb-live-header">
-      <div class="lb-live-brand">Live<span>Bridge</span></div>
-      <div class="lb-live-subtitle">
-        Join a room. Choose your language. Understand live.
-      </div>
-    </div>
-
-    <div class="lb-live-card">
-
-      <div class="lb-live-controls">
-
-        <label class="lb-live-label">Room Name</label>
-        <input
-          id="listenerRoom"
-          class="lb-live-input"
-          value="TRANSLATION"
-          placeholder="Enter room name"
-        >
-
-        <label class="lb-live-label">Listening Language</label>
-        <select id="listenerLanguage" class="lb-live-select">
-          <option value="en|en-US">English</option>
-          <option value="fr|fr-CA">French — Français</option>
-          <option value="es|es-ES">Spanish — Español</option>
-          <option value="de|de-DE">German — Deutsch</option>
-          <option value="pt|pt-BR">Portuguese — Português</option>
-          <option value="it|it-IT">Italian — Italiano</option>
-          <option value="pl|pl-PL">Polish — Polski</option>
-          <option value="ru|ru-RU">Russian — Русский</option>
-          <option value="uk|uk-UA">Ukrainian — Українська</option>
-          <option value="nl|nl-NL">Dutch — Nederlands</option>
-          <option value="cs|cs-CZ">Czech — Čeština</option>
-          <option value="fil|fil-PH">Filipino (Tagalog) — Filipino</option>
-          <option value="he|he-IL">Hebrew — עברית</option>
-          <option value="yo|yo-NG">Yoruba — Yorùbá</option>
-          <option value="ig|ig-NG">Igbo — Igbo</option>
-          <option value="ha|ha-NG">Hausa — Hausa</option>
-          <option value="zh|zh-CN">Mandarin Chinese — 中文（普通话）</option>
-          <option value="yue|yue-CN">Cantonese — 廣東話</option>
-        </select>
-
-        <button class="lb-live-button" id="joinRoomButton">
-          Join Live Room
-        </button>
-
-        <div style="
-          margin-top:12px;
-          padding:12px 13px;
-          border-radius:11px;
-          background:rgba(37,136,255,.07);
-          border:1px solid rgba(37,136,255,.16);
-          color:#9fb4ca;
-          font-size:11px;
-          line-height:1.55;
-        ">
-          <strong style="color:#dce9f5;">
-            Live Translation Notice:
-          </strong>
-          This event may be transcribed and processed using automated
-          translation and text-to-speech technology. Automated results
-          may contain errors.
-          <a
-            href="/privacy/"
-            target="_blank"
-            style="color:#78b7ff;font-weight:800;"
-          >
-            Privacy Policy
-          </a>
-        </div>
-
-        <span class="lb-voice-label">Translated Voice</span>
-        <div class="lb-voice-choice">
-          <button type="button" class="lb-voice-button selected" id="maleVoiceButton">👨 Male Voice</button>
-          <button type="button" class="lb-voice-button" id="femaleVoiceButton">👩 Female Voice</button>
-        </div>
-
-      </div>
-
-      <div class="lb-live-topbar">
-
-       <div class="lb-live-status">
-  <span id="listenerDot" class="lb-live-dot"></span>
-  <span id="listenerStatus">Not Connected</span>
-
-  <button
-    type="button"
-    id="listenerAudioButton"
-    style="
-      margin-left:8px;
-      padding:7px 11px;
-      border-radius:8px;
-      border:1px solid rgba(255,255,255,.15);
-      background:#16283d;
-      color:white;
-      font-size:12px;
-      font-weight:800;
-      cursor:pointer;
-    "
-  >
-    🔊 Audio On
-  </button>
-</div>
-
-        <div class="lb-live-meta">
-          <span class="lb-live-pill" id="listenerRoomLabel">Room: —</span>
-          <span class="lb-live-pill" id="listenerLangLabel">Language: —</span>
-          <span class="lb-live-pill" id="listenerCountLabel">👥 0 Viewers</span>
-        </div>
-
-      </div>
-
-      <div class="lb-live-output" id="listenerOutput">
-        Join a room to begin receiving the live message.
-      </div>
-
-      <div style="
-  padding:16px 20px;
-  border-top:1px solid rgba(255,255,255,.07);
-  background:rgba(0,0,0,.12);
-">
-  <button
-    id="emailTranscriptButton"
-    style="
-      width:100%;
-      padding:14px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.14);
-      background:#16283d;
-      color:white;
-      font-size:15px;
-      font-weight:800;
-      cursor:pointer;
-    ">
-    ✉ Email Transcript & AI Notes
-  </button>
-</div>
-      <div class="lb-live-footer">
-
-        <div class="lb-live-size">
-          <span>Text Size</span>
-          <button id="sizeDown">A−</button>
-          <button id="sizeReset">A</button>
-          <button id="sizeUp">A+</button>
-        </div>
-
-        <div>
-          🎧 Translated Audio &nbsp; • &nbsp; 💬 Live Captions
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="lb-listener-share-card">
-      <div>
-        <div class="lb-listener-share-title">Share This Room</div>
-        <div class="lb-listener-share-copy">
-          Send this listener link to someone else so they can join the same LiveBridge room.
-        </div>
-
-        <div class="lb-listener-share-row">
-          <div class="lb-listener-share-link" id="lbListenerShareURL"></div>
-          <button type="button" class="lb-listener-share-button" id="lbListenerCopy">Copy Link</button>
-          <button type="button" class="lb-listener-share-button green" id="lbListenerShare">Send / Share</button>
-          <button type="button" class="lb-listener-share-button" id="lbListenerOpen">Open</button>
+        <div id="lbLanguageGate" class="lb-language-gate">
+          <div class="lb-language-gate-inner">
+            <div class="lb-language-gate-brand">Live<span>Bridge</span>
+          </div>
+          <div class="lb-language-gate-title">Choose your language</div>
+          <div class="lb-language-gate-subtitle">
+            Select the language you understand best.<br>
+            <span id="lbLanguageGateRoom" class="lb-language-gate-room">
+            </span>
+          </div>
+          <div id="lbLanguageGrid" class="lb-language-grid">
+          </div>
+          <div class="lb-language-gate-note">
+            No app download is required. Select your language to continue to the live translation room.
+          </div>
         </div>
       </div>
-
-      <div class="lb-listener-qr-wrap">
-        <div class="lb-listener-qr-box">
-          <img id="lbListenerQR" alt="LiveBridge room QR code">
+      <div class="lb-live-page">
+        <div class="lb-live-wrap">
+          <div class="lb-listener-home-row">
+            <a class="lb-listener-home" href="/">← Back to LiveBridge</a>
+          </div>
+          <div class="lb-live-header">
+            <div class="lb-live-brand">Live<span>Bridge</span>
+          </div>
+          <div class="lb-live-subtitle">
+            Join a room. Choose your language. Understand live.
+          </div>
         </div>
-        <div class="lb-listener-qr-caption">Scan to join this room</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<script>
+        <div class="lb-live-card">
+          <div class="lb-live-controls">
+            <label class="lb-live-label">Room Name</label>
+            <input
+              id="listenerRoom"
+              class="lb-live-input"
+              value="TRANSLATION"
+              placeholder="Enter room name"
+              >
+              <label class="lb-live-label">Listening Language</label>
+              <select id="listenerLanguage" class="lb-live-select">
+                <option value="en|en-US">English</option>
+                <option value="fr|fr-CA">French — Français</option>
+                <option value="es|es-ES">Spanish — Español</option>
+                <option value="de|de-DE">German — Deutsch</option>
+                <option value="pt|pt-BR">Portuguese — Português</option>
+                <option value="it|it-IT">Italian — Italiano</option>
+                <option value="pl|pl-PL">Polish — Polski</option>
+                <option value="ru|ru-RU">Russian — Русский</option>
+                <option value="uk|uk-UA">Ukrainian — Українська</option>
+                <option value="nl|nl-NL">Dutch — Nederlands</option>
+                <option value="cs|cs-CZ">Czech — Čeština</option>
+                <option value="fil|fil-PH">Filipino (Tagalog) — Filipino</option>
+                <option value="he|he-IL">Hebrew — עברית</option>
+                <option value="yo|yo-NG">Yoruba — Yorùbá</option>
+                <option value="ig|ig-NG">Igbo — Igbo</option>
+                <option value="ha|ha-NG">Hausa — Hausa</option>
+                <option value="zh|zh-CN">Mandarin Chinese — 中文（普通话）</option>
+                <option value="yue|yue-CN">Cantonese — 廣東話</option>
+              </select>
+              <button class="lb-live-button" id="joinRoomButton">
+                Join Live Room
+              </button>
+              <div style="
+                margin-top:12px;
+                padding:12px 13px;
+                border-radius:11px;
+                background:rgba(37,136,255,.07);
+                border:1px solid rgba(37,136,255,.16);
+                color:#9fb4ca;
+                font-size:11px;
+                line-height:1.55;
+                ">
+                <strong id="lbNoticeTitle" style="color:#dce9f5;">
+                  Live Translation Notice:
+                </strong>
+                This event may be transcribed and processed using automated
+                translation and text-to-speech technology. Automated results
+                may contain errors.
+                <a
+                  href="/privacy/"
+                  target="_blank"
+                  style="color:#78b7ff;font-weight:800;"
+                  >
+                  Privacy Policy
+                </a>
+              </div>
+              <span class="lb-voice-label">Translated Voice</span>
+              <div class="lb-voice-choice">
+                <button type="button" class="lb-voice-button selected" id="maleVoiceButton">👨 Male Voice</button>
+                <button type="button" class="lb-voice-button" id="femaleVoiceButton">👩 Female Voice</button>
+              </div>
+            </div>
+            <div class="lb-live-topbar">
+              <div class="lb-live-status">
+                <span id="listenerDot" class="lb-live-dot">
+                </span>
+                <span id="listenerStatus">Not Connected</span>
+                <button
+                  type="button"
+                  id="listenerAudioButton"
+                  style="
+                  margin-left:8px;
+                  padding:7px 11px;
+                  border-radius:8px;
+                  border:1px solid rgba(255,255,255,.15);
+                  background:#16283d;
+                  color:white;
+                  font-size:12px;
+                  font-weight:800;
+                  cursor:pointer;
+                  "
+                  >
+                  🔊 Audio On
+                </button>
+              </div>
+              <div class="lb-live-meta">
+                <span class="lb-live-pill" id="listenerRoomLabel">Room: —</span>
+                <span class="lb-live-pill" id="listenerLangLabel">Language: —</span>
+                <span class="lb-live-pill" id="listenerCountLabel">👥 0 Viewers</span>
+              </div>
+            </div>
+            <div class="lb-live-output" id="listenerOutput">
+              Join a room to begin receiving the live message.
+            </div>
+            <div style="
+              padding:16px 20px;
+              border-top:1px solid rgba(255,255,255,.07);
+              background:rgba(0,0,0,.12);
+              ">
+              <button
+                id="emailTranscriptButton"
+                style="
+                width:100%;
+                padding:14px;
+                border-radius:10px;
+                border:1px solid rgba(255,255,255,.14);
+                background:#16283d;
+                color:white;
+                font-size:15px;
+                font-weight:800;
+                cursor:pointer;
+                ">
+                ✉ Email Transcript & AI Notes
+              </button>
+            </div>
+            <div class="lb-live-footer">
+              <div class="lb-live-size">
+                <span>Text Size</span>
+                <button id="sizeDown">A−</button>
+                <button id="sizeReset">A</button>
+                <button id="sizeUp">A+</button>
+              </div>
+              <div>
+                🎧 Translated Audio &nbsp; • &nbsp; 💬 Live Captions
+              </div>
+            </div>
+          </div>
+          <div class="lb-listener-share-card">
+            <div>
+              <div class="lb-listener-share-title">Share This Room</div>
+              <div class="lb-listener-share-copy">
+                Send this listener link to someone else so they can join the same LiveBridge room.
+              </div>
+              <div class="lb-listener-share-row">
+                <div class="lb-listener-share-link" id="lbListenerShareURL">
+                </div>
+                <button type="button" class="lb-listener-share-button" id="lbListenerCopy">Copy Link</button>
+                <button type="button" class="lb-listener-share-button green" id="lbListenerShare">Send / Share</button>
+                <button type="button" class="lb-listener-share-button" id="lbListenerOpen">Open</button>
+              </div>
+            </div>
+            <div class="lb-listener-qr-wrap">
+              <div class="lb-listener-qr-box">
+                <img id="lbListenerQR" alt="LiveBridge room QR code">
+                </div>
+                <div class="lb-listener-qr-caption">Scan to join this room</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script>
   const WORKER_URL =
   "https://livebridge.northstarventures-ca.workers.dev";
 
@@ -1970,9 +1942,7 @@ if (listenerReconnectTimer) {
   }
 
 </script>
-
-
-<script>
+        <script>
 function askForEmail() {
   return new Promise((resolve) => {
 
@@ -2390,15 +2360,12 @@ resolve(email);
   loadRoomFromURL();
   applyListenerFontSize();
 </script>
-
-
-<!-- =====================================================
-LIVEBRIDGE AZURE LISTENER TEST ADD-ON
-Use ONLY on the duplicated /translation1 page.
-Keep the existing listener embeds unchanged.
-===================================================== -->
-
-<style>
+        <!-- =====================================================
+        LIVEBRIDGE AZURE LISTENER TEST ADD-ON
+        Use ONLY on the duplicated /translation1 page.
+        Keep the existing listener embeds unchanged.
+        ===================================================== -->
+        <style>
   .lb-azure-test-badge{
     display:inline-flex;
     align-items:center;
@@ -2498,8 +2465,7 @@ Keep the existing listener embeds unchanged.
   }
 
 </style>
-
-<script>
+        <script>
 (function () {
 
   const AZURE_WORKER =
@@ -4238,8 +4204,7 @@ return url.toString();
 
 
 </script>
-
-<script>
+        <script>
 (function(){
 
   const languages = [
@@ -4382,6 +4347,111 @@ return url.toString();
 
 })();
 </script>
+        <script>
+(function(){
+  const UI={
+    en:{back:"← Back to LiveBridge",subtitle:"Join a room. Choose your language. Understand live.",room:"Room Name",roomPh:"Enter room name",language:"Listening Language",join:"Join Live Room",noticeTitle:"Live Translation Notice:",notice:"This event may be transcribed and processed using automated translation and text-to-speech technology. Automated results may contain errors.",privacy:"Privacy Policy",voice:"Translated Voice",male:"👨 Male Voice",female:"👩 Female Voice",notConnected:"Not Connected",waiting:"Connected — Waiting for Live Feed",live:"Live Feed Connected",noLive:"No Live Feed",audioOn:"🔊 Audio On",audioMuted:"🔇 Audio Muted",roomPrefix:"Room",languagePrefix:"Language",viewers:"Viewers",output:"Join a room to begin receiving the live message.",email:"✉ Email Transcript & AI Notes",textSize:"Text Size",audioCaption:"🎧 Translated Audio   •   💬 Live Captions",shareTitle:"Share This Room",shareCopy:"Send this listener link to someone else so they can join the same LiveBridge room.",copy:"Copy Link",share:"Send / Share",open:"Open",scan:"Scan to join this room",engine:"Voice engine"},
+    fr:{back:"← Retour à LiveBridge",subtitle:"Rejoignez une salle. Choisissez votre langue. Comprenez en direct.",room:"Nom de la salle",roomPh:"Entrez le nom de la salle",language:"Langue d’écoute",join:"Rejoindre la salle en direct",noticeTitle:"Avis de traduction en direct :",notice:"Cet événement peut être transcrit et traité à l’aide de technologies de traduction automatisée et de synthèse vocale. Les résultats automatisés peuvent contenir des erreurs.",privacy:"Politique de confidentialité",voice:"Voix traduite",male:"👨 Voix masculine",female:"👩 Voix féminine",notConnected:"Non connecté",waiting:"Connecté — En attente du direct",live:"Flux en direct connecté",noLive:"Aucun flux en direct",audioOn:"🔊 Audio activé",audioMuted:"🔇 Audio coupé",roomPrefix:"Salle",languagePrefix:"Langue",viewers:"auditeurs",output:"Rejoignez une salle pour commencer à recevoir le message en direct.",email:"✉ Envoyer la transcription et les notes IA",textSize:"Taille du texte",audioCaption:"🎧 Audio traduit   •   💬 Sous-titres en direct",shareTitle:"Partager cette salle",shareCopy:"Envoyez ce lien à une autre personne pour qu’elle puisse rejoindre la même salle LiveBridge.",copy:"Copier le lien",share:"Envoyer / Partager",open:"Ouvrir",scan:"Scannez pour rejoindre cette salle",engine:"Moteur vocal"},
+    es:{back:"← Volver a LiveBridge",subtitle:"Únete a una sala. Elige tu idioma. Comprende en directo.",room:"Nombre de la sala",roomPh:"Introduce el nombre de la sala",language:"Idioma de escucha",join:"Entrar a la sala en vivo",noticeTitle:"Aviso de traducción en vivo:",notice:"Este evento puede ser transcrito y procesado mediante traducción automatizada y tecnología de texto a voz. Los resultados automáticos pueden contener errores.",privacy:"Política de privacidad",voice:"Voz traducida",male:"👨 Voz masculina",female:"👩 Voz femenina",notConnected:"No conectado",waiting:"Conectado — Esperando la transmisión",live:"Transmisión en vivo conectada",noLive:"Sin transmisión en vivo",audioOn:"🔊 Audio activado",audioMuted:"🔇 Audio silenciado",roomPrefix:"Sala",languagePrefix:"Idioma",viewers:"oyentes",output:"Únete a una sala para comenzar a recibir el mensaje en vivo.",email:"✉ Enviar transcripción y notas de IA",textSize:"Tamaño del texto",audioCaption:"🎧 Audio traducido   •   💬 Subtítulos en vivo",shareTitle:"Compartir esta sala",shareCopy:"Envía este enlace a otra persona para que pueda unirse a la misma sala de LiveBridge.",copy:"Copiar enlace",share:"Enviar / Compartir",open:"Abrir",scan:"Escanea para unirte a esta sala",engine:"Motor de voz"},
+    de:{back:"← Zurück zu LiveBridge",subtitle:"Raum beitreten. Sprache wählen. Live verstehen.",room:"Raumname",roomPh:"Raumname eingeben",language:"Hörsprache",join:"Live-Raum beitreten",noticeTitle:"Hinweis zur Live-Übersetzung:",notice:"Diese Veranstaltung kann mit automatischer Übersetzung und Text-zu-Sprache-Technologie transkribiert und verarbeitet werden. Automatische Ergebnisse können Fehler enthalten.",privacy:"Datenschutzrichtlinie",voice:"Übersetzte Stimme",male:"👨 Männliche Stimme",female:"👩 Weibliche Stimme",notConnected:"Nicht verbunden",waiting:"Verbunden — Warte auf Live-Feed",live:"Live-Feed verbunden",noLive:"Kein Live-Feed",audioOn:"🔊 Audio an",audioMuted:"🔇 Audio stumm",roomPrefix:"Raum",languagePrefix:"Sprache",viewers:"Zuhörer",output:"Treten Sie einem Raum bei, um die Live-Nachricht zu empfangen.",email:"✉ Transkript & KI-Notizen senden",textSize:"Textgröße",audioCaption:"🎧 Übersetztes Audio   •   💬 Live-Untertitel",shareTitle:"Diesen Raum teilen",shareCopy:"Senden Sie diesen Link an andere, damit sie demselben LiveBridge-Raum beitreten können.",copy:"Link kopieren",share:"Senden / Teilen",open:"Öffnen",scan:"Scannen, um diesem Raum beizutreten",engine:"Sprachmodul"},
+    pt:{back:"← Voltar ao LiveBridge",subtitle:"Entre em uma sala. Escolha seu idioma. Entenda ao vivo.",room:"Nome da sala",roomPh:"Digite o nome da sala",language:"Idioma de escuta",join:"Entrar na sala ao vivo",noticeTitle:"Aviso de tradução ao vivo:",notice:"Este evento pode ser transcrito e processado usando tradução automatizada e tecnologia de texto para fala. Os resultados automáticos podem conter erros.",privacy:"Política de privacidade",voice:"Voz traduzida",male:"👨 Voz masculina",female:"👩 Voz feminina",notConnected:"Não conectado",waiting:"Conectado — Aguardando transmissão",live:"Transmissão ao vivo conectada",noLive:"Sem transmissão ao vivo",audioOn:"🔊 Áudio ligado",audioMuted:"🔇 Áudio silenciado",roomPrefix:"Sala",languagePrefix:"Idioma",viewers:"ouvintes",output:"Entre em uma sala para começar a receber a mensagem ao vivo.",email:"✉ Enviar transcrição e notas de IA",textSize:"Tamanho do texto",audioCaption:"🎧 Áudio traduzido   •   💬 Legendas ao vivo",shareTitle:"Compartilhar esta sala",shareCopy:"Envie este link para outra pessoa entrar na mesma sala LiveBridge.",copy:"Copiar link",share:"Enviar / Compartilhar",open:"Abrir",scan:"Escaneie para entrar nesta sala",engine:"Mecanismo de voz"},
+    it:{back:"← Torna a LiveBridge",subtitle:"Entra in una stanza. Scegli la lingua. Comprendi dal vivo.",room:"Nome stanza",roomPh:"Inserisci il nome della stanza",language:"Lingua di ascolto",join:"Entra nella stanza live",noticeTitle:"Avviso traduzione live:",notice:"Questo evento può essere trascritto ed elaborato tramite traduzione automatica e sintesi vocale. I risultati automatici possono contenere errori.",privacy:"Informativa sulla privacy",voice:"Voce tradotta",male:"👨 Voce maschile",female:"👩 Voce femminile",notConnected:"Non connesso",waiting:"Connesso — In attesa del live",live:"Live connesso",noLive:"Nessun live",audioOn:"🔊 Audio attivo",audioMuted:"🔇 Audio disattivato",roomPrefix:"Stanza",languagePrefix:"Lingua",viewers:"ascoltatori",output:"Entra in una stanza per iniziare a ricevere il messaggio live.",email:"✉ Invia trascrizione e note IA",textSize:"Dimensione testo",audioCaption:"🎧 Audio tradotto   •   💬 Sottotitoli live",shareTitle:"Condividi questa stanza",shareCopy:"Invia questo link a un’altra persona per farla entrare nella stessa stanza LiveBridge.",copy:"Copia link",share:"Invia / Condividi",open:"Apri",scan:"Scansiona per entrare in questa stanza",engine:"Motore vocale"},
+    pl:{back:"← Wróć do LiveBridge",subtitle:"Dołącz do pokoju. Wybierz język. Rozumiej na żywo.",room:"Nazwa pokoju",roomPh:"Wpisz nazwę pokoju",language:"Język odsłuchu",join:"Dołącz do pokoju na żywo",noticeTitle:"Informacja o tłumaczeniu na żywo:",notice:"To wydarzenie może być transkrybowane i przetwarzane przy użyciu automatycznego tłumaczenia i syntezy mowy. Wyniki automatyczne mogą zawierać błędy.",privacy:"Polityka prywatności",voice:"Przetłumaczony głos",male:"👨 Głos męski",female:"👩 Głos żeński",notConnected:"Nie połączono",waiting:"Połączono — Oczekiwanie na transmisję",live:"Transmisja na żywo połączona",noLive:"Brak transmisji",audioOn:"🔊 Dźwięk włączony",audioMuted:"🔇 Dźwięk wyciszony",roomPrefix:"Pokój",languagePrefix:"Język",viewers:"słuchaczy",output:"Dołącz do pokoju, aby zacząć odbierać wiadomość na żywo.",email:"✉ Wyślij transkrypcję i notatki AI",textSize:"Rozmiar tekstu",audioCaption:"🎧 Tłumaczony dźwięk   •   💬 Napisy na żywo",shareTitle:"Udostępnij ten pokój",shareCopy:"Wyślij ten link innej osobie, aby mogła dołączyć do tego samego pokoju LiveBridge.",copy:"Kopiuj link",share:"Wyślij / Udostępnij",open:"Otwórz",scan:"Zeskanuj, aby dołączyć do pokoju",engine:"Silnik głosowy"},
+    ru:{back:"← Назад в LiveBridge",subtitle:"Войдите в комнату. Выберите язык. Понимайте вживую.",room:"Название комнаты",roomPh:"Введите название комнаты",language:"Язык прослушивания",join:"Войти в прямую трансляцию",noticeTitle:"Уведомление о переводе:",notice:"Это событие может расшифровываться и обрабатываться с помощью автоматического перевода и синтеза речи. Автоматические результаты могут содержать ошибки.",privacy:"Политика конфиденциальности",voice:"Переведённый голос",male:"👨 Мужской голос",female:"👩 Женский голос",notConnected:"Не подключено",waiting:"Подключено — Ожидание трансляции",live:"Прямая трансляция подключена",noLive:"Нет прямой трансляции",audioOn:"🔊 Звук включён",audioMuted:"🔇 Звук выключен",roomPrefix:"Комната",languagePrefix:"Язык",viewers:"слушателей",output:"Войдите в комнату, чтобы начать получать сообщение вживую.",email:"✉ Отправить расшифровку и заметки ИИ",textSize:"Размер текста",audioCaption:"🎧 Переведённый звук   •   💬 Живые субтитры",shareTitle:"Поделиться комнатой",shareCopy:"Отправьте эту ссылку другому человеку, чтобы он мог войти в ту же комнату LiveBridge.",copy:"Копировать ссылку",share:"Отправить / Поделиться",open:"Открыть",scan:"Сканируйте, чтобы войти в комнату",engine:"Голосовой движок"},
+    uk:{back:"← Назад до LiveBridge",subtitle:"Приєднайтеся до кімнати. Оберіть мову. Розумійте наживо.",room:"Назва кімнати",roomPh:"Введіть назву кімнати",language:"Мова прослуховування",join:"Приєднатися до прямої трансляції",noticeTitle:"Повідомлення про живий переклад:",notice:"Ця подія може транскрибуватися та оброблятися за допомогою автоматичного перекладу і синтезу мовлення. Автоматичні результати можуть містити помилки.",privacy:"Політика конфіденційності",voice:"Перекладений голос",male:"👨 Чоловічий голос",female:"👩 Жіночий голос",notConnected:"Не підключено",waiting:"Підключено — Очікування трансляції",live:"Пряму трансляцію підключено",noLive:"Немає прямої трансляції",audioOn:"🔊 Аудіо увімкнено",audioMuted:"🔇 Аудіо вимкнено",roomPrefix:"Кімната",languagePrefix:"Мова",viewers:"слухачів",output:"Приєднайтеся до кімнати, щоб почати отримувати повідомлення наживо.",email:"✉ Надіслати транскрипт і нотатки ШІ",textSize:"Розмір тексту",audioCaption:"🎧 Перекладене аудіо   •   💬 Живі субтитри",shareTitle:"Поділитися кімнатою",shareCopy:"Надішліть це посилання іншій людині, щоб вона могла приєднатися до тієї ж кімнати LiveBridge.",copy:"Копіювати",share:"Надіслати / Поділитися",open:"Відкрити",scan:"Скануйте, щоб приєднатися",engine:"Голосовий рушій"},
+    nl:{back:"← Terug naar LiveBridge",subtitle:"Ga een ruimte binnen. Kies je taal. Begrijp live.",room:"Ruimtenaam",roomPh:"Voer de ruimtenaam in",language:"Luistertaal",join:"Live-ruimte binnengaan",noticeTitle:"Melding livevertaling:",notice:"Dit evenement kan worden getranscribeerd en verwerkt met automatische vertaling en tekst-naar-spraak. Automatische resultaten kunnen fouten bevatten.",privacy:"Privacybeleid",voice:"Vertaalde stem",male:"👨 Mannelijke stem",female:"👩 Vrouwelijke stem",notConnected:"Niet verbonden",waiting:"Verbonden — Wachten op livefeed",live:"Livefeed verbonden",noLive:"Geen livefeed",audioOn:"🔊 Audio aan",audioMuted:"🔇 Audio gedempt",roomPrefix:"Ruimte",languagePrefix:"Taal",viewers:"luisteraars",output:"Ga een ruimte binnen om het livebericht te ontvangen.",email:"✉ Transcript en AI-notities e-mailen",textSize:"Tekstgrootte",audioCaption:"🎧 Vertaald audio   •   💬 Live ondertiteling",shareTitle:"Deze ruimte delen",shareCopy:"Stuur deze link naar iemand anders zodat die dezelfde LiveBridge-ruimte kan binnengaan.",copy:"Link kopiëren",share:"Verzenden / Delen",open:"Openen",scan:"Scan om deze ruimte binnen te gaan",engine:"Stemengine"},
+    cs:{back:"← Zpět na LiveBridge",subtitle:"Připojte se k místnosti. Vyberte jazyk. Rozumějte živě.",room:"Název místnosti",roomPh:"Zadejte název místnosti",language:"Jazyk poslechu",join:"Připojit se k živé místnosti",noticeTitle:"Upozornění na živý překlad:",notice:"Tato událost může být přepisována a zpracovávána pomocí automatického překladu a převodu textu na řeč. Automatické výsledky mohou obsahovat chyby.",privacy:"Zásady ochrany osobních údajů",voice:"Přeložený hlas",male:"👨 Mužský hlas",female:"👩 Ženský hlas",notConnected:"Nepřipojeno",waiting:"Připojeno — Čekání na živý přenos",live:"Živý přenos připojen",noLive:"Žádný živý přenos",audioOn:"🔊 Zvuk zapnut",audioMuted:"🔇 Zvuk vypnut",roomPrefix:"Místnost",languagePrefix:"Jazyk",viewers:"posluchačů",output:"Připojte se k místnosti a začněte přijímat živou zprávu.",email:"✉ Odeslat přepis a poznámky AI",textSize:"Velikost textu",audioCaption:"🎧 Přeložený zvuk   •   💬 Živé titulky",shareTitle:"Sdílet tuto místnost",shareCopy:"Pošlete tento odkaz další osobě, aby se mohla připojit ke stejné místnosti LiveBridge.",copy:"Kopírovat odkaz",share:"Odeslat / Sdílet",open:"Otevřít",scan:"Naskenujte pro připojení",engine:"Hlasový modul"},
+    fil:{back:"← Bumalik sa LiveBridge",subtitle:"Sumali sa room. Piliin ang wika. Umintindi nang live.",room:"Pangalan ng Room",roomPh:"Ilagay ang pangalan ng room",language:"Wikang Pakikinggan",join:"Sumali sa Live Room",noticeTitle:"Paunawa sa Live Translation:",notice:"Maaaring i-transcribe at iproseso ang event na ito gamit ang automated translation at text-to-speech. Maaaring may pagkakamali ang automated na resulta.",privacy:"Patakaran sa Privacy",voice:"Isinaling Boses",male:"👨 Boses ng Lalaki",female:"👩 Boses ng Babae",notConnected:"Hindi nakakonekta",waiting:"Nakakonekta — Naghihintay ng Live Feed",live:"Nakakonekta ang Live Feed",noLive:"Walang Live Feed",audioOn:"🔊 Naka-on ang Audio",audioMuted:"🔇 Naka-mute ang Audio",roomPrefix:"Room",languagePrefix:"Wika",viewers:"tagapakinig",output:"Sumali sa room para simulang matanggap ang live na mensahe.",email:"✉ I-email ang Transcript at AI Notes",textSize:"Laki ng Teksto",audioCaption:"🎧 Isinaling Audio   •   💬 Live Captions",shareTitle:"Ibahagi ang Room na Ito",shareCopy:"Ipadala ang link na ito sa iba para makasali sila sa parehong LiveBridge room.",copy:"Kopyahin ang Link",share:"Ipadala / Ibahagi",open:"Buksan",scan:"I-scan para sumali sa room",engine:"Voice engine"},
+    he:{back:"← חזרה ל-LiveBridge",subtitle:"הצטרפו לחדר. בחרו שפה. הבינו בשידור חי.",room:"שם החדר",roomPh:"הזינו שם חדר",language:"שפת האזנה",join:"הצטרפות לחדר החי",noticeTitle:"הודעת תרגום חי:",notice:"ייתכן שאירוע זה יתומלל ויעובד באמצעות תרגום אוטומטי וטכנולוגיית טקסט לדיבור. תוצאות אוטומטיות עלולות להכיל שגיאות.",privacy:"מדיניות פרטיות",voice:"קול מתורגם",male:"👨 קול גברי",female:"👩 קול נשי",notConnected:"לא מחובר",waiting:"מחובר — ממתין לשידור",live:"השידור החי מחובר",noLive:"אין שידור חי",audioOn:"🔊 שמע פעיל",audioMuted:"🔇 שמע מושתק",roomPrefix:"חדר",languagePrefix:"שפה",viewers:"מאזינים",output:"הצטרפו לחדר כדי להתחיל לקבל את המסר החי.",email:"✉ שליחת תמלול והערות AI",textSize:"גודל טקסט",audioCaption:"🎧 שמע מתורגם   •   💬 כתוביות חיות",shareTitle:"שיתוף החדר",shareCopy:"שלחו את הקישור לאדם נוסף כדי שיוכל להצטרף לאותו חדר LiveBridge.",copy:"העתקת קישור",share:"שליחה / שיתוף",open:"פתיחה",scan:"סרקו כדי להצטרף לחדר",engine:"מנוע קול"},
+    yo:{back:"← Padà sí LiveBridge",subtitle:"Darapọ mọ yara. Yan èdè rẹ. Loye ní ààyè.",room:"Orúkọ Yara",roomPh:"Tẹ orúkọ yara sii",language:"Èdè Títẹ́tí",join:"Darapọ mọ Yara Live",noticeTitle:"Àkíyèsí Ìtumọ̀ Live:",notice:"A lè kọ ohun tí a sọ sínú ọrọ̀ kí a sì ṣe e pẹ̀lú ìtumọ̀ aládàáṣiṣẹ́ àti imọ̀ text-to-speech. Àbájáde le ní àṣìṣe.",privacy:"Ilana Asiri",voice:"Ohùn Ìtumọ̀",male:"👨 Ohùn Ọkùnrin",female:"👩 Ohùn Obìnrin",notConnected:"Kò sopọ̀",waiting:"Ti sopọ̀ — N dúró de Live Feed",live:"Live Feed ti sopọ̀",noLive:"Ko si Live Feed",audioOn:"🔊 Audio wa ni titan",audioMuted:"🔇 Audio dakẹ",roomPrefix:"Yara",languagePrefix:"Èdè",viewers:"olugbọ",output:"Darapọ mọ yara lati bẹrẹ gbigba ifiranṣẹ laaye.",email:"✉ Fi Transcript ati AI Notes ranṣẹ",textSize:"Iwọn Ọrọ",audioCaption:"🎧 Audio Ìtumọ̀   •   💬 Live Captions",shareTitle:"Pin Yara Yi",shareCopy:"Fi ọna asopọ yii ranṣẹ si ẹlomiiran ki wọn le darapọ mọ yara LiveBridge kanna.",copy:"Da ọna asopọ",share:"Firanṣẹ / Pin",open:"Ṣii",scan:"Ṣayẹwo lati darapọ mọ yara",engine:"Ẹrọ ohun"},
+    ig:{back:"← Laghachi na LiveBridge",subtitle:"Banye n'ime ụlọ. Họrọ asụsụ gị. Ghọta ozugbo.",room:"Aha Ụlọ",roomPh:"Tinye aha ụlọ",language:"Asụsụ Ntị",join:"Banye na Live Room",noticeTitle:"Ọkwa Nsụgharị Live:",notice:"Enwere ike idegharị ihe omume a ma hazie ya site na nsụgharị akpaghị aka na teknụzụ text-to-speech. Nsonaazụ akpaghị aka nwere ike inwe njehie.",privacy:"Iwu Nzuzo",voice:"Olu A Sụgharịrị",male:"👨 Olu Nwoke",female:"👩 Olu Nwanyị",notConnected:"Ejikọghị",waiting:"Ejikọtara — Na-echere Live Feed",live:"Live Feed ejikọrọ",noLive:"Enweghị Live Feed",audioOn:"🔊 Audio dị",audioMuted:"🔇 Audio gbachiri",roomPrefix:"Ụlọ",languagePrefix:"Asụsụ",viewers:"ndị na-ege ntị",output:"Banye n'ime ụlọ ka ịmalite ịnata ozi live.",email:"✉ Zipu Transcript & AI Notes",textSize:"Nha Ederede",audioCaption:"🎧 Audio A Sụgharịrị   •   💬 Live Captions",shareTitle:"Kekọrịta Ụlọ A",shareCopy:"Ziga njikọ a onye ọzọ ka o nwee ike ịbanye n'otu LiveBridge room.",copy:"Detuo njikọ",share:"Zipu / Kekọrịta",open:"Mepee",scan:"Nyochaa ka ịbanye",engine:"Igwe olu"},
+    ha:{back:"← Koma LiveBridge",subtitle:"Shiga daki. Zaɓi harshenka. Fahimta kai tsaye.",room:"Sunan Daki",roomPh:"Shigar da sunan daki",language:"Harshen Sauraro",join:"Shiga Dakin Kai Tsaye",noticeTitle:"Sanarwar Fassarar Kai Tsaye:",notice:"Ana iya rubuta wannan taron da sarrafa shi ta amfani da fassarar atomatik da fasahar text-to-speech. Sakamakon atomatik na iya ƙunsar kuskure.",privacy:"Manufar Sirri",voice:"Muryar Fassara",male:"👨 Muryar Namiji",female:"👩 Muryar Mace",notConnected:"Ba a haɗa ba",waiting:"An haɗa — Ana jiran Live Feed",live:"Live Feed ya haɗu",noLive:"Babu Live Feed",audioOn:"🔊 Sauti yana kunne",audioMuted:"🔇 Sauti a kashe",roomPrefix:"Daki",languagePrefix:"Harshe",viewers:"masu sauraro",output:"Shiga daki don fara karɓar saƙon kai tsaye.",email:"✉ Aika Transcript & AI Notes",textSize:"Girman Rubutu",audioCaption:"🎧 Sauti Mai Fassara   •   💬 Live Captions",shareTitle:"Raba Wannan Daki",shareCopy:"Aika wannan hanyar haɗin ga wani domin ya shiga dakin LiveBridge ɗaya.",copy:"Kwafi Link",share:"Aika / Raba",open:"Buɗe",scan:"Duba don shiga daki",engine:"Injin murya"},
+    zh:{back:"← 返回 LiveBridge",subtitle:"加入房间。选择语言。实时理解。",room:"房间名称",roomPh:"输入房间名称",language:"收听语言",join:"加入直播房间",noticeTitle:"实时翻译提示：",notice:"本活动可能使用自动翻译和文字转语音技术进行转录和处理。自动生成的结果可能包含错误。",privacy:"隐私政策",voice:"翻译语音",male:"👨 男声",female:"👩 女声",notConnected:"未连接",waiting:"已连接 — 等待直播",live:"直播已连接",noLive:"暂无直播",audioOn:"🔊 音频开启",audioMuted:"🔇 音频静音",roomPrefix:"房间",languagePrefix:"语言",viewers:"听众",output:"加入房间后即可开始接收实时信息。",email:"✉ 发送转录和 AI 笔记",textSize:"文字大小",audioCaption:"🎧 翻译音频   •   💬 实时字幕",shareTitle:"分享此房间",shareCopy:"将此链接发送给其他人，他们即可加入同一个 LiveBridge 房间。",copy:"复制链接",share:"发送 / 分享",open:"打开",scan:"扫描加入此房间",engine:"语音引擎"},
+    yue:{back:"← 返回 LiveBridge",subtitle:"加入房間。揀你嘅語言。即時聽明。",room:"房間名稱",roomPh:"輸入房間名稱",language:"收聽語言",join:"加入直播房間",noticeTitle:"即時翻譯提示：",notice:"本活動可能會使用自動翻譯同文字轉語音技術進行轉錄同處理。自動結果可能會有錯誤。",privacy:"私隱政策",voice:"翻譯語音",male:"👨 男聲",female:"👩 女聲",notConnected:"未連線",waiting:"已連線 — 等候直播",live:"直播已連線",noLive:"暫無直播",audioOn:"🔊 音訊開啟",audioMuted:"🔇 音訊靜音",roomPrefix:"房間",languagePrefix:"語言",viewers:"聽眾",output:"加入房間後即可開始接收即時訊息。",email:"✉ 傳送逐字稿同 AI 筆記",textSize:"文字大小",audioCaption:"🎧 翻譯音訊   •   💬 即時字幕",shareTitle:"分享呢個房間",shareCopy:"將呢條連結傳畀其他人，佢哋就可以加入同一個 LiveBridge 房間。",copy:"複製連結",share:"傳送 / 分享",open:"開啟",scan:"掃描加入房間",engine:"語音引擎"}
+  };
 
-</body>
-</html>
+  function langCode(){
+    return String(new URLSearchParams(location.search).get("lang")||"en").toLowerCase();
+  }
+
+  function t(){ return UI[langCode()] || UI.en; }
+
+  function setText(selector,value){
+    const el=document.querySelector(selector);
+    if(el && value) el.textContent=value;
+  }
+
+  function applyStatic(){
+    const x=t();
+    document.documentElement.lang=langCode();
+    if(langCode()==="he") document.documentElement.dir="rtl"; else document.documentElement.dir="ltr";
+    setText(".lb-listener-home",x.back);
+    setText(".lb-live-subtitle",x.subtitle);
+    const labels=document.querySelectorAll(".lb-live-controls > .lb-live-label");
+    if(labels[0]) labels[0].textContent=x.room;
+    if(labels[1]) labels[1].textContent=x.language;
+    const room=document.getElementById("listenerRoom");
+    if(room) room.placeholder=x.roomPh;
+    setText("#joinRoomButton",x.join);
+    const noticeTitle=document.getElementById("lbNoticeTitle");
+    if(noticeTitle && noticeTitle.parentElement){
+      noticeTitle.parentElement.innerHTML='<strong id="lbNoticeTitle" style="color:#dce9f5;">'+x.noticeTitle+'</strong> '+x.notice+' <a href="/privacy/" target="_blank" style="color:#78b7ff;font-weight:800;">'+x.privacy+'</a>';
+    }
+    setText(".lb-voice-label",x.voice);
+    setText("#maleVoiceButton",x.male);
+    setText("#femaleVoiceButton",x.female);
+    setText("#emailTranscriptButton",x.email);
+    const size=document.querySelector(".lb-live-size span"); if(size) size.textContent=x.textSize;
+    const footer=document.querySelector(".lb-live-footer > div:last-child"); if(footer) footer.textContent=x.audioCaption;
+    setText(".lb-listener-share-title",x.shareTitle);
+    setText(".lb-listener-share-copy",x.shareCopy);
+    setText("#lbListenerCopy",x.copy);
+    setText("#lbListenerShare",x.share);
+    setText("#lbListenerOpen",x.open);
+    setText(".lb-listener-qr-caption",x.scan);
+  }
+
+  function applyDynamic(){
+    const x=t();
+    const status=document.getElementById("listenerStatus");
+    if(status){
+      const s=status.textContent.trim();
+      if(["Not Connected",UI.en.notConnected].includes(s)) status.textContent=x.notConnected;
+      else if(s.includes("Connected — Waiting for Live Feed") || s===UI.en.waiting) status.textContent=x.waiting;
+      else if(s.includes("Live Feed Connected") || s===UI.en.live) status.textContent=x.live;
+      else if(s.includes("No Live Feed") || s===UI.en.noLive) status.textContent=x.noLive;
+    }
+    const audio=document.getElementById("listenerAudioButton");
+    if(audio){
+      const s=audio.textContent.trim();
+      if(s.includes("Audio Muted") || s===UI.en.audioMuted) audio.textContent=x.audioMuted;
+      else if(s.includes("Audio On") || s===UI.en.audioOn) audio.textContent=x.audioOn;
+    }
+    const rl=document.getElementById("listenerRoomLabel");
+    if(rl){ const val=rl.textContent.split(":").slice(1).join(":").trim()||"—"; rl.textContent=x.roomPrefix+": "+val; }
+    const ll=document.getElementById("listenerLangLabel");
+    if(ll){ const val=ll.textContent.split(":").slice(1).join(":").trim()||"—"; ll.textContent=x.languagePrefix+": "+val; }
+    const vl=document.getElementById("listenerCountLabel");
+    if(vl){ const n=(vl.textContent.match(/\d+/)||["0"])[0]; vl.textContent="👥 "+n+" "+x.viewers; }
+    const output=document.getElementById("listenerOutput");
+    if(output && (output.textContent.trim()===UI.en.output || output.textContent.trim()==="Join a room to begin receiving the live message.")) output.textContent=x.output;
+    document.querySelectorAll(".lb-live-controls div,.lb-live-controls span").forEach(el=>{
+      if(el.children.length) return;
+      const s=el.textContent.trim();
+      if(s.startsWith("Voice engine:")) el.textContent=s.replace(/^Voice engine:/,x.engine+":");
+    });
+  }
+
+  let scheduled=false;
+  function schedule(){
+    if(scheduled) return;
+    scheduled=true;
+    requestAnimationFrame(()=>{ scheduled=false; applyStatic(); applyDynamic(); });
+  }
+
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",schedule); else schedule();
+  new MutationObserver(schedule).observe(document.documentElement,{subtree:true,childList:true,characterData:true});
+})();
+</script>
+      </body>
+    </html>
