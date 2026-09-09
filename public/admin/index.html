@@ -2972,161 +2972,750 @@ async function sharePrivateOffer(){
 }
 
 async function downloadOfferGraphic(){
-  const data=lastCreatedOffer;
-  if(!data?.offerUrl||!data?.offer){return;}
+  const data = lastCreatedOffer;
 
-  const offer=data.offer;
-  const plan=offer.plan||{};
-  const canvas=document.createElement("canvas");
-  canvas.width=1600;
-  canvas.height=1000;
-  const ctx=canvas.getContext("2d");
+  if(
+    !data?.offerUrl ||
+    !data?.offer
+  ){
+    return;
+  }
 
-  function rr(x,y,w,h,r,fill,stroke){
-    const radius=Math.min(r,w/2,h/2);
+  const offer = data.offer;
+  const plan = offer.plan || {};
+
+  const canvas =
+    document.createElement("canvas");
+
+  /*
+    1600 x 1000 gives a premium landscape image
+    that works well in email, text, WhatsApp,
+    presentations and social sharing.
+  */
+  canvas.width = 1600;
+  canvas.height = 1000;
+
+  const ctx =
+    canvas.getContext("2d");
+
+
+  function roundedRect(
+    x,
+    y,
+    width,
+    height,
+    radius,
+    fill,
+    stroke = null,
+    lineWidth = 1
+  ){
+    const r =
+      Math.min(
+        radius,
+        width / 2,
+        height / 2
+      );
+
     ctx.beginPath();
-    ctx.moveTo(x+radius,y);
-    ctx.arcTo(x+w,y,x+w,y+h,radius);
-    ctx.arcTo(x+w,y+h,x,y+h,radius);
-    ctx.arcTo(x,y+h,x,y,radius);
-    ctx.arcTo(x,y,x+w,y,radius);
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(
+      x + width,
+      y,
+      x + width,
+      y + height,
+      r
+    );
+    ctx.arcTo(
+      x + width,
+      y + height,
+      x,
+      y + height,
+      r
+    );
+    ctx.arcTo(
+      x,
+      y + height,
+      x,
+      y,
+      r
+    );
+    ctx.arcTo(
+      x,
+      y,
+      x + width,
+      y,
+      r
+    );
     ctx.closePath();
-    if(fill){ctx.fillStyle=fill;ctx.fill();}
-    if(stroke){ctx.strokeStyle=stroke;ctx.stroke();}
-  }
 
-  function wrap(text,x,y,maxWidth,lineHeight,maxLines=2){
-    const words=String(text||"").split(/\s+/).filter(Boolean);
-    let line="",cy=y,count=0;
-    for(const word of words){
-      const test=line?line+" "+word:word;
-      if(ctx.measureText(test).width>maxWidth&&line){
-        ctx.fillText(line,x,cy);
-        count++;
-        if(count>=maxLines)return cy;
-        line=word;
-        cy+=lineHeight;
-      }else line=test;
+    if(fill){
+      ctx.fillStyle = fill;
+      ctx.fill();
     }
-    if(line&&count<maxLines)ctx.fillText(line,x,cy);
-    return cy;
+
+    if(stroke){
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = lineWidth;
+      ctx.stroke();
+    }
   }
 
-  ctx.fillStyle="#f4f6f8";
-  ctx.fillRect(0,0,1600,1000);
 
-  rr(70,62,1460,876,28,"#ffffff","#d9e1e7");
-  ctx.lineWidth=2;
+  function wrapText(
+    text,
+    x,
+    y,
+    maxWidth,
+    lineHeight,
+    maxLines = 3
+  ){
+    const words =
+      String(text || "")
+        .split(/\s+/)
+        .filter(Boolean);
 
-  const accent=ctx.createLinearGradient(70,0,1530,0);
-  accent.addColorStop(0,"#168fca");
-  accent.addColorStop(1,"#49c6d5");
-  ctx.fillStyle=accent;
-  ctx.fillRect(70,62,1460,7);
+    let line = "";
+    let currentY = y;
+    let lines = 0;
 
-  ctx.fillStyle="#10283b";
-  ctx.font="900 48px Arial";
-  ctx.fillText("LiveBridge",120,145);
+    for(
+      let i = 0;
+      i < words.length;
+      i++
+    ){
+      const testLine =
+        line
+          ? line + " " + words[i]
+          : words[i];
 
-  ctx.fillStyle="#7c8d99";
-  ctx.font="600 19px Arial";
-  ctx.fillText("Private pricing proposal",121,184);
+      if(
+        ctx.measureText(testLine).width >
+          maxWidth &&
+        line
+      ){
+        ctx.fillText(
+          line,
+          x,
+          currentY
+        );
 
-  ctx.fillStyle="#8b9aa6";
-  ctx.font="900 14px Arial";
-  ctx.fillText("PREPARED EXCLUSIVELY FOR",120,263);
+        lines += 1;
 
-  ctx.fillStyle="#18364d";
-  ctx.font="900 31px Arial";
-  ctx.fillText(String(offer.recipientName||"Your Organization").substring(0,52),120,305);
+        if(
+          lines >= maxLines
+        ){
+          return currentY;
+        }
 
-  ctx.fillStyle="#0d2234";
-  ctx.font="900 54px Arial";
-  const titleBottom=wrap(plan.planName||"LiveBridge Plan",120,390,830,62,2);
+        line =
+          words[i];
 
-  ctx.fillStyle="#607587";
-  ctx.font="500 21px Arial";
-  wrap(
-    plan.description||"A tailored LiveBridge subscription for real-time multilingual communication.",
-    120,titleBottom+50,760,32,2
+        currentY +=
+          lineHeight;
+
+      }else{
+        line =
+          testLine;
+      }
+    }
+
+    if(
+      line &&
+      lines < maxLines
+    ){
+      ctx.fillText(
+        line,
+        x,
+        currentY
+      );
+    }
+
+    return currentY;
+  }
+
+
+  /*
+  =====================================================
+  BACKGROUND
+  Deep premium LiveBridge blue with subtle light.
+  =====================================================
+  */
+
+  const bg =
+    ctx.createLinearGradient(
+      0,
+      0,
+      1600,
+      1000
+    );
+
+  bg.addColorStop(
+    0,
+    "#061827"
   );
 
-  const price=new Intl.NumberFormat("en-CA",{
-    style:"currency",
-    currency:plan.currency||"CAD"
-  }).format(Number(plan.priceCents||0)/100);
+  bg.addColorStop(
+    0.48,
+    "#0a3154"
+  );
 
-  ctx.fillStyle="#0e2a40";
-  ctx.font="900 66px Arial";
-  ctx.fillText(price,120,600);
+  bg.addColorStop(
+    1,
+    "#10254a"
+  );
 
-  ctx.fillStyle="#718493";
-  ctx.font="700 22px Arial";
-  ctx.fillText("per "+(plan.billingInterval||"month"),120,638);
+  ctx.fillStyle =
+    bg;
 
-  rr(120,700,330,112,15,"#f7f9fb","#e0e7ed");
-  rr(470,700,330,112,15,"#f7f9fb","#e0e7ed");
+  ctx.fillRect(
+    0,
+    0,
+    1600,
+    1000
+  );
 
-  ctx.fillStyle="#8898a4";
-  ctx.font="900 13px Arial";
-  ctx.fillText("INCLUDED TRANSLATION TIME",145,737);
-  ctx.fillText("SIMULTANEOUS LISTENERS",495,737);
 
-  ctx.fillStyle="#153149";
-  ctx.font="900 29px Arial";
-  ctx.fillText(hoursFromMinutes(plan.includedMinutes),145,786);
-  ctx.fillText(String(Number(plan.viewerLimit||0)),495,786);
+  /*
+    Large soft atmospheric glows.
+  */
+  const glow1 =
+    ctx.createRadialGradient(
+      1370,
+      80,
+      0,
+      1370,
+      80,
+      560
+    );
 
-  ctx.strokeStyle="#e2e8ed";
+  glow1.addColorStop(
+    0,
+    "rgba(75,210,237,.34)"
+  );
+
+  glow1.addColorStop(
+    0.45,
+    "rgba(75,150,237,.12)"
+  );
+
+  glow1.addColorStop(
+    1,
+    "rgba(75,150,237,0)"
+  );
+
+  ctx.fillStyle =
+    glow1;
+
+  ctx.fillRect(
+    800,
+    0,
+    800,
+    650
+  );
+
+
+  const glow2 =
+    ctx.createRadialGradient(
+      100,
+      900,
+      0,
+      100,
+      900,
+      500
+    );
+
+  glow2.addColorStop(
+    0,
+    "rgba(57,218,173,.15)"
+  );
+
+  glow2.addColorStop(
+    1,
+    "rgba(57,218,173,0)"
+  );
+
+  ctx.fillStyle =
+    glow2;
+
+  ctx.fillRect(
+    0,
+    450,
+    650,
+    550
+  );
+
+
+  /*
+  =====================================================
+  DECORATIVE BRAND DETAIL
+  =====================================================
+  */
+
+  ctx.strokeStyle =
+    "rgba(255,255,255,.055)";
+
+  ctx.lineWidth =
+    2;
+
   ctx.beginPath();
-  ctx.moveTo(930,220);
-  ctx.lineTo(930,800);
+  ctx.arc(
+    1450,
+    180,
+    235,
+    0,
+    Math.PI * 2
+  );
   ctx.stroke();
 
-  ctx.fillStyle="#6c7f8e";
-  ctx.font="900 13px Arial";
-  ctx.fillText("REVIEW YOUR PRIVATE PROPOSAL",1000,288);
+  ctx.beginPath();
+  ctx.arc(
+    1450,
+    180,
+    165,
+    0,
+    Math.PI * 2
+  );
+  ctx.stroke();
 
-  rr(1000,330,330,330,22,"#ffffff","#dbe2e8");
 
-  const qrUrl="https://api.qrserver.com/v1/create-qr-code/?size=700x700&margin=12&data="+encodeURIComponent(data.offerUrl);
+  /*
+  =====================================================
+  HEADER / BRAND
+  =====================================================
+  */
+
+  ctx.fillStyle =
+    "#ffffff";
+
+  ctx.font =
+    "900 54px Arial";
+
+  ctx.fillText(
+    "LiveBridge",
+    100,
+    118
+  );
+
+
+  ctx.fillStyle =
+    "#66d8f5";
+
+  ctx.font =
+    "900 16px Arial";
+
+  ctx.letterSpacing =
+    "2px";
+
+  ctx.fillText(
+    "REAL-TIME MULTILINGUAL COMMUNICATION",
+    102,
+    158
+  );
+
+
+  /*
+  =====================================================
+  WELCOME MESSAGE
+  =====================================================
+  */
+
+  ctx.fillStyle =
+    "#7ce5ff";
+
+  ctx.font =
+    "900 15px Arial";
+
+  ctx.fillText(
+    "A PRIVATE OFFER PREPARED FOR",
+    100,
+    245
+  );
+
+
+  ctx.fillStyle =
+    "#ffffff";
+
+  ctx.font =
+    "900 48px Arial";
+
+  const recipient =
+    String(
+      offer.recipientName ||
+      "Your Organization"
+    );
+
+  wrapText(
+    recipient,
+    100,
+    300,
+    720,
+    55,
+    2
+  );
+
+
+  ctx.fillStyle =
+    "#c4d9e8";
+
+  ctx.font =
+    "500 24px Arial";
+
+  ctx.fillText(
+    "We're excited to share a LiveBridge plan created for your organization.",
+    100,
+    385
+  );
+
+
+  /*
+  =====================================================
+  MAIN OFFER CARD
+  =====================================================
+  */
+
+  roundedRect(
+    100,
+    445,
+    850,
+    390,
+    28,
+    "rgba(255,255,255,.96)",
+    "rgba(255,255,255,.42)",
+    2
+  );
+
+
+  ctx.fillStyle =
+    "#7890a2";
+
+  ctx.font =
+    "900 13px Arial";
+
+  ctx.fillText(
+    "YOUR LIVEBRIDGE OFFER",
+    145,
+    495
+  );
+
+
+  ctx.fillStyle =
+    "#10283c";
+
+  ctx.font =
+    "900 44px Arial";
+
+  const titleBottom =
+    wrapText(
+      plan.planName ||
+        "LiveBridge Private Plan",
+      145,
+      555,
+      660,
+      50,
+      2
+    );
+
+
+  const amount =
+    new Intl.NumberFormat(
+      "en-CA",
+      {
+        style:
+          "currency",
+
+        currency:
+          plan.currency ||
+          "CAD"
+      }
+    )
+    .format(
+      Number(
+        plan.priceCents ||
+        0
+      ) / 100
+    );
+
+
+  ctx.fillStyle =
+    "#0a2135";
+
+  ctx.font =
+    "900 60px Arial";
+
+  ctx.fillText(
+    amount,
+    145,
+    titleBottom + 95
+  );
+
+
+  ctx.fillStyle =
+    "#687f91";
+
+  ctx.font =
+    "700 19px Arial";
+
+  ctx.fillText(
+    "per " +
+      (
+        plan.billingInterval ||
+        "month"
+      ),
+    145,
+    titleBottom + 130
+  );
+
+
+  /*
+    Offer statistics.
+  */
+
+  roundedRect(
+    145,
+    710,
+    330,
+    82,
+    15,
+    "#f2f6f9"
+  );
+
+  roundedRect(
+    495,
+    710,
+    330,
+    82,
+    15,
+    "#f2f6f9"
+  );
+
+
+  ctx.fillStyle =
+    "#8094a3";
+
+  ctx.font =
+    "900 11px Arial";
+
+  ctx.fillText(
+    "INCLUDED TRANSLATION TIME",
+    168,
+    738
+  );
+
+  ctx.fillText(
+    "SIMULTANEOUS LISTENERS",
+    518,
+    738
+  );
+
+
+  ctx.fillStyle =
+    "#16354d";
+
+  ctx.font =
+    "900 27px Arial";
+
+  ctx.fillText(
+    hoursFromMinutes(
+      plan.includedMinutes
+    ),
+    168,
+    774
+  );
+
+  ctx.fillText(
+    String(
+      Number(
+        plan.viewerLimit ||
+        0
+      )
+    ),
+    518,
+    774
+  );
+
+
+  /*
+  =====================================================
+  RIGHT SIDE — INVITATION / QR
+  =====================================================
+  */
+
+  ctx.fillStyle =
+    "#ffffff";
+
+  ctx.font =
+    "900 29px Arial";
+
+  ctx.fillText(
+    "Your private invitation",
+    1050,
+    455
+  );
+
+
+  ctx.fillStyle =
+    "#b9cfde";
+
+  ctx.font =
+    "500 19px Arial";
+
+  wrapText(
+    "Review the details prepared for you and continue whenever you're ready.",
+    1050,
+    497,
+    410,
+    29,
+    3
+  );
+
+
+  /*
+    QR presentation card.
+  */
+
+  roundedRect(
+    1050,
+    590,
+    245,
+    245,
+    24,
+    "#ffffff",
+    "rgba(255,255,255,.25)",
+    1
+  );
+
+
+  const qrUrl =
+    "https://api.qrserver.com/v1/create-qr-code/?size=700x700&margin=12&data=" +
+    encodeURIComponent(
+      data.offerUrl
+    );
+
+
   try{
-    const img=new Image();
-    img.crossOrigin="anonymous";
-    await new Promise((resolve,reject)=>{
-      img.onload=resolve;
-      img.onerror=reject;
-      img.src=qrUrl;
-    });
-    ctx.drawImage(img,1020,350,290,290);
+
+    const qr =
+      new Image();
+
+    qr.crossOrigin =
+      "anonymous";
+
+    await new Promise(
+      (
+        resolve,
+        reject
+      ) => {
+
+        qr.onload =
+          resolve;
+
+        qr.onerror =
+          reject;
+
+        qr.src =
+          qrUrl;
+      }
+    );
+
+    ctx.drawImage(
+      qr,
+      1070,
+      610,
+      205,
+      205
+    );
+
   }catch(error){
-    ctx.fillStyle="#18364d";
-    ctx.font="800 20px Arial";
-    ctx.fillText("QR unavailable",1078,500);
+
+    ctx.fillStyle =
+      "#16354d";
+
+    ctx.font =
+      "900 18px Arial";
+
+    ctx.fillText(
+      "Secure offer link",
+      1090,
+      720
+    );
   }
 
-  ctx.fillStyle="#526a7c";
-  ctx.font="700 18px Arial";
-  ctx.fillText("Scan to review pricing and",1000,710);
-  ctx.fillText("continue to secure checkout.",1000,740);
 
-  ctx.fillStyle="#8a9aa6";
-  ctx.font="500 15px Arial";
-  ctx.fillText("Secure proposal · Checkout powered by Stripe",1000,792);
+  ctx.fillStyle =
+    "#d3e5f0";
 
-  ctx.fillStyle="#9aa7b1";
-  ctx.font="600 14px Arial";
-  ctx.fillText("livebridge.ca",120,886);
+  ctx.font =
+    "700 16px Arial";
 
-  ctx.fillStyle="#9aa7b1";
-  ctx.textAlign="right";
-  ctx.fillText("Real-time multilingual communication",1480,886);
-  ctx.textAlign="left";
+  ctx.fillText(
+    "Scan to open your private offer",
+    1050,
+    873
+  );
 
-  const a=document.createElement("a");
-  a.download="LiveBridge-Private-Proposal.png";
-  a.href=canvas.toDataURL("image/png");
-  a.click();
+
+  /*
+  =====================================================
+  BOTTOM INVITATION BAR
+  =====================================================
+  */
+
+  roundedRect(
+    100,
+    875,
+    850,
+    66,
+    18,
+    "rgba(76,220,183,.95)"
+  );
+
+
+  ctx.fillStyle =
+    "#082d3d";
+
+  ctx.font =
+    "900 20px Arial";
+
+  ctx.fillText(
+    "We look forward to helping your organization connect across languages.",
+    137,
+    917
+  );
+
+
+  /*
+  =====================================================
+  FOOTER
+  =====================================================
+  */
+
+  ctx.fillStyle =
+    "#9eb9cb";
+
+  ctx.font =
+    "600 13px Arial";
+
+  ctx.fillText(
+    "Private proposal prepared through LiveBridge",
+    1050,
+    925
+  );
+
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+  link.download =
+    "LiveBridge-Private-Offer.png";
+
+  link.href =
+    canvas.toDataURL(
+      "image/png"
+    );
+
+  link.click();
 }
 
 
