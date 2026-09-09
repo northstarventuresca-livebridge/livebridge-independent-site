@@ -1131,7 +1131,7 @@ body{
 
     <div class="lb-detail-row">
       <div class="lb-detail-label">Current Plan</div>
-      <div class="lb-detail-value">Free Account Demo — Unlimited Access</div>
+      <div class="lb-detail-value" id="accountCurrentPlan">—</div>
     </div>
 
   </div>
@@ -3048,10 +3048,7 @@ async function getLiveBridgeSessionToken(){
 }
 
 
-async function syncAccountToWorker(
-  user,
-  account
-){
+async function loadAuthoritativeAccount(){
 
   try{
 
@@ -3059,62 +3056,44 @@ async function syncAccountToWorker(
       await getLiveBridgeSessionToken();
 
     if(!token){
-      console.error(
+      throw new Error(
         "No Clerk session token available."
       );
-      return null;
     }
 
     const response =
       await fetch(
         LB_WORKER +
-        "/account-sync",
+        "/account",
         {
-          method:"POST",
-
           headers:{
-            "Content-Type":
-              "application/json",
-
             "Authorization":
               "Bearer " + token
-          },
-
-          body:JSON.stringify({
-
-            organizationName:
-              account.organizationName,
-
-            accountHolder:
-              account.accountHolder,
-
-            email:
-              account.email,
-
-            phone:
-              account.phone,
-
-            roomName:
-              account.defaultRoom,
-
-            planCode:
-              user
-                ?.unsafeMetadata
-                ?.liveBridge
-                ?.planCode ||
-              "free-demo"
-          })
+          }
         }
       );
 
     const data =
       await response.json();
 
-    if(!response.ok){
+    if(
+      response.status === 404 ||
+      data?.exists === false
+    ){
+      return {
+        missing:true,
+        account:null
+      };
+    }
 
+    if(
+      !response.ok ||
+      !data.success ||
+      !data.account
+    ){
       throw new Error(
         data.error ||
-        "Account sync failed."
+        "Account lookup failed."
       );
     }
 
@@ -3122,22 +3101,33 @@ async function syncAccountToWorker(
       data.account;
 
     console.log(
-      "LiveBridge D1 account synced:",
+      "LiveBridge authoritative D1 account loaded:",
       data.account
     );
 
-    return data.account;
+    return {
+      missing:false,
+      account:data.account
+    };
 
   }catch(error){
 
     console.error(
-      "LiveBridge account sync failed:",
+      "LiveBridge authoritative account load failed:",
       error
     );
 
-    return null;
+    return {
+      missing:false,
+      account:null,
+      error:
+        error.message ||
+        "Unable to load LiveBridge account."
+    };
   }
 }
+
+
 async function checkAdminAccess(){
 
   try{
@@ -3185,36 +3175,121 @@ async function checkAdminAccess(){
 
 async function renderDashboard(user){
 
-  const account =
-    getAccount(user);
-  const serverAccount =
-    await syncAccountToWorker(
-      user,
-      account
+  const result =
+    await loadAuthoritativeAccount();
+
+  if(
+    result?.missing === true
+  ){
+    window.location.replace(
+      "/plans/index.html"
     );
-
-
-  if (
-    serverAccount &&
-    serverAccount.roomName
-  ) {
-
-    const authoritativeRoom =
-      String(
-        serverAccount.roomName
-      )
-      .trim()
-      .toUpperCase();
-
-    if (authoritativeRoom) {
-      account.defaultRoom =
-        authoritativeRoom;
-    }
+    return;
   }
 
+  const serverAccount =
+    result?.account ||
+    null;
+
+  if(!serverAccount){
+
+    document.getElementById(
+      "lb-loading"
+    ).style.display =
+      "none";
+
+    document.getElementById(
+      "lb-dashboard"
+    ).style.display =
+      "none";
+
+    document.getElementById(
+      "lb-login-screen"
+    ).style.display =
+      "flex";
+
+    const authBox =
+      document.getElementById(
+        "clerk-auth"
+      );
+
+    if(authBox){
+      authBox.innerHTML = `
+        <div style="
+          padding:18px;
+          border-radius:12px;
+          border:1px solid rgba(255,255,255,.12);
+          background:#0f1d2d;
+          color:#dbe8f5;
+          line-height:1.55;
+        ">
+          <strong>
+            LiveBridge account could not be loaded.
+          </strong>
+          <div style="margin-top:8px;color:#8fa6bf;">
+            Please refresh the page. If the problem continues,
+            contact LiveBridge support.
+          </div>
+        </div>
+      `;
+    }
+
+    return;
+  }
+
+  const account = {
+    organizationName:
+      String(
+        serverAccount.organizationName ||
+        ""
+      ),
+
+    accountHolder:
+      String(
+        serverAccount.accountHolder ||
+        ""
+      ),
+
+    email:
+      String(
+        serverAccount.accountEmail ||
+        serverAccount.email ||
+        ""
+      ),
+
+    phone:
+      String(
+        serverAccount.phone ||
+        ""
+      ),
+
+    plan:
+      String(
+        serverAccount.planName ||
+        serverAccount.planCode ||
+        ""
+      ),
+
+    defaultRoom:
+      String(
+        serverAccount.roomName ||
+        ""
+      )
+      .trim()
+      .toUpperCase(),
+
+    accountStatus:
+      String(
+        serverAccount.accountStatus ||
+        ""
+      )
+  };
 
   window.liveBridgeAccount =
     account;
+
+  window.liveBridgeServerAccount =
+    serverAccount;
 
   document.getElementById(
     "lb-loading"
@@ -3246,37 +3321,56 @@ async function renderDashboard(user){
   document.getElementById(
     "sidebarOrganization"
   ).textContent =
-    account.organizationName;
+    account.organizationName ||
+    "—";
 
   document.getElementById(
     "defaultRoomDisplay"
   ).textContent =
-    account.defaultRoom;
+    account.defaultRoom ||
+    "—";
 
   document.getElementById(
     "accountOrganization"
   ).textContent =
-    account.organizationName;
+    account.organizationName ||
+    "—";
 
   document.getElementById(
     "accountHolder"
   ).textContent =
-    account.accountHolder;
+    account.accountHolder ||
+    "—";
 
   document.getElementById(
     "accountEmail"
   ).textContent =
-    account.email || "—";
+    account.email ||
+    "—";
 
   document.getElementById(
     "accountPhone"
   ).textContent =
-    account.phone || "—";
+    account.phone ||
+    "—";
 
   document.getElementById(
     "accountRoom"
   ).textContent =
-    account.defaultRoom;
+    account.defaultRoom ||
+    "—";
+
+  const planInfo =
+    document.getElementById(
+      "accountCurrentPlan"
+    );
+
+  if(planInfo){
+    planInfo.textContent =
+      serverAccount.planName ||
+      serverAccount.planCode ||
+      "—";
+  }
 
 
   Clerk.mountUserButton(
@@ -5017,351 +5111,7 @@ Replace the SECOND /account Embed with this entire code.
 })();
 </script>
 
-<!-- =====================================================
-LIVEBRIDGE /account AUTOMATIC D1 REGISTRATION RECOVERY
-REPLACE the current diagnostic THIRD Embed with this one.
-
-- Runs silently after login.
-- Uses the active Clerk session even if Clerk.user is temporarily null.
-- Repairs a Clerk account only when complete signup/legal metadata exists.
-- Does not delete organizations or invent legal consent.
-===================================================== -->
-
-<script>
-(function(){
-
-  const WORKER =
-    "https://livebridge.northstarventures-ca.workers.dev";
-
-  let running =
-    false;
-
-
-  async function getSessionAndUser(){
-
-    if(!window.Clerk){
-      return null;
-    }
-
-
-    await window.Clerk.load();
-
-
-    const sessions =
-      window.Clerk.client?.sessions ||
-      window.Clerk.client?.signedInSessions ||
-      [];
-
-
-    const lastActiveId =
-      window.Clerk.client
-        ?.lastActiveSessionId ||
-      "";
-
-
-    let session =
-      window.Clerk.session ||
-      null;
-
-
-    if(!session && lastActiveId){
-
-      session =
-        sessions.find(
-          item =>
-            item.id === lastActiveId
-        ) || null;
-    }
-
-
-    if(!session){
-
-      session =
-        sessions.find(
-          item =>
-            item.status === "active"
-        ) ||
-        sessions[0] ||
-        null;
-    }
-
-
-    if(!session){
-      return null;
-    }
-
-
-    if(
-      window.Clerk.session?.id !==
-      session.id
-    ){
-
-      await window.Clerk.setActive({
-        session:
-          session.id
-      });
-    }
-
-
-    const user =
-      window.Clerk.user ||
-      session.user ||
-      null;
-
-
-    if(!user){
-      return null;
-    }
-
-
-    const token =
-      await session.getToken();
-
-
-    if(!token){
-      return null;
-    }
-
-
-    return {
-      session,
-      user,
-      token
-    };
-  }
-
-
-  async function recover(){
-
-    if(running){
-      return;
-    }
-
-    running =
-      true;
-
-
-    try{
-
-      const auth =
-        await getSessionAndUser();
-
-
-      if(!auth){
-        return;
-      }
-
-
-      const liveBridge =
-        auth.user
-          ?.unsafeMetadata
-          ?.liveBridge ||
-        {};
-
-
-      const organizationName =
-        String(
-          liveBridge.organizationName ||
-          ""
-        ).trim();
-
-
-      const accountHolder =
-        String(
-          liveBridge.accountHolder ||
-          auth.user.fullName ||
-          ""
-        ).trim();
-
-
-      const email =
-        String(
-          liveBridge.email ||
-          auth.user.primaryEmailAddress
-            ?.emailAddress ||
-          auth.user.emailAddresses?.[0]
-            ?.emailAddress ||
-          ""
-        ).trim();
-
-
-      const phone =
-        String(
-          liveBridge.phone ||
-          ""
-        ).trim();
-
-
-      const roomName =
-        String(
-          liveBridge.defaultRoom ||
-          ""
-        )
-        .trim()
-        .toUpperCase();
-
-
-      const planCode =
-        String(
-          liveBridge.planCode ||
-          "free-demo"
-        ).trim();
-
-
-      const termsAcceptedAt =
-        Number(
-          liveBridge.termsAcceptedAt ||
-          0
-        );
-
-
-      const privacyAcceptedAt =
-        Number(
-          liveBridge.privacyAcceptedAt ||
-          0
-        );
-
-
-      const legalVersion =
-        String(
-          liveBridge.legalVersion ||
-          ""
-        ).trim();
-
-
-      /*
-        Working D1 accounts may have empty Clerk metadata.
-        Those are left completely alone.
-      */
-
-      if(
-        !organizationName ||
-        !email ||
-        !roomName ||
-        !termsAcceptedAt ||
-        !privacyAcceptedAt ||
-        !legalVersion
-      ){
-        return;
-      }
-
-
-      const response =
-        await fetch(
-          WORKER +
-          "/account-sync",
-          {
-            method:
-              "POST",
-
-            headers:{
-              "Authorization":
-                "Bearer " +
-                auth.token,
-
-              "Content-Type":
-                "application/json"
-            },
-
-            body:
-              JSON.stringify({
-
-                organizationName,
-
-                accountHolder,
-
-                email,
-
-                accountEmail:
-                  email,
-
-                phone,
-
-                roomName,
-
-                planCode,
-
-                termsAcceptedAt,
-
-                privacyAcceptedAt,
-
-                legalVersion
-              })
-          }
-        );
-
-
-      const data =
-        await response.json();
-
-
-      if(
-        !response.ok ||
-        !data.success
-      ){
-
-        console.error(
-          "LiveBridge automatic registration recovery failed:",
-          data
-        );
-
-        return;
-      }
-
-
-      console.log(
-        "LiveBridge D1 registration verified.",
-        data.account
-      );
-
-
-    }catch(error){
-
-      console.error(
-        "LiveBridge automatic registration recovery error:",
-        error
-      );
-
-    }finally{
-
-      running =
-        false;
-    }
-  }
-
-
-  function start(){
-
-    setTimeout(
-      recover,
-      700
-    );
-
-
-    setTimeout(
-      recover,
-      2200
-    );
-  }
-
-
-  if(
-    document.readyState ===
-    "loading"
-  ){
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      start
-    );
-
-  }else{
-
-    start();
-  }
-
-})();
-</script>
+<!-- LiveBridge account data is D1-authoritative. Account creation occurs only through verified signup. -->
 
 <script>
 (function(){
